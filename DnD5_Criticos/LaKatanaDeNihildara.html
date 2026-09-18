@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La katana de Nihildara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #2a0909 url('https://www.transparenttextures.com/patterns/leather.png');
+            color: #e6dada;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        h1, h2 {
+            font-family: 'Cinzel', 'IM Fell English SC', serif;
+            color: #b71c1c;
+            text-shadow: 2px 2px 8px #000, 0 0 10px #7b2d26;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            justify-content: center;
+            text-align: center;
+        }
+        h1 { margin-top: 12px; margin-bottom: 2px; }
+        h2 { margin-top: 0; margin-bottom: 10px; font-size: 1.2em; }
+        .svg-espada { width: 38px; height: 38px; vertical-align: middle; }
+        .svg-gota { width: 28px; height: 28px; vertical-align: middle; }
+        .container {
+            background: linear-gradient(135deg, #3a0d0d 80%, #7b2d26 100%);
+            border-radius: 12px;
+            box-shadow: 0 0 30px #1a0000, 0 0 0 8px #7b2d26 inset;
+            border: 3px solid #b71c1c;
+            position: relative;
+            overflow: hidden;
+            max-width: 520px;
+            margin: 18px auto 0 auto;
+            padding: 12px 10px 10px 10px;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -30px; left: 20px;
+            width: 60px; height: 60px;
+            background: url('https://cdn.pixabay.com/photo/2013/07/13/12/46/blood-146067_1280.png') no-repeat center/contain;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .mode-button {
+            background: #3a0d0d;
+            color: #fff;
+            border: 2px solid #b71c1c;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            margin: 0;
+            padding: 7px 12px;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #1a0000;
+            position: relative;
+        }
+        .mode-button.active, .mode-button:hover {
+            background: #b71c1c;
+            color: #fffbe6;
+            box-shadow: 0 4px 16px #7b2d26;
+        }
+        .form-group {
+            margin-bottom: 7px;
+        }
+        .horizontal-form-groups {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 7px;
+        }
+        .horizontal-form-groups .form-group {
+            flex: 1;
+            min-width: 180px;
+            margin-bottom: 0;
+        }
+        .damage-input-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        input[type="number"] {
+            padding: 5px;
+            border: 1.5px solid #b71c1c;
+            border-radius: 4px;
+            width: 70px;
+            font-size: 15px;
+            background: #2a0909;
+            color: #fff0f0;
+        }
+        .radio-group { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .radio-item { display: flex; align-items: center; }
+        .radio-item input { margin-right: 10px; }
+        .dc-display {
+            font-size: 18px;
+            margin-left: 15px;
+            display: inline-block;
+            color: #ffbaba;
+            font-family: 'Cinzel', serif;
+        }
+        button {
+            background: linear-gradient(90deg, #b71c1c 60%, #7b2d26 100%);
+            color: #fff;
+            border: 2px solid #7b2d26;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Cinzel', serif;
+            padding: 8px 18px;
+            margin-top: 7px;
+            box-shadow: 0 2px 8px #1a0000;
+            transition: background 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover {
+            background: #d32f2f;
+            box-shadow: 0 4px 16px #7b2d26;
+        }
+        .critical-effect {
+            background: linear-gradient(120deg, #7b2d26 60%, #3a0d0d 100%);
+            border-left: 8px solid #b71c1c;
+            border-radius: 8px;
+            box-shadow: 0 0 20px #7b2d26;
+            color: #fff0f0;
+            position: relative;
+            margin-top: 10px;
+            padding: 10px 12px;
+            animation: fadeIn 1s;
+            overflow: visible;
+        }
+        .critical-effect.splash {
+            animation: bloodSplash 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+        }
+        .critical-effect::after {
+            content: '';
+            position: absolute;
+            bottom: -18px; right: 30px;
+            width: 40px; height: 40px;
+            background: url('https://cdn.pixabay.com/photo/2013/07/13/12/46/blood-146067_1280.png') no-repeat center/contain;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .blood-splash {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%) scale(1);
+            width: 120px;
+            height: 80px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+            animation: bloodSplashAnim 0.7s cubic-bezier(.7,0,.3,1) forwards;
+        }
+        @keyframes bloodSplashAnim {
+            0% { opacity: 0; transform: translateX(-50%) scale(0.2) rotate(-10deg); }
+            40% { opacity: 1; transform: translateX(-50%) scale(1.1) rotate(3deg); }
+            80% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translateX(-50%) scale(1.2) rotate(0deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: none;}
+        }
+        @keyframes bloodSplash {
+            0% { transform: scale(0.7) rotate(-8deg); opacity: 0.2; filter: blur(2px); }
+            60% { transform: scale(1.1) rotate(2deg); opacity: 1; filter: blur(0); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; filter: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <svg class="svg-espada" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="28" y="2" width="8" height="40" rx="4" fill="#b71c1c" stroke="#fff" stroke-width="2"/>
+                <rect x="24" y="42" width="16" height="6" rx="3" fill="#7b2d26" stroke="#fff" stroke-width="2"/>
+                <rect x="20" y="48" width="24" height="6" rx="3" fill="#b71c1c" stroke="#fff" stroke-width="2"/>
+                <circle cx="32" cy="60" r="4" fill="#7b2d26" stroke="#fff" stroke-width="2"/>
+            </svg>
+            La katana de Nihildara
+            <svg class="svg-gota" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2C16 2 4 16 4 22C4 27.5228 9.47715 32 16 32C22.5228 32 28 27.5228 28 22C28 16 16 2 16 2Z" fill="#b71c1c" stroke="#fff" stroke-width="2"/>
+            </svg>
+        </h1>
+        <h2>Calculadora de Críticos: En mi mesa nadie escuchará tus gritos.</h2>
+        <div class="mode-buttons">
+            <div class="mode-button active" data-mode="simple">Simple</div>
+            <div class="mode-button" data-mode="advanced">Avanzado</div>
+            <div class="mode-button" data-mode="official">Oficial</div>
+        </div>
+        <div class="form-group">
+            <label for="damage">Daño recibido:</label>
+            <div class="damage-input-container">
+                <input type="number" id="damage" placeholder="0" min="0" value="0">
+                <div class="dc-display">Tiro de Salvación de CON DC: <span id="dc-value">10</span></div>
+            </div>
+        </div>
+        <div class="horizontal-form-groups">
+            <div class="form-group">
+                <label>Tipo de criatura:</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="humanoide" name="criatura" value="humanoide" checked>
+                        <label for="humanoide">Humanoide</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="animal" name="criatura" value="animal">
+                        <label for="animal">Animal</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="monstruo" name="criatura" value="monstruo">
+                        <label for="monstruo">Monstruo</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tipo de ataque:</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="golpeador" name="tipo-ataque" value="golpeador" checked>
+                        <label for="golpeador">Contundente</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="perforante" name="tipo-ataque" value="perforante">
+                        <label for="perforante">Perforante</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="cortador" name="tipo-ataque" value="cortador">
+                        <label for="cortador">Cortante</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="calculate-btn">Calcular Efecto Crítico</button>
+        <div class="critical-effect" id="critical-effect">
+            <h3>Efecto del Crítico</h3>
+            <p id="effect-description">Selecciona las opciones y haz clic en "Calcular Efecto Crítico".</p>
+            <div id="blood-splash-container" style="position: absolute; left: 0; top: 0; width: 100%; height: 0; pointer-events: none;"></div>
+        </div>
+    </div>
+    <script>
+        // --- Lógica de críticos revisada y optimizada ---
+        const tablasCriticos = {
+            obtenerLocalizacion: function(tipoCreatura, valorDado) {
+                let localizacion = '';
+                if (tipoCreatura === 'humanoide') {
+                    if (valorDado <= 2) localizacion = 'Pierna derecha';
+                    else if (valorDado <= 4) localizacion = 'Pierna izquierda';
+                    else if (valorDado === 5) localizacion = 'Abdomen';
+                    else if (valorDado <= 7) localizacion = 'Torso';
+                    else if (valorDado === 8) localizacion = 'Brazo derecho';
+                    else if (valorDado === 9) localizacion = 'Brazo izquierdo';
+                    else if (valorDado === 10) localizacion = 'Cabeza';
+                } else if (tipoCreatura === 'animal') {
+                    if (valorDado === 1) localizacion = 'Pata delantera derecha/ala';
+                    else if (valorDado === 2) localizacion = 'Pata delantera izquierda/ala';
+                    else if (valorDado === 3) localizacion = 'Pata trasera derecha';
+                    else if (valorDado === 4) localizacion = 'Pata trasera izquierda';
+                    else if (valorDado === 5) localizacion = 'Cola';
+                    else if (valorDado <= 7) localizacion = 'Abdomen';
+                    else if (valorDado <= 9) localizacion = 'Torso/pecho';
+                    else if (valorDado === 10) localizacion = 'Cabeza';
+                } else if (tipoCreatura === 'monstruo') {
+                    if (valorDado === 1) localizacion = 'Extremidad delantera derecha/garra/ala';
+                    else if (valorDado === 2) localizacion = 'Extremidad delantera izquierda/garra/ala';
+                    else if (valorDado === 3) localizacion = 'Extremidad trasera derecha';
+                    else if (valorDado === 4) localizacion = 'Extremidad trasera izquierda';
+                    else if (valorDado === 5) localizacion = 'Cola';
+                    else if (valorDado <= 7) localizacion = 'Abdomen';
+                    else if (valorDado <= 9) localizacion = 'Torso/pecho';
+                    else if (valorDado === 10) localizacion = 'Cabeza';
+                }
+                return localizacion;
+            },
+            mapearCategoria: function(localizacion) {
+                if (localizacion.includes('Pierna') || localizacion.includes('Pata') || localizacion.includes('Extremidad')) {
+                    if (localizacion.includes('trasera') || !localizacion.includes('delantera')) {
+                        return 'piernas';
+                    } else {
+                        return 'brazos';
+                    }
+                } else if (localizacion.includes('Abdomen')) {
+                    return 'abdomen';
+                } else if (localizacion.includes('Torso')) {
+                    return 'torso';
+                } else if (localizacion.includes('Brazo')) {
+                    return 'brazos';
+                } else if (localizacion.includes('Cabeza')) {
+                    return 'cabeza';
+                } else if (localizacion.includes('Cola')) {
+                    return 'cola';
+                }
+                return 'torso';
+            },
+            buscarEfectoEnTabla: function(categoria, tipoAtaque) {
+                const efectos = {
+                    contundente: {
+                        piernas: "La extremidad recibe un golpe que afecta a su movilidad. Desventaja en salvaciones de Destreza y velocidad a la mitad hasta curación mágica.",
+                        abdomen: "Golpe en el abdomen. Desventaja en salvaciones de Constitución y velocidad -10 pies hasta curación mágica.",
+                        torso: "Impacto en el torso. Desventaja en salvaciones de Constitución y no puede usar Carrera hasta curación mágica.",
+                        brazos: "El brazo queda entumecido. Desventaja en ataques con ese brazo hasta curación mágica.",
+                        cabeza: "Golpe en la cabeza. Desventaja en ataques y pruebas de característica hasta el final del siguiente turno.",
+                        cola: "La cola recibe un impacto. Desventaja en salvaciones de Destreza hasta curación mágica."
+                    },
+                    cortante: {
+                        piernas: "Corte en la extremidad. Sangrado (1d4 daño/turno, Medicina DC 10) y velocidad a la mitad.",
+                        abdomen: "Laceración en el abdomen. Sangrado (1d6 daño/turno, Medicina DC 15).",
+                        torso: "Corte en el torso. Sangrado (1d8 daño/turno, Medicina DC 15).",
+                        brazos: "Corte en el brazo. Desventaja en ataques con ese brazo y sangrado (1d4 daño/turno, Medicina DC 10).",
+                        cabeza: "Corte en la cabeza. Desventaja en ataques y pruebas de característica y sangrado (1d6 daño/turno, Medicina DC 15).",
+                        cola: "Corte en la cola. Desventaja en salvaciones de Destreza y sangrado (1d4 daño/turno, Medicina DC 10)."
+                    },
+                    perforante: {
+                        piernas: "Herida punzante en la extremidad. Sangrado (1d6 daño/turno, Medicina DC 15) y velocidad -10 pies.",
+                        abdomen: "Perforación en el abdomen. Sangrado interno (1d8 daño/turno, Medicina DC 15) y desventaja en salvaciones de Constitución.",
+                        torso: "Herida punzante en el torso. Sangrado (1d8 daño/turno, Medicina DC 15) y no puede usar Carrera.",
+                        brazos: "Herida penetrante en el brazo. Desventaja en ataques con ese brazo y sangrado (1d6 daño/turno, Medicina DC 15).",
+                        cabeza: "Herida penetrante en la cabeza. Desventaja en ataques y pruebas de característica y sangrado (1d8 daño/turno, Medicina DC 15).",
+                        cola: "Herida penetrante en la cola. Desventaja en salvaciones de Destreza y sangrado (1d6 daño/turno, Medicina DC 15)."
+                    }
+                };
+                return efectos[tipoAtaque][categoria];
+            },
+            tirarDado: caras => Math.floor(Math.random() * caras) + 1
+        };
+        let currentMode = 'simple';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botones de modo
+            // Botones de modo
+document.querySelectorAll('.mode-button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.mode-button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentMode = this.getAttribute('data-mode');
+        document.getElementById('effect-description').innerHTML = 'Selecciona las opciones y haz clic en "Calcular Efecto Crítico".';
+        
+        // Habilitar/deshabilitar controles según el modo
+        const inputsTipoCreatura = document.querySelectorAll('input[name="criatura"]');
+        const inputsTipoAtaque = document.querySelectorAll('input[name="tipo-ataque"]');
+        
+        if (currentMode === 'official') {
+            // Desactivar controles en modo oficial
+            inputsTipoCreatura.forEach(input => {
+                input.disabled = true;
+                input.parentElement.style.opacity = '0.5';
+            });
+            inputsTipoAtaque.forEach(input => {
+                input.disabled = true;
+                input.parentElement.style.opacity = '0.5';
+            });
+        } else {
+            // Activar controles en otros modos
+            inputsTipoCreatura.forEach(input => {
+                input.disabled = false;
+                input.parentElement.style.opacity = '1';
+            });
+            inputsTipoAtaque.forEach(input => {
+                input.disabled = false;
+                input.parentElement.style.opacity = '1';
+            });
+        }
+    });
+});
+            // Cálculo automático de DC al escribir daño
+            const damageInput = document.getElementById('damage');
+            damageInput.addEventListener('input', function() {
+                const damage = parseInt(this.value) || 0;
+                document.getElementById('dc-value').textContent = Math.max(10, Math.floor(damage / 2));
+            });
+            // Botón calcular
+            document.getElementById('calculate-btn').addEventListener('click', function() {
+                // Animación de salpicadura de sangre
+                const splashContainer = document.getElementById('blood-splash-container');
+                splashContainer.innerHTML = '';
+                const splash = document.createElement('div');
+                splash.className = 'blood-splash';
+                splash.innerHTML = `
+                <svg viewBox="0 0 180 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="90" cy="50" rx="70" ry="22" fill="#b71c1c"/>
+                  <ellipse cx="50" cy="80" rx="16" ry="7" fill="#7b2d26"/>
+                  <ellipse cx="130" cy="85" rx="13" ry="6" fill="#7b2d26"/>
+                  <ellipse cx="90" cy="30" rx="22" ry="10" fill="#d32f2f"/>
+                  <ellipse cx="120" cy="40" rx="12" ry="5" fill="#b71c1c"/>
+                  <ellipse cx="60" cy="35" rx="10" ry="4" fill="#b71c1c"/>
+                  <!-- Gotas grandes laterales -->
+                  <ellipse cx="20" cy="60" rx="8" ry="18" fill="#b71c1c" transform="rotate(-20 20 60)"/>
+                  <ellipse cx="160" cy="60" rx="8" ry="18" fill="#b71c1c" transform="rotate(20 160 60)"/>
+                  <!-- Gotas pequeñas dispersas -->
+                  <ellipse cx="30" cy="95" rx="4" ry="8" fill="#d32f2f"/>
+                  <ellipse cx="150" cy="95" rx="4" ry="8" fill="#d32f2f"/>
+                  <ellipse cx="10" cy="80" rx="3" ry="6" fill="#b71c1c"/>
+                  <ellipse cx="170" cy="80" rx="3" ry="6" fill="#b71c1c"/>
+                  <!-- Salpicaduras irregulares -->
+                  <path d="M60 60 Q65 80 80 70 Q90 90 100 70 Q115 80 120 60" fill="#a31515" opacity="0.7"/>
+                  <path d="M100 40 Q110 20 130 30 Q140 10 150 30" fill="#d32f2f" opacity="0.5"/>
+                  <ellipse cx="90" cy="10" rx="7" ry="3" fill="#d32f2f"/>
+                  <ellipse cx="40" cy="20" rx="5" ry="2" fill="#b71c1c"/>
+                  <ellipse cx="140" cy="20" rx="5" ry="2" fill="#b71c1c"/>
+                </svg>
+                `;
+                splashContainer.appendChild(splash);
+                setTimeout(() => { splash.remove(); }, 900);
+                // Lógica de cálculo
+                const damage = parseInt(document.getElementById('damage').value) || 0;
+                document.getElementById('dc-value').textContent = Math.max(10, Math.floor(damage / 2));
+                let tipoCreatura = document.querySelector('input[name="criatura"]:checked').value;
+                let tipoAtaque = document.querySelector('input[name="tipo-ataque"]:checked').value;
+                if (tipoAtaque === 'golpeador') tipoAtaque = 'contundente';
+                if (tipoAtaque === 'cortador') tipoAtaque = 'cortante';
+                if (tipoAtaque === 'perforante') tipoAtaque = 'perforante';
+                // Modo simple y avanzado usan la misma lógica aquí, pero puedes expandirlo
+                if (currentMode === 'simple') {
+    const tiradaLocalizacion = tablasCriticos.tirarDado(10);
+    const localizacion = tablasCriticos.obtenerLocalizacion(tipoCreatura, tiradaLocalizacion);
+    const categoria = tablasCriticos.mapearCategoria(localizacion);
+    const efecto = tablasCriticos.buscarEfectoEnTabla(categoria, tipoAtaque);
+    let effect = `<strong>Localización:</strong> ${localizacion}<br>`;
+    effect += `<strong>Efecto:</strong> ${efecto}`;
+    document.getElementById('effect-description').innerHTML = effect;
+} else if (currentMode === 'advanced') {
+    // Sistema avanzado: gravedad basada en el daño recibido
+    const tiradaLocalizacion = tablasCriticos.tirarDado(10);
+    const localizacion = tablasCriticos.obtenerLocalizacion(tipoCreatura, tiradaLocalizacion);
+    const categoria = tablasCriticos.mapearCategoria(localizacion);
+    
+    // Determinar el dado de gravedad según el daño recibido
+    let dadoGravedad = 4; // Valor por defecto: d4
+    if (damage > 25) dadoGravedad = 20;
+    else if (damage >= 21) dadoGravedad = 12;
+    else if (damage >= 16) dadoGravedad = 10;
+    else if (damage >= 11) dadoGravedad = 8;
+    else if (damage >= 6) dadoGravedad = 6;
+    
+    // Tirar gravedad (máximo 12)
+    let tiradaGravedad = tablasCriticos.tirarDado(dadoGravedad);
+    if (tiradaGravedad > 12) tiradaGravedad = 12;
+    
+    const efecto = tablasCriticos.buscarEfectoEnTabla(categoria, tipoAtaque);
+    
+    let effect = `<strong>Localización:</strong> ${localizacion}<br>`;
+    effect += `<strong>Gravedad:</strong> ${tiradaGravedad}/12 (Daño recibido: ${damage}, Dado: d${dadoGravedad})<br>`;
+    effect += `<strong>Efecto:</strong> ${efecto}`;
+    
+    document.getElementById('effect-description').innerHTML = effect;
+} else if (currentMode === 'official') {
+                    const tiradaDMG = tablasCriticos.tirarDado(20);
+                    let dmgEffect;
+                    switch(tiradaDMG) {
+                        case 1:
+                            dmgEffect = "Pierde un ojo. Desventaja en Percepción (vista) y ataques a distancia. Magia como regenerar puede restaurar el ojo perdido. Si no le quedan ojos, queda ciego.";
+                            break;
+                        case 2:
+                            dmgEffect = "Pierde un brazo o una mano. No puede sostener nada con ambas manos y solo puede sostener un objeto a la vez. Magia como regenerar puede restaurar el apéndice perdido.";
+                            break;
+                        case 3:
+                            dmgEffect = "Pierde un pie o una pierna. Velocidad a la mitad y debe usar bastón o muleta. Cae prono tras usar Dash. Desventaja en Destreza para equilibrar. Magia como regenerar puede restaurar el apéndice perdido.";
+                            break;
+                        case 4:
+                            dmgEffect = "Cojera. Velocidad -5 pies. Debe hacer un TS Destreza DC 10 tras Dash o cae prono. Curación mágica elimina la cojera.";
+                            break;
+                        case 5:
+                        case 6:
+                        case 7:
+                            dmgEffect = "Lesión interna. Al intentar una acción en combate, TS Constitución DC 15 o pierde la acción y no puede usar reacciones hasta su siguiente turno. Se cura con curación mágica o 10 días de reposo.";
+                            break;
+                        case 8:
+                        case 9:
+                        case 10:
+                            dmgEffect = "Costillas rotas. Igual que lesión interna, pero TS DC 10.";
+                            break;
+                        case 11:
+                        case 12:
+                        case 13:
+                            dmgEffect = "Cicatriz horrible. Desventaja en Carisma (Persuasión), ventaja en Carisma (Intimidación). Curación mágica de 6º o superior elimina la cicatriz.";
+                            break;
+                        case 14:
+                        case 15:
+                        case 16:
+                            dmgEffect = "Herida supurante. El máximo de PV se reduce en 1 cada 24h. Si llega a 0, muere. Se cura con curación mágica o 10 éxitos en Medicina DC 15 (1 intento/24h).";
+                            break;
+                        default:
+                            dmgEffect = "Cicatriz menor. Sin efecto adverso. Curación mágica de 6º o superior elimina la cicatriz.";
+                    }
+                    let effect = `<strong>Tabla Oficial (DMG)</strong><br>`;
+                    effect += `<strong>Tirada:</strong> ${tiradaDMG}/20<br><br>`;
+                    effect += `<strong>Efecto:</strong> ${dmgEffect}`;
+                    document.getElementById('effect-description').innerHTML = effect;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
