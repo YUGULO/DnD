@@ -1,0 +1,3106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El cofre de Tennax - Generador de Tesoros D&D 5e</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Fondamento&display=swap">
+    <style>
+        :root {
+            --primary-color: #7b2cbf;
+            --primary-dark: #5a189a;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --text-color: #e0e0ff;
+            --gold-color: #ffd700;
+            --silver-color: #c0c0c0;
+            --bronze-color: #cd7f32;
+            --dark-bg: #1a1a2e;
+            --card-bg: rgba(26, 26, 46, 0.8);
+            --paper-bg: #f0e6d2;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fondamento', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            background-image: url('https://www.transparenttextures.com/patterns/buried.png'), 
+                              url('https://raw.githubusercontent.com/patterns-dev/public-assets/main/images/fantasy-background.jpg');
+            /* Fondo alternativo si las URLs externas fallan */
+            background-image: url('https://www.transparenttextures.com/patterns/buried.png'), 
+                              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23404' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23505'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+            background-blend-mode: overlay;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.7) 0%, rgba(50, 30, 80, 0.7) 100%);
+            /* Fondo alternativo con degradado y textura por si las imágenes fallan */
+            background: 
+                repeating-linear-gradient(45deg, rgba(30, 30, 60, 0.05) 0px, rgba(30, 30, 60, 0.05) 2px, transparent 2px, transparent 4px),
+                linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(58, 12, 163, 0.6) 50%, rgba(90, 24, 154, 0.8) 100%);
+            z-index: -1;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        h1, h2 {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--gold-color);
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.7);
+            letter-spacing: 1px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold-color), transparent);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-top: 10px;
+            color: var(--silver-color);
+        }
+        
+        h3 {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
+                        inset 0 0 10px rgba(123, 44, 191, 0.3),
+                        0 0 20px rgba(123, 44, 191, 0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(123, 44, 191, 0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .option-group {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(10, 10, 20, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(123, 44, 191, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .option-group:hover {
+            box-shadow: 0 6px 20px rgba(123, 44, 191, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        label:hover {
+            background: rgba(123, 44, 191, 0.2);
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            margin-right: 10px;
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="radio"] {
+            border-radius: 50%;
+        }
+        
+        input[type="checkbox"]:checked, input[type="radio"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-dark);
+        }
+        input[type="checkbox"]:checked::before, input[type="radio"]:checked::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+        }
+        
+        input[type="checkbox"]:checked::before {
+            border-radius: 2px;
+        }
+        
+        input[type="radio"]:checked::before {
+            border-radius: 50%;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            font-family: 'MedievalSharp', cursive;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 
+                        0 0 10px rgba(123, 44, 191, 0.5);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4), 
+                        0 0 15px rgba(123, 44, 191, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        #resultado {
+            margin-top: 30px;
+            border-top: none;
+            padding-top: 20px;
+            position: relative;
+        }
+        
+        #resultado::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(123, 44, 191, 0.5), transparent);
+        }
+        
+        .tesoro-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(30, 30, 50, 0.7);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tesoro-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/old-map.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .tesoro-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
+                        0 0 15px rgba(123, 44, 191, 0.2);
+        }
+        
+        .monedas {
+            color: var(--gold-color);
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        }
+        
+        .objetos {
+            color: var(--silver-color);
+            text-shadow: 0 0 5px rgba(192, 192, 192, 0.3);
+        }
+        
+        .magicos {
+            color: #b967ff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(185, 103, 255, 0.5);
+        }
+        
+        .gemas {
+            color: #5ce1e6;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(92, 225, 230, 0.5);
+        }
+        
+        .nombre-en {
+            font-style: italic;
+            color: #a0a0a0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* Estilos para la disposición en dos columnas */
+        .tesoros-contenedor {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .tesoro-columna {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* Efectos decorativos */
+        .scroll-corner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://raw.githubusercontent.com/patterns-dev/public-assets/main/images/scroll-corner.png');
+            /* Alternativa en base64 por si la URL externa falla */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d2ba9c' d='M0,0 L100,0 C70,15 85,30 100,100 L0,100 L0,0 Z'%3E%3C/path%3E%3Cpath fill='%23b69a7c' d='M20,20 C40,20 50,20 80,50 C55,75 40,80 20,80 L20,20 Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+        }
+        
+        .top-left {
+            top: -5px;
+            left: -5px;
+            transform: rotate(0deg);
+        }
+        
+        .top-right {
+            top: -5px;
+            right: -5px;
+            transform: rotate(90deg);
+        }
+        
+        .bottom-left {
+            bottom: -5px;
+            left: -5px;
+            transform: rotate(270deg);
+        }
+        
+        .bottom-right {
+            bottom: -5px;
+            right: -5px;
+            transform: rotate(180deg);
+        }
+        
+        /* Icono de dragón para el título */
+        .title-dragon {
+            position: relative;
+            display: block;
+            text-align: center;
+            margin: 0 auto;
+        }
+        .title-dragon::before, .title-dragon::after {
+            content: "??";
+            font-size: 2.5rem;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.7;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .title-dragon::before {
+            left: -60px;
+        }
+        
+        .title-dragon::after {
+            right: -60px;
+        }
+        
+        /* Animación de brillo para títulos */
+        @keyframes goldShimmer {
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.7); }
+            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.7); }
+            100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.7); }
+        }
+        
+        h1, h2 {
+            animation: goldShimmer 3s infinite;
+        }
+        
+        /* Pergamino para instrucciones */
+        .parchment {
+            background-color: var(--paper-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            color: #5a3921;
+            font-family: 'Fondamento', serif;
+            position: relative;
+            margin: 30px auto;
+            max-width: 800px;
+            border: 1px solid #d2ba9c;
+            overflow: hidden;
+        }
+        
+        .parchment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .parchment p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        /* Efectos de iluminación */
+        .light-effect {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 44, 191, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .light-1 {
+            top: 20%;
+            left: 10%;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        
+        .light-2 {
+            bottom: 30%;
+            right: 15%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(247, 37, 133, 0.15) 0%, transparent 70%);
+            animation: float 20s infinite alternate-reverse ease-in-out;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+            100% { transform: translate(-30px, 30px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tesoros-contenedor {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .title-dragon::before, .title-dragon::after {
+                display: none;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .option-group {
+                min-width: 100%;
+            }
+        }
+        
+        /* Estilo para botones de Roll20 */
+        .roll20-button {
+            background: linear-gradient(135deg, #d82c20 0%, #961f16 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'MedievalSharp', cursive;
+            transition: all 0.3s;
+            display: block;
+            margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .roll20-button:hover {
+            background: linear-gradient(135deg, #e43b2e 0%, #a82319 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .roll20-button:active {
+            transform: translateY(0);
+        }
+        
+        .roll20-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .roll20-button:hover::before {
+            left: 100%;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="light-effect light-1"></div>
+    <div class="light-effect light-2"></div>
+    
+    <div class="main-container">
+        <div class="title-dragon">
+            <h1>El cofre de Tennax</h1>
+        </div>
+        <h2>Generador de Tesoros D&D 5e</h2>
+        
+        <div class="parchment">
+            <p>Tennax, el legendario dragón de la Montaña de Cristal, acumuló tesoros durante milenios. Muchos aventureros codician sus riquezas, pero pocos conocen la verdadera extensión de su cofre. Este pergamino mágico te permitirá vislumbrar qué tesoros podrías encontrar en tu próxima aventura.</p>
+        </div>
+        
+        <div class="container">
+            <div class="scroll-corner top-left"></div>
+            <div class="scroll-corner top-right"></div>
+            <div class="scroll-corner bottom-left"></div>
+            <div class="scroll-corner bottom-right"></div>
+            
+            <h2>Opciones de Generación</h2>
+            
+            <div class="options">
+                <div class="option-group">
+                    <h3>Tipo de Objetos Mágicos</h3>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="tipo" value="arcana" checked> Arcana</label>
+                        <label><input type="checkbox" name="tipo" value="armamento" checked> Armamento</label>
+                        <label><input type="checkbox" name="tipo" value="implementos" checked> Implementos</label>
+                        <label><input type="checkbox" name="tipo" value="reliquias" checked> Reliquias</label>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <h3>Rango de Nivel</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="nivel" value="01-04" checked> Nivel 01-04</label>
+                        <label><input type="radio" name="nivel" value="05-10"> Nivel 05-10</label>
+                        <label><input type="radio" name="nivel" value="11-16"> Nivel 11-16</label>
+                        <label><input type="radio" name="nivel" value="17-20"> Nivel 17-20</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="generar">Generar Tesoro</button>
+        </div>
+        
+        <div class="container" id="resultado">
+            <div class="scroll-corner top-left"></div>
+            <div class="scroll-corner top-right"></div>
+            <div class="scroll-corner bottom-left"></div>
+            <div class="scroll-corner bottom-right"></div>
+            
+            <h2>Tesoro Generado</h2>
+            <div id="tesoro-resultado">
+                <p>Haz clic en "Generar Tesoro" para crear un nuevo tesoro aleatorio.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para generar un número aleatorio entre min y max (ambos inclusive)
+        function aleatorio(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        // Función para copiar el tesoro (para Roll20)
+        function copiarTesoro(tipo) {
+            // Obtener los elementos adecuados según el tipo
+            let contenidoTexto = '';
+            const columna = document.querySelectorAll('.tesoro-columna')[tipo === 'individual' ? 0 : 1];
+            const elementosTesoro = columna.querySelectorAll('.tesoro-item');
+            
+            // Formatear para Roll20
+            elementosTesoro.forEach(elemento => {
+                const titulo = elemento.querySelector('h3').textContent;
+                let contenido = '';
+                
+                // Obtener contenido y eliminar etiquetas HTML
+                if (elemento.querySelector('p')) {
+                    contenido = elemento.querySelector('p').innerHTML
+                                   .replace(/<br>/g, '\n')
+                                   .replace(/<span class="nombre-en">/g, '')
+                                   .replace(/<\/span>/g, '')
+                                   .replace(/&lt;/g, '<')
+                                   .replace(/&gt;/g, '>');
+                }
+                
+                // Formatear para el chat de Roll20
+                contenidoTexto += `/desc ?? **${titulo}** ??\n${contenido}\n\n`;
+            });
+            
+            // Copiar
+            navigator.clipboard.writeText(contenidoTexto).then(() => {
+                // Mostrar y ocultar el tooltip
+                const tooltip = document.querySelectorAll('.tooltip')[tipo === 'individual' ? 0 : 1];
+                const tooltiptext = tooltip.querySelector('.tooltiptext');
+                
+                tooltiptext.style.visibility = 'visible';
+                tooltiptext.style.opacity = '1';
+                
+                setTimeout(() => {
+                    tooltiptext.style.visibility = 'hidden';
+                    tooltiptext.style.opacity = '0';
+                }, 2000);
+                
+                console.log('Contenido copiado');
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                alert('No se pudo copiar. Intenta de nuevo o copia manualmente.');
+            });
+        }
+        
+        // Tabla de rareza de objetos mágicos según nivel (DMG p.218)
+        const tablaRarezaObjetosMagicos = {
+            "01-04": { // Nivel 1-4
+                "01-54": "común",
+                "55-91": "poco común",
+                "92-00": "raro"
+            },
+            "05-10": { // Nivel 5-10
+                "01-30": "común",
+                "31-81": "poco común",
+                "82-98": "raro",
+                "99-00": "muy raro"
+            },
+            "11-16": { // Nivel 11-16
+                "01-11": "común",
+                "12-34": "poco común",
+                "35-70": "raro",
+                "71-93": "muy raro",
+                "94-00": "legendario"
+            },
+            "17-20": { // Nivel 17-20
+                "01-20": "raro",
+                "21-64": "muy raro",
+                "65-00": "legendario"
+            }
+        };
+        
+        // Función para determinar la rareza de un objeto según el nivel
+        function determinarRareza(nivel) {
+            const tirada = aleatorio(1, 100);
+            const tablaNivel = tablaRarezaObjetosMagicos[nivel];
+            
+            // Convertir tirada a formato de dos dígitos para comparar con rangos
+            const tiradaFormato = tirada.toString().padStart(2, '0');
+            
+            let rarezaSeleccionada = "poco común"; // valor por defecto
+            
+            for (const rango in tablaNivel) {
+                const [min, max] = rango.split('-').map(val => parseInt(val));
+                if (tirada >= min && tirada <= max) {
+                    rarezaSeleccionada = tablaNivel[rango];
+                    break;
+                }
+            }
+            
+            return {
+                tirada: tirada,
+                rareza: rarezaSeleccionada
+            };
+        }
+        // Resumen de objetos mágicos por rareza (con nombres en español e inglés)
+        const resumenObjetosMagicos = {
+            "común": [
+                { es: "Varita de Sonrisas", en: "Wand of Smiles" },
+                { es: "Armadura Reluciente", en: "Armor of Gleaming" },
+                { es: "Flecha Irrompible", en: "Unbreakable Arrow" },
+                { es: "Espada Tocada por la Luna", en: "Moon-Touched Sword" },
+                { es: "Cuenta de Alimento", en: "Bead of Nourishment" },
+                { es: "Vela de las Profundidades", en: "Candle of the Deep" },
+                { es: "Capa de Ondulación", en: "Cloak of Billowing" },
+                { es: "Poción de Comprensión", en: "Potion of Comprehension" },
+                { es: "Bastón de Flores", en: "Staff of Flowers" }
+            ],
+            "poco común": [
+                { es: "Bolsa de Contención", en: "Bag of Holding" },
+                { es: "Poción de Curación", en: "Potion of Healing" },
+                { es: "Escoba Voladora", en: "Broom of Flying" },
+                { es: "Capa de Protección", en: "Cloak of Protection" },
+                { es: "Botas Élficas", en: "Boots of Elvenkind" },
+                { es: "Aljaba de Ehlonna", en: "Quiver of Ehlonna" },
+                { es: "Escudo +1", en: "Shield +1" },
+                { es: "Arma +1", en: "Weapon +1" },
+                { es: "Varita del Mago de Guerra, +1", en: "Wand of the War Mage, +1" },
+                { es: "Amuleto del Devoto +1", en: "Amulet of the Devout +1" },
+                { es: "Grimorio Arcano +1", en: "Arcane Grimoire +1" }
+            ],
+            "raro": [
+                { es: "Arma +2", en: "Weapon +2" },
+                { es: "Armadura +1", en: "Armor +1" },
+                { es: "Cinturón de Fuerza de Gigante (colina)", en: "Belt of Giant Strength (hill)" },
+                { es: "Hacha de Berserker", en: "Berserker Axe" },
+                { es: "Poción de Invisibilidad", en: "Potion of Invisibility" },
+                { es: "Capa del Murciélago", en: "Cloak of the Bat" },
+                { es: "Látigo Mental", en: "Mind Whip" },
+                { es: "Escudo Atrapaflechas", en: "Arrow-Catching Shield" },
+                { es: "Botas de Velocidad", en: "Boots of Speed" },
+                { es: "Poción de Curación Superior", en: "Potion of Superior Healing" },
+                { es: "Bastón de Curación", en: "Staff of Healing" }
+            ],
+            "muy raro": [
+                { es: "Arma +3", en: "Weapon +3" },
+                { es: "Armadura +2", en: "Armor +2" },
+                { es: "Alfombra Voladora", en: "Carpet of Flying" },
+                { es: "Espada Danzante", en: "Dancing Sword" },
+                { es: "Cinturón de Fuerza de Gigante (fuego)", en: "Belt of Giant Strength (fire)" },
+                { es: "Poción de Vuelo", en: "Potion of Flying" },
+                { es: "Anillo de Regeneración", en: "Ring of Regeneration" },
+                { es: "Bastón de Fuego", en: "Staff of Fire" },
+                { es: "Poción de Curación Suprema", en: "Potion of Supreme Healing" },
+                { es: "Cuerno de Valhalla (bronce)", en: "Horn of Valhalla (bronze)" }
+            ],
+            "legendario": [
+                { es: "Armadura +3", en: "Armor +3" },
+                { es: "Santo Vengador", en: "Holy Avenger" },
+                { es: "Espada Vorpal", en: "Vorpal Sword" },
+                { es: "Esfera de Aniquilación", en: "Sphere of Annihilation" },
+                { es: "Bastón de los Magos", en: "Staff of the Magi" },
+                { es: "Pergamino de Hechizo (nivel 9)", en: "Spell Scroll (9th level)" },
+                { es: "Cinturón de Fuerza de Gigante (tormenta)", en: "Belt of Giant Strength (storm)" },
+                { es: "Vara de Resurrección", en: "Rod of Resurrection" },
+                { es: "Poción de Fuerza de Gigante (tormenta)", en: "Potion of Giant Strength (storm)" },
+                { es: "Orbe de Skoraeus", en: "Orb of Skoraeus" }
+            ]
+        };
+
+        // Lista de gemas y objetos de valor
+        const gemas = [
+            { nombre: "Ýgata", valor: 10 },
+            { nombre: "Azurita", valor: 10 },
+            { nombre: "Cuarzo Azul", valor: 10 },
+            { nombre: "Hematita", valor: 10 },
+            { nombre: "Lapislázuli", valor: 10 },
+            { nombre: "Malaquita", valor: 10 },
+            { nombre: "Ojo de Tigre", valor: 10 },
+            { nombre: "Turquesa", valor: 10 },
+            { nombre: "Jade", valor: 50 },
+            { nombre: "Amatista", valor: 100 },
+            { nombre: "Coral", valor: 100 },
+            { nombre: "Granate", valor: 100 },
+            { nombre: "Perla", valor: 100 },
+            { nombre: "Espinela", valor: 100 },
+            { nombre: "Topacio", valor: 500 },
+            { nombre: "Ópalo Negro", valor: 500 },
+            { nombre: "Zafiro", valor: 1000 },
+            { nombre: "Esmeralda", valor: 1000 },
+            { nombre: "Rubí", valor: 1000 },
+            { nombre: "Diamante", valor: 5000 }
+        ];
+
+        const objetosValiosos = [
+            { nombre: "Cáliz de plata", valor: 25 },
+            { nombre: "Brazalete de oro labrado", valor: 50 },
+            { nombre: "Camafeo de marfil", valor: 50 },
+            { nombre: "Máscara ceremonial", valor: 75 },
+            { nombre: "Copa de mármol con grabados", valor: 100 },
+            { nombre: "Peine decorado con perlas", valor: 100 },
+            { nombre: "Pendientes de ámbar", valor: 150 },
+            { nombre: "Daga ceremonial con empuñadura tallada", valor: 200 },
+            { nombre: "Estatuilla de bronce", valor: 300 },
+            { nombre: "Collar de plata con piedras semipreciosas", valor: 400 },
+            { nombre: "Anillo de sello de noble", valor: 500 },
+            { nombre: "Pergamino antiguo con información valiosa", valor: 750 },
+            { nombre: "Corona decorativa de oro", valor: 800 },
+            { nombre: "Relicario con miniaturas pintadas", valor: 1000 },
+            { nombre: "Ajedrez de jade", valor: 1200 },
+            { nombre: "Tapiz bordado con hilos de oro", valor: 1500 },
+            { nombre: "Tomo antiguo con ilustraciones", valor: 2000 },
+            { nombre: "Cetro ceremonial con gemas incrustadas", valor: 2500 },
+            { nombre: "Espejo de plata con marco de oro", valor: 3000 },
+            { nombre: "Estatua de marfil con ojos de gemas", valor: 5000 }
+        ];
+        
+        // Función para generar tesoro
+        function generarTesoro() {
+            const tiposSeleccionados = Array.from(document.querySelectorAll('input[name="tipo"]:checked')).map(cb => cb.value);
+            const nivelSeleccionado = document.querySelector('input[name="nivel"]:checked').value;
+            
+            const resultado = document.getElementById('tesoro-resultado');
+            
+            // SECCIÓN 1: TESORO INDIVIDUAL
+            // Generar monedas aleatorias según el nivel seleccionado para tesoro individual
+            let monedasIndividual = {
+                cobre: 0,
+                plata: 0,
+                oro: 0,
+                platino: 0
+            };
+            
+            // Ajustar las cantidades de monedas según el nivel (basado en TESOROS.TXT)
+            switch(nivelSeleccionado) {
+                case "01-04":
+                    monedasIndividual.oro = Math.floor(aleatorio(3, 18)); // 3d6 GP
+                    break;
+                case "05-10":
+                    monedasIndividual.oro = Math.floor(aleatorio(2, 16) * 10); // 2d8 × 10 GP
+                    break;
+                case "11-16":
+                    monedasIndividual.platino = Math.floor(aleatorio(2, 20) * 10); // 2d10 × 10 PP
+                    break;
+                case "17-20":
+                    monedasIndividual.platino = Math.floor(aleatorio(2, 16) * 100); // 2d8 × 100 PP
+                    break;
+            }
+            
+            // También añadir algunas monedas adicionales para variedad
+            if (nivelSeleccionado === "01-04") {
+                monedasIndividual.cobre = aleatorio(50, 300);
+                monedasIndividual.plata = aleatorio(20, 150);
+            } else if (nivelSeleccionado === "05-10") {
+                monedasIndividual.plata = aleatorio(100, 500);
+            }
+            
+            // SECCIÓN 2: TESORO DE GUARIDA
+            // Generar monedas aleatorias según el nivel seleccionado para tesoro de guarida
+            let monedasGuarida = {
+                cobre: 0,
+                plata: 0,
+                oro: 0,
+                platino: 0
+            };
+            
+            // Ajustar las cantidades de monedas de guarida según el nivel (basado en TESOROS.TXT)
+            switch(nivelSeleccionado) {
+                case "01-04":
+                    monedasGuarida.oro = Math.floor(aleatorio(2, 8) * 100); // 2d4 × 100 GP
+                    break;
+                case "05-10":
+                    monedasGuarida.oro = Math.floor(aleatorio(8, 80) * 100); // 8d10 × 100 GP
+                    break;
+                case "11-16":
+                    monedasGuarida.oro = Math.floor(aleatorio(8, 64) * 1000); // 8d8 × 1,000 GP
+                    break;
+                case "17-20":
+                    monedasGuarida.oro = Math.floor(aleatorio(6, 60) * 10000); // 6d10 × 10,000 GP
+                    break;
+            }
+            
+            // También añadir algunas monedas adicionales para guarida
+            if (nivelSeleccionado === "01-04") {
+                monedasGuarida.cobre = aleatorio(500, 1500);
+                monedasGuarida.plata = aleatorio(200, 800);
+            } else if (nivelSeleccionado === "05-10") {
+                monedasGuarida.plata = aleatorio(1000, 4000);
+                monedasGuarida.platino = aleatorio(10, 50);
+            } else {
+                monedasGuarida.platino = Math.floor(monedasGuarida.oro * 0.1); // 10% del oro en platino
+            }
+            
+            // SECCIÓN 3: GEMAS Y OBJETOS VALIOSOS
+            
+            // Tesoro individual - gemas y objetos
+            const gemasIndividual = [];
+            const objetosIndividual = [];
+            // Probabilidad baja de encontrar gemas u objetos en el tesoro individual
+            const tiradaGemasIndividual = aleatorio(1, 100);
+            const tiradaObjetosIndividual = aleatorio(1, 100);
+            // Cantidad según nivel
+            let cantidadGemasIndividual = 0;
+            let cantidadObjetosIndividual = 0;
+            // Determinar si hay gemas y cuántas según el nivel
+            if (tiradaGemasIndividual <= 15) { // 15% de probabilidad
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        cantidadGemasIndividual = aleatorio(1, 2);
+                        break;
+                    case "05-10":
+                        cantidadGemasIndividual = aleatorio(1, 3);
+                        break;
+                    case "11-16":
+                        cantidadGemasIndividual = aleatorio(1, 4);
+                        break;
+                    case "17-20":
+                        cantidadGemasIndividual = aleatorio(2, 5);
+                        break;
+                }
+            }
+            
+            // Determinar si hay objetos valiosos y cuántos según el nivel
+            if (tiradaObjetosIndividual <= 10) { // 10% de probabilidad
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        cantidadObjetosIndividual = 1;
+                        break;
+                    case "05-10":
+                        cantidadObjetosIndividual = aleatorio(1, 2);
+                        break;
+                    case "11-16":
+                        cantidadObjetosIndividual = aleatorio(1, 2);
+                        break;
+                    case "17-20":
+                        cantidadObjetosIndividual = aleatorio(1, 3);
+                        break;
+                }
+            }
+            
+            // Generar gemas aleatorias para tesoro individual
+            for (let i = 0; i < cantidadGemasIndividual; i++) {
+                // Determinar rango de valor según nivel
+                let rangoMin = 0;
+                let rangoMax = 0;
+                
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        rangoMin = 0; rangoMax = 8; // 10-50 po
+                        break;
+                    case "05-10":
+                        rangoMin = 6; rangoMax = 13; // 50-100 po
+                        break;
+                    case "11-16":
+                        rangoMin = 10; rangoMax = 16; // 100-500 po
+                        break;
+                    case "17-20":
+                        rangoMin = 14; rangoMax = gemas.length - 1; // 500-5000 po
+                        break;
+                }
+                
+                // Elegir gema aleatoria en el rango de valor
+                const indiceGema = aleatorio(rangoMin, rangoMax);
+                gemasIndividual.push(gemas[indiceGema]);
+            }
+            
+            // Generar objetos valiosos aleatorios para tesoro individual
+            for (let i = 0; i < cantidadObjetosIndividual; i++) {
+                // Determinar rango de valor según nivel
+                let rangoMin = 0;
+                let rangoMax = 0;
+                
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        rangoMin = 0; rangoMax = 6; // 25-150 po
+                        break;
+                    case "05-10":
+                        rangoMin = 5; rangoMax = 11; // 100-500 po
+                        break;
+                    case "11-16":
+                        rangoMin = 9; rangoMax = 16; // 400-2000 po
+                        break;
+                    case "17-20":
+                        rangoMin = 13; rangoMax = objetosValiosos.length - 1; // 800-5000 po
+                        break;
+                }
+                
+                // Elegir objeto aleatorio en el rango de valor
+                const indiceObjeto = aleatorio(rangoMin, rangoMax);
+                objetosIndividual.push(objetosValiosos[indiceObjeto]);
+            }
+            
+            // Tesoro de guarida - gemas y objetos
+            let gemasGuarida = [];
+            const objetosGuarida = [];
+            
+            // Probabilidad media-baja de encontrar gemas u objetos en el tesoro de guarida
+            const tiradaGemasGuarida = aleatorio(1, 100);
+            const tiradaObjetosGuarida = aleatorio(1, 100);
+            
+            // Cantidad según nivel
+            let cantidadGemasGuarida = 0;
+            let cantidadObjetosGuarida = 0;
+            
+            // Determinar si hay gemas y cuántas según el nivel
+            if (tiradaGemasGuarida <= 50) { // 50% de probabilidad
+                // Usar una tirada d100 para determinar la cantidad base
+                const tiradaCantidadGemas = aleatorio(1, 100);
+                
+                // La cantidad base depende del resultado de la tirada
+                let cantidadBase = 0;
+                
+                if (tiradaCantidadGemas <= 20) { // 20% - pocas gemas
+                    cantidadBase = 1;
+                } else if (tiradaCantidadGemas <= 60) { // 40% - cantidad moderada
+                    cantidadBase = 2;
+                } else if (tiradaCantidadGemas <= 85) { // 25% - muchas gemas
+                    cantidadBase = 3;
+                } else { // 15% - gran cantidad
+                    cantidadBase = 4;
+                }
+                
+                // Multiplicar por un factor según el nivel
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        cantidadGemasGuarida = cantidadBase * aleatorio(1, 3); // 1-12 gemas
+                        break;
+                    case "05-10":
+                        cantidadGemasGuarida = cantidadBase * aleatorio(2, 4); // 2-16 gemas
+                        break;
+                    case "11-16":
+                        cantidadGemasGuarida = cantidadBase * aleatorio(3, 6); // 3-24 gemas
+                        break;
+                    case "17-20":
+                        cantidadGemasGuarida = cantidadBase * aleatorio(5, 8); // 5-32 gemas
+                        break;
+                }
+            }
+            
+            // Determinar si hay objetos valiosos y cuántos según el nivel
+            if (tiradaObjetosGuarida <= 40) { // 40% de probabilidad
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        cantidadObjetosGuarida = aleatorio(1, 4); // 1d4
+                        break;
+                    case "05-10":
+                        cantidadObjetosGuarida = aleatorio(1, 6); // 1d6
+                        break;
+                    case "11-16":
+                        cantidadObjetosGuarida = aleatorio(2, 8); // 2d4
+                        break;
+                    case "17-20":
+                        cantidadObjetosGuarida = aleatorio(2, 10); // 2d5
+                        break;
+                }
+            }
+            
+            // Generar gemas aleatorias para tesoro de guarida
+            let valorTotalGemasGuarida = 0;
+            
+            // Calcular el valor máximo que podemos asignar a gemas (no más del 40% del valor de monedas)
+            const valorMaximoGemas = (monedasGuarida.oro + (monedasGuarida.platino * 10)) * 0.4;
+            
+            // Ajustar las gemas por valor
+            // Distribuir gemas según su valor para mantener una proporción realista
+            const gemasBaratas = []; // 10-50 po
+            const gemasMedias = [];  // 100-500 po
+            const gemasValiosas = []; // 1000-5000 po
+            
+            // Distribuir la cantidad total de gemas según el nivel
+            let distribucionGemas = {
+                baratas: 0,
+                medias: 0,
+                valiosas: 0
+            };
+            
+            switch(nivelSeleccionado) {
+                case "01-04":
+                    distribucionGemas.baratas = Math.ceil(cantidadGemasGuarida * 0.8); // 80% baratas
+                    distribucionGemas.medias = Math.ceil(cantidadGemasGuarida * 0.2);  // 20% medias
+                    distribucionGemas.valiosas = 0;                                    // 0% valiosas
+                    break;
+                case "05-10":
+                    distribucionGemas.baratas = Math.ceil(cantidadGemasGuarida * 0.6); // 60% baratas
+                    distribucionGemas.medias = Math.ceil(cantidadGemasGuarida * 0.35); // 35% medias
+                    distribucionGemas.valiosas = Math.ceil(cantidadGemasGuarida * 0.05); // 5% valiosas
+                    break;
+                case "11-16":
+                    distribucionGemas.baratas = Math.ceil(cantidadGemasGuarida * 0.4); // 40% baratas
+                    distribucionGemas.medias = Math.ceil(cantidadGemasGuarida * 0.4);  // 40% medias
+                    distribucionGemas.valiosas = Math.ceil(cantidadGemasGuarida * 0.2); // 20% valiosas
+                    break;
+                case "17-20":
+                    distribucionGemas.baratas = Math.ceil(cantidadGemasGuarida * 0.3); // 30% baratas
+                    distribucionGemas.medias = Math.ceil(cantidadGemasGuarida * 0.4);  // 40% medias
+                    distribucionGemas.valiosas = Math.ceil(cantidadGemasGuarida * 0.3); // 30% valiosas
+                    break;
+            }
+            // Función para seleccionar gemas según su rango de valor
+            function seleccionarGemasPorRango(min, max, cantidad) {
+                const gemasSeleccionadas = [];
+                for (let i = 0; i < cantidad; i++) {
+                    const indice = aleatorio(min, max);
+                    gemasSeleccionadas.push(gemas[indice]);
+                    valorTotalGemasGuarida += gemas[indice].valor;
+                    
+                    // Si superamos el valor máximo, paramos de añadir
+                    if (valorTotalGemasGuarida > valorMaximoGemas) {
+                        valorTotalGemasGuarida -= gemas[indice].valor; // Restamos el último valor
+                        break;
+                    }
+                }
+                return gemasSeleccionadas;
+            }
+            
+            // Seleccionar gemas según distribucion
+            const gemasBaratasSeleccionadas = seleccionarGemasPorRango(0, 8, distribucionGemas.baratas);
+            
+            // Si aún no superamos el límite, añadimos gemas medias
+            if (valorTotalGemasGuarida < valorMaximoGemas) {
+                const gemasMediasSeleccionadas = seleccionarGemasPorRango(9, 15, distribucionGemas.medias);
+                gemasBaratasSeleccionadas.push(...gemasMediasSeleccionadas);
+            }
+            
+            // Si aún no superamos el límite, añadimos gemas valiosas
+            if (valorTotalGemasGuarida < valorMaximoGemas) {
+                const gemasValiosasSelecionadas = seleccionarGemasPorRango(16, 19, distribucionGemas.valiosas);
+                gemasBaratasSeleccionadas.push(...gemasValiosasSelecionadas);
+            }
+            
+            // Todas las gemas seleccionadas
+            gemasGuarida = gemasBaratasSeleccionadas;
+            
+            // Generar objetos valiosos aleatorios para tesoro de guarida
+            let valorTotalObjetosGuarida = 0;
+            for (let i = 0; i < cantidadObjetosGuarida; i++) {
+                // Determinar rango de valor según nivel
+                let rangoMin = 0;
+                let rangoMax = 0;
+                
+                switch(nivelSeleccionado) {
+                    case "01-04":
+                        rangoMin = 0; rangoMax = 8; // 25-300 po
+                        break;
+                    case "05-10":
+                        rangoMin = 7; rangoMax = 13; // 200-1000 po
+                        break;
+                    case "11-16":
+                        rangoMin = 11; rangoMax = 16; // 500-2000 po
+                        break;
+                    case "17-20":
+                        rangoMin = 15; rangoMax = objetosValiosos.length - 1; // 1500-5000 po
+                        break;
+                }
+                
+                // Elegir objeto aleatorio en el rango de valor
+                const indiceObjeto = aleatorio(rangoMin, rangoMax);
+                objetosGuarida.push(objetosValiosos[indiceObjeto]);
+                valorTotalObjetosGuarida += objetosValiosos[indiceObjeto].valor;
+            }
+            
+            // Restar el valor de gemas y objetos valiosos de las monedas de guarida
+            const valorTotalTesoro = valorTotalGemasGuarida + valorTotalObjetosGuarida;
+            
+            // Convertir el valor a monedas y restar (preferentemente de oro)
+            if (valorTotalTesoro > 0) {
+                if (monedasGuarida.oro >= valorTotalTesoro) {
+                    monedasGuarida.oro -= valorTotalTesoro;
+                } else {
+                    // Si no hay suficiente oro, usar platino
+                    const resto = valorTotalTesoro - monedasGuarida.oro;
+                    monedasGuarida.oro = 0;
+                    
+                    if (monedasGuarida.platino * 10 >= resto) {
+                        monedasGuarida.platino -= Math.ceil(resto / 10);
+                    } else {
+                        // Si aún no es suficiente, reducir todo a cero
+                        monedasGuarida.platino = 0;
+                    }
+                }
+            }
+            
+            // Generar objetos mágicos basados en rareza según nivel
+            const objetosMagicos = [];
+            
+            // Determinar cuántos objetos mágicos según el nivel para tesoro de guarida (basado en TESOROS.TXT)
+            let numObjetosMagicos = 0;
+            switch(nivelSeleccionado) {
+                case "01-04":
+                    numObjetosMagicos = Math.max(0, aleatorio(1, 4) - 1); // 1d4-1
+                    break;
+                case "05-10":
+                    numObjetosMagicos = aleatorio(1, 3); // 1d3
+                    break;
+                case "11-16":
+                    numObjetosMagicos = aleatorio(1, 4); // 1d4
+                    break;
+                case "17-20":
+                    numObjetosMagicos = aleatorio(1, 6); // 1d6
+                    break;
+            }
+            
+            for (let i = 0; i < numObjetosMagicos; i++) {
+                if (tiposSeleccionados.length === 0) continue;
+                
+                // Determinar tipo de objeto aleatorio entre los seleccionados
+                const tipoElegido = tiposSeleccionados[aleatorio(0, tiposSeleccionados.length - 1)];
+                
+                // Determinar rareza basada en nivel usando la tabla DMG p.218
+                const resultado = determinarRareza(nivelSeleccionado);
+                const rareza = resultado.rareza;
+                
+                // En la función de generación de objetos mágicos, reemplazar la selección de objeto por:
+                // Ejemplo para tipo 'arcana':
+                // const tirada = aleatorio(1, 100);
+                // const rareza = 'comun' | 'poco comun' | 'raro' | 'muy raro' | 'legendario';
+                // const objeto = buscarObjetoPorTirada(tablasObjetos.arcana[rareza], tirada);
+                const rarezaNorm = normalizarRareza(rareza);
+                const tipoElegidoNorm = normalizarTipo(tipoElegido);
+                const subtabla = (tablasObjetos[tipoElegidoNorm] && tablasObjetos[tipoElegidoNorm][rarezaNorm]) ? tablasObjetos[tipoElegidoNorm][rarezaNorm] : [];
+                if (!Array.isArray(subtabla) || subtabla.length === 0) {
+                  console.warn('No hay objetos para tipo:', tipoElegido, 'rareza:', rarezaNorm);
+                }
+                const objeto = buscarObjetoPorTirada(subtabla, aleatorio(1, 100));
+                if (!objeto || !objeto.es || !objeto.en || objeto.es === 'Sin objetos') {
+                  continue;
+                }
+                let nombreFinal = objeto.es;
+                // Detectar primero si es "Arma de Adamantina/Mithril" (debe ir antes que armaduras)
+                if (/^Arma( |\b)/i.test(objeto.es) && /adamantina|mithril|adamantita/i.test(objeto.es)) {
+                    let armasPosibles = ARMAS;
+                    let armaAleatoria = armasPosibles[Math.floor(Math.random() * armasPosibles.length)];
+                    nombreFinal = objeto.es + ': ' + armaAleatoria.es;
+                }
+                // Detectar si es un objeto de armadura genérico o especial (incluyendo Armadura de Adamantina)
+                else if (/^Armadura( |\b)/i.test(objeto.es) || (/adamantina|mithril|adamantita/i.test(objeto.es) && !/^Arma/i.test(objeto.es))) {
+                    let soloMetal = /adamantina|mithril|adamantita/i.test(objeto.es);
+                    let armadurasPosibles = soloMetal ? ARMADURAS.filter(a => a.metal) : ARMADURAS;
+                    let armaduraAleatoria = armadurasPosibles[Math.floor(Math.random() * armadurasPosibles.length)];
+                    if (/\+\d/.test(objeto.es)) {
+                        nombreFinal = armaduraAleatoria.es + ' ' + objeto.es.match(/\+\d/)[0];
+                    } else if (/adamantina|mithril|adamantita/i.test(objeto.es)) {
+                        nombreFinal = objeto.es + ': ' + armaduraAleatoria.es;
+                    } else {
+                        nombreFinal = armaduraAleatoria.es + ' (' + objeto.es + ')';
+                    }
+                }
+                // Detectar si es un objeto de arma genérico o especial
+                else if (/^Arma( |\b)/i.test(objeto.es) || /arma/i.test(objeto.es)) {
+                    let armasPosibles = ARMAS;
+                    let armaAleatoria = armasPosibles[Math.floor(Math.random() * armasPosibles.length)];
+                    if (/\+\d/.test(objeto.es)) {
+                        nombreFinal = armaAleatoria.es + ' ' + objeto.es.match(/\+\d/)[0];
+                    } else {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + ')';
+                    }
+                }
+                // Detectar si es munición genérica
+                else if (/^Munici[oó]n( |\b)/i.test(objeto.es) || /ammunition/i.test(objeto.en)) {
+                    let municiones = ['Flecha', 'Bala', 'Virote', 'Piedra de honda', 'Dardo'];
+                    let municionAleatoria = municiones[Math.floor(Math.random() * municiones.length)];
+                    if (/\+\d/.test(objeto.es)) {
+                        nombreFinal = municionAleatoria + ' ' + objeto.es.match(/\+\d/)[0];
+                    } else {
+                        nombreFinal = municionAleatoria + ' (' + objeto.es + ')';
+                    }
+                }
+                // Conjuros en pergaminos, tatuajes, spellwrought, armas imbuidas, etc.
+                if (/Arma Hechizada \((truco|trucaje) o nivel 1\)/i.test(objeto.es) || /Enspelled Weapon \((cantrip|level 1 spell|truco|trucaje|nivel 1)\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 0 || c.nivel === 1);
+                    let conjuro = posibles[Math.floor(Math.random() * posibles.length)];
+                    let armaAleatoria = ARMAS[Math.floor(Math.random() * ARMAS.length)];
+                    nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): ' + conjuro.es;
+                } else if (/Arma Hechizada \(nivel 2 o 3\)/i.test(objeto.es) || /Enspelled Weapon \((level 2|level 3|nivel 2|nivel 3) spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 2 || c.nivel === 3);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    let armaAleatoria = ARMAS[Math.floor(Math.random() * ARMAS.length)];
+                    if (conjuro) {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): ' + conjuro.es;
+                    } else {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): [Sin conjuros de nivel 2 o 3]';
+                    }
+                } else if (/Arma Hechizada \(nivel 4 o 5\)/i.test(objeto.es) || /Enspelled Weapon \((level 4|level 5|nivel 4|nivel 5) spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 4 || c.nivel === 5);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    let armaAleatoria = ARMAS[Math.floor(Math.random() * ARMAS.length)];
+                    if (conjuro) {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): ' + conjuro.es;
+                    } else {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): [Sin conjuros de nivel 4 o 5]';
+                    }
+                } else if (/Arma Hechizada \(nivel 6, 7 u 8\)/i.test(objeto.es) || /Enspelled Weapon \((level 6|level 7|level 8|nivel 6|nivel 7|nivel 8) spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 6 || c.nivel === 7 || c.nivel === 8);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    let armaAleatoria = ARMAS[Math.floor(Math.random() * ARMAS.length)];
+                    if (conjuro) {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): ' + conjuro.es;
+                    } else {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): [Sin conjuros de nivel 6, 7 u 8]';
+                    }
+                } else if (/Arma Hechizada \(nivel 9\)/i.test(objeto.es) || /Enspelled Weapon \((level 9|nivel 9) spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 9);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    let armaAleatoria = ARMAS[Math.floor(Math.random() * ARMAS.length)];
+                    if (conjuro) {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): ' + conjuro.es;
+                    } else {
+                        nombreFinal = armaAleatoria.es + ' (' + objeto.es + '): [Sin conjuros de nivel 9]';
+                    }
+                }
+                
+                // Pergaminos de hechizo (Spell Scrolls)
+                if (/Pergamino de Hechizo \((trucaje|truco) o nivel 1\)/i.test(objeto.es) || /Spell Scroll \((cantrip|level 1 spell)\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 0 || c.nivel === 1);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Pergamino de Hechizo: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    } else {
+                        nombreFinal = objeto.es;
+                    }
+                } else if (/Pergamino de Hechizo \(nivel 2 o 3\)/i.test(objeto.es) || /Spell Scroll \(level 2 or level 3 spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 2 || c.nivel === 3);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Pergamino de Hechizo: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    } else {
+                        nombreFinal = objeto.es;
+                    }
+                } else if (/Pergamino de Hechizo \(nivel 4 o 5\)/i.test(objeto.es) || /Spell Scroll \(level 4 or level 5 spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 4 || c.nivel === 5);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Pergamino de Hechizo: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    } else {
+                        nombreFinal = objeto.es;
+                    }
+                } else if (/Pergamino de Hechizo \(nivel 6, 7 u 8\)/i.test(objeto.es) || /Spell Scroll \(level 6, level 7, or level 8 spell\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 6 || c.nivel === 7 || c.nivel === 8);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Pergamino de Hechizo: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    } else {
+                        nombreFinal = objeto.es;
+                    }
+                } else if (/Pergamino de Hechizo \(nivel 9\)/i.test(objeto.es) || /Spell Scroll \(level 9 spell\)/i.test(objeto.en) || /Spell Scroll \(9th level\)/i.test(objeto.en)) {
+                    let posibles = CONJUROS.filter(c => c.nivel === 9);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Pergamino de Hechizo: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    } else {
+                        nombreFinal = objeto.es;
+                    }
+                }
+                
+                // Bastones Hechizados (Enspelled Staff)
+                if (/Bast.n Hechizado/i.test(objeto.es) || /Enspelled Staff/i.test(objeto.en)) {
+                    let posibles = [];
+                    // Determinar nivel según el texto
+                    if (/truco|trucaje|nivel 1|cantrip|level 1/i.test(objeto.es) || /cantrip|level 1/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 0 || c.nivel === 1);
+                    } else if (/nivel 2 o 3|level 2|level 3/i.test(objeto.es) || /level 2|level 3/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 2 || c.nivel === 3);
+                    } else if (/nivel 4 o 5|level 4|level 5/i.test(objeto.es) || /level 4|level 5/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 4 || c.nivel === 5);
+                    } else if (/nivel 6, 7 u 8|level 6|level 7|level 8/i.test(objeto.es) || /level 6|level 7|level 8/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 6 || c.nivel === 7 || c.nivel === 8);
+                    }
+                    
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Bastón Hechizado: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    }
+                }
+                
+                // Armaduras Hechizadas (Enspelled Armor)
+                if (/Armadura Hechizada/i.test(objeto.es) || /Enspelled Armor/i.test(objeto.en)) {
+                    let posibles = [];
+                    let armaduraAleatoria = ARMADURAS[Math.floor(Math.random() * ARMADURAS.length)];
+                    // Determinar nivel según el texto
+                    if (/truco|trucaje|nivel 1|cantrip|level 1/i.test(objeto.es) || /cantrip|level 1/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 0 || c.nivel === 1);
+                    } else if (/nivel 2 o 3|level 2|level 3/i.test(objeto.es) || /level 2|level 3/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 2 || c.nivel === 3);
+                    } else if (/nivel 4 o 5|level 4|level 5/i.test(objeto.es) || /level 4|level 5/i.test(objeto.en)) {
+                        posibles = CONJUROS.filter(c => c.nivel === 4 || c.nivel === 5);
+                    }
+                    
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = armaduraAleatoria.es + ' (Armadura Hechizada): ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    }
+                }
+                
+                // Tatuajes Ortográficos (Spellwrought Tattoo)
+                if (/Tatuaje ortogr.fico/i.test(objeto.es) || /Spellwrought Tattoo/i.test(objeto.en)) {
+                    // Los tatuajes son de niveles 0-1 según la rareza común
+                    let posibles = CONJUROS.filter(c => c.nivel === 0 || c.nivel === 1);
+                    let conjuro = posibles.length > 0 ? posibles[Math.floor(Math.random() * posibles.length)] : null;
+                    if (conjuro) {
+                        nombreFinal = 'Tatuaje ortográfico: ' + conjuro.es + ' (nivel ' + conjuro.nivel + ')';
+                    }
+                }
+                objetosMagicos.push({
+                    es: nombreFinal,
+                    en: objeto.en,
+                    rareza: rareza,
+                    tipo: tipoElegido
+                });
+            }
+            
+            // Crear HTML para mostrar ambos tesoros
+            const tesoroHTML = `
+                <div class="tesoros-contenedor">
+                    <div class="tesoro-columna">
+                        <div class="tesoro-item">
+                            <h3>Tesoro Individual</h3>
+                            <p class="monedas">
+                                ${monedasIndividual.cobre > 0 ? `${monedasIndividual.cobre} piezas de cobre<br>` : ''}
+                                ${monedasIndividual.plata > 0 ? `${monedasIndividual.plata} piezas de plata<br>` : ''}
+                                ${monedasIndividual.oro > 0 ? `${monedasIndividual.oro} piezas de oro<br>` : ''}
+                                ${monedasIndividual.platino > 0 ? `${monedasIndividual.platino} piezas de platino` : ''}
+                            </p>
+                        </div>
+                        
+                        ${gemasIndividual.length > 0 ? `
+                        <div class="tesoro-item">
+                            <h3>Gemas (Individual)</h3>
+                            <p class="gemas">
+                                ${gemasIndividual.map(g => `- ${g.nombre} (${g.valor} po)`).join('<br>')}
+                            </p>
+                        </div>
+                        ` : ''}
+                        
+                        ${objetosIndividual.length > 0 ? `
+                        <div class="tesoro-item">
+                            <h3>Objetos Valiosos (Individual)</h3>
+                            <p class="objetos">
+                                ${objetosIndividual.map(o => `- ${o.nombre} (${o.valor} po)`).join('<br>')}
+                            </p>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="tooltip">
+                            <button class="roll20-button" onclick="copiarTesoro('individual')">
+                                Copiar para Roll20
+                            </button>
+                            <span class="tooltiptext">Copiado </span>
+                        </div>
+                    </div>
+                    
+                    <div class="tesoro-columna">
+                        <div class="tesoro-item">
+                            <h3>Tesoro de Guarida</h3>
+                            <p class="monedas">
+                                ${monedasGuarida.cobre > 0 ? `${monedasGuarida.cobre} piezas de cobre<br>` : ''}
+                                ${monedasGuarida.plata > 0 ? `${monedasGuarida.plata} piezas de plata<br>` : ''}
+                                ${monedasGuarida.oro > 0 ? `${monedasGuarida.oro} piezas de oro<br>` : ''}
+                                ${monedasGuarida.platino > 0 ? `${monedasGuarida.platino} piezas de platino` : ''}
+                            </p>
+                        </div>
+                        
+                        ${gemasGuarida.length > 0 ? `
+                        <div class="tesoro-item">
+                            <h3>Gemas (Guarida)</h3>
+                            <p class="gemas">
+                                ${gemasGuarida.map(g => `- ${g.nombre} (${g.valor} po)`).join('<br>')}
+                            </p>
+                        </div>
+                        ` : ''}
+                        
+                        ${objetosGuarida.length > 0 ? `
+                        <div class="tesoro-item">
+                            <h3>Objetos Valiosos (Guarida)</h3>
+                            <p class="objetos">
+                                ${objetosGuarida.map(o => `- ${o.nombre} (${o.valor} po)`).join('<br>')}
+                            </p>
+                        </div>
+                        ` : ''}
+                        
+                        ${objetosMagicos.length > 0 ? `
+                        <div class="tesoro-item">
+                            <h3>Objetos Mágicos (Guarida)</h3>
+                            <p class="magicos">
+                                ${objetosMagicos.map(obj => `- ${obj.es} <span class="nombre-en">(${obj.en})</span> [${obj.rareza}, ${obj.tipo}]`).join('<br>')}
+                            </p>
+                        </div>
+                        ` : 'Sin objetos mágicos posibles'}
+                        
+                        <div class="tooltip">
+                            <button class="roll20-button" onclick="copiarTesoro('guarida')">
+                                Copiar para Roll20
+                            </button>
+                            <span class="tooltiptext">Copiado</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultado.innerHTML = tesoroHTML;
+        }
+        
+        // Event listener para el botón de generar
+        document.getElementById('generar').addEventListener('click', generarTesoro);
+
+        // --- Tablas de objetos mágicos por tipo y rareza (solo Arcana-Común de ejemplo) ---
+        const tablasObjetos = {
+          arcana: {
+            comun: [
+              { rango: "01-02", en: "Bead of Nourishment", es: "Cuenta de Alimento" },
+              { rango: "03-04", en: "Bead of Refreshment", es: "Cuenta Refrescante" },
+              { rango: "05-07", en: "Candle of the Deep", es: "Vela de las Profundidades" },
+              { rango: "08-10", en: "Cloak of Billowing", es: "Capa de Ondulación" },
+              { rango: "11-13", en: "Cloak of Many Fashions", es: "Capa de Muchos Estilos" },
+              { rango: "14-15", en: "Clothes of Mending", es: "Ropas de Remiendo" },
+              { rango: "16-17", en: "Dark Shard Amulet", es: "Amuleto de Fragmento Oscuro" },
+              { rango: "18-19", en: "Enduring Spellbook", es: "Libro de Hechizos Duradero" },
+              { rango: "20-21", en: "Ersatz Eye", es: "Ojo Sustituto" },
+              { rango: "22-24", en: "Hat of Vermin", es: "Sombrero de Alimañas" },
+              { rango: "25-27", en: "Hat of Wizardry", es: "Sombrero de Hechicería" },
+              { rango: "28-29", en: "Heward's Handy Spice Pouch", es: "Bolsa de Especias de Heward" },
+              { rango: "30-31", en: "Horn of Silent Alarm", es: "Cuerno de Alarma Silenciosa" },
+              { rango: "32-33", en: "Instrument of Illusions", es: "Instrumento de Ilusiones" },
+              { rango: "34-35", en: "Instrument of Scribing", es: "Instrumento de Escritura" },
+              { rango: "36-37", en: "Lock of Trickery", es: "Cerradura de Travesura" },
+              { rango: "38-40", en: "Mystery Key", es: "Llave Misteriosa" },
+              { rango: "41-42", en: "Orb of Direction", es: "Orbe de Dirección" },
+              { rango: "43-44", en: "Orb of Time", es: "Orbe del Tiempo" },
+              { rango: "45-46", en: "Perfume of Bewitching", es: "Perfume de Hechizo" },
+              { rango: "47-49", en: "Pipe of Smoke Monsters", es: "Pipa de Monstruos de Humo" },
+              { rango: "50-52", en: "Potion of Climbing", es: "Poción de Escalada" },
+              { rango: "53-55", en: "Potion of Comprehension", es: "Poción de Comprensión" },
+              { rango: "56-58", en: "Pot of Awakening", es: "Maceta del Despertar" },
+              { rango: "59-60", en: "Prosthetic Limb", es: "Extremidad protésica" },
+              { rango: "61-64", en: "Rival Coin", es: "Moneda Rival" },
+              { rango: "65-66", en: "Rope of Mending", es: "Cuerda de Remiendo" },
+              { rango: "67-68", en: "Ruby of the War Mage", es: "Rubí del Mago de Guerra" },
+              { rango: "69-82", en: "Spell Scroll (cantrip or level 1 spell)", es: "Pergamino de Hechizo (trucaje o nivel 1)" },
+              { rango: "83-84", en: "Staff of Adornment", es: "Bastón de Adorno" },
+              { rango: "85-86", en: "Staff of Birdcalls", es: "Bastón de Canto de Pájaros" },
+              { rango: "87-89", en: "Staff of Flowers", es: "Bastón de Flores" },
+              { rango: "90-92", en: "Talking Doll", es: "Muñeca Parlante" },
+              { rango: "93-94", en: "Tankard of Sobriety", es: "Jarra de Sobriedad" },
+              { rango: "95-97", en: "Wand of Conducting", es: "Varita de Dirección" },
+              { rango: "98-00", en: "Wand of Pyrotechnics", es: "Varita de Pirotecnia" }
+            ],
+            pococomun: [
+              { rango: "01", en: "Amulet of Proof against Detection and Location", es: "Amuleto de Prueba contra Detección y Localización" },
+              { rango: "02", en: "Baba Yaga's Dancing Broom", es: "Escoba Danza de Baba Yaga" },
+              { rango: "03-05", en: "Bag of Holding", es: "Bolsa de Contención" },
+              { rango: "06-07", en: "Bag of Tricks", es: "Bolsa de Trucos" },
+              { rango: "08", en: "Brooch of Shielding", es: "Broche de Protección" },
+              { rango: "09", en: "Broom of Flying", es: "Escoba Voladora" },
+              { rango: "10", en: "Cap of Water Breathing", es: "Gorro de Respiración Acuática" },
+              { rango: "11", en: "Circlet of Blasting", es: "Aro de Explosión" },
+              { rango: "12-13", en: "Cloak of Protection", es: "Capa de Protección" },
+              { rango: "14", en: "Cloak of the Manta Ray", es: "Capa de la Mantarraya" },
+              { rango: "15", en: "Decanter of Endless Water", es: "Botella de Agua Infinita" },
+              { rango: "16", en: "Deck of Illusions", es: "Baraja de Ilusiones" },
+              { rango: "17-18", en: "Driftglobe", es: "Globo Flotante" },
+              { rango: "19-20", en: "Dust of Disappearance", es: "Polvo de Desaparición" },
+              { rango: "21", en: "Dust of Dryness", es: "Polvo de Sequedad" },
+              { rango: "22", en: "Dust of Sneezing and Choking", es: "Polvo de Estornudos y Asfixia" },
+              { rango: "23-24", en: "Elemental Gem", es: "Gema Elemental" },
+              { rango: "25", en: "Enspelled Staff (cantrip or level 1 spell)", es: "Bastón Hechizado (truco o nivel 1)" },
+              { rango: "26", en: "Eversmoking Bottle", es: "Botella de Humo Eterno" },
+              { rango: "27", en: "Eyes of Charming", es: "Ojos de Encantamiento" },
+              { rango: "28", en: "Eyes of Minute Seeing", es: "Ojos de Visión Minuciosa" },
+              { rango: "29-30", en: "Figurine of Wondrous Power (silver raven)", es: "Figurilla de Poder Maravilloso (cuervo de plata)" },
+              { rango: "31", en: "Gem of Brightness", es: "Gema de Brillo" },
+              { rango: "32", en: "Hag Eye", es: "Ojo de Bruja" },
+              { rango: "33", en: "Hat of Disguise", es: "Sombrero de Disfraz" },
+              { rango: "34", en: "Headband of Intellect", es: "Cinta de Intelecto" },
+              { rango: "35", en: "Helm of Comprehending Languages", es: "Yelmo de Comprensión de Idiomas" },
+              { rango: "36", en: "Helm of Telepathy", es: "Yelmo de Telepatía" },
+              { rango: "37", en: "Immovable Rod", es: "Barra Inamovible" },
+              { rango: "38", en: "Lantern of Revealing", es: "Linterna Reveladora" },
+              { rango: "39", en: "Medallion of Thoughts", es: "Medallón de Pensamientos" },
+              { rango: "40", en: "Mithral Armor", es: "Armadura de Mithril" },
+              { rango: "41-42", en: "Necklace of Adaptation", es: "Collar de Adaptación" },
+              { rango: "43", en: "Oil of Slipperiness", es: "Aceite de Resbaladizo" },
+              { rango: "44", en: "Pearl of Power", es: "Perla de Poder" },
+              { rango: "45", en: "Periapt of Health", es: "Amuleto de Salud" },
+              { rango: "46-47", en: "Philter of Love", es: "Filtro de Amor" },
+              { rango: "48-49", en: "Potion of Animal Friendship", es: "Poción de Amistad Animal" },
+              { rango: "50-51", en: "Potion of Fire Breath", es: "Poción de Aliento de Fuego" },
+              { rango: "52-53", en: "Potion of Giant Strength (hill)", es: "Poción de Fuerza de Gigante (colina)" },
+              { rango: "54-55", en: "Potion of Growth", es: "Poción de Crecimiento" },
+              { rango: "56-57", en: "Potion of Poison", es: "Poción de Veneno" },
+              { rango: "58-59", en: "Potion of Resistance", es: "Poción de Resistencia" },
+              { rango: "60-61", en: "Potion of Water Breathing", es: "Poción de Respiración Acuática" },
+              { rango: "62", en: "Quaal's Feather Token (anchor, fan, or tree)", es: "Pluma de Quaal (ancla, abanico o árbol)" },
+              { rango: "63", en: "Ring of Mind Shielding", es: "Anillo de Protección Mental" },
+              { rango: "64-65", en: "Robe of Useful Items", es: "Túnica de Objetos Útiles" },
+              { rango: "66-67", en: "Rod of the Pact Keeper", es: "Vara del Guardián del Pacto" },
+              { rango: "68-69", en: "Rope of Climbing", es: "Cuerda de Escalada" },
+              { rango: "70", en: "Saddle of the Cavalier", es: "Silla de Montar del Caballero" },
+              { rango: "71-72", en: "Sending Stones", es: "Piedras de Envío" },
+              { rango: "73-74", en: "Slippers of Spider Climbing", es: "Zapatillas de Trepar como Araña" },
+              { rango: "75-82", en: "Spell Scroll (level 2 or level 3 spell)", es: "Pergamino de Hechizo (nivel 2 o 3)" },
+              { rango: "83", en: "Staff of the Adder", es: "Bastón de la Víbora" },
+              { rango: "84", en: "Staff of the Python", es: "Bastón de la Pitón" },
+              { rango: "85-88", en: "Wand of Magic Detection", es: "Varita de Detección Mágica" },
+              { rango: "89-91", en: "Wand of Magic Missiles", es: "Varita de Misiles Mágicos" },
+              { rango: "92-93", en: "Wand of Secrets", es: "Varita de Secretos" },
+              { rango: "94-95", en: "Wand of the War Mage, +1", es: "Varita del Mago de Guerra, +1" },
+              { rango: "96-97", en: "Wand of Web", es: "Varita de Telaraña" },
+              { rango: "98-99", en: "Wind Fan", es: "Abanico de Viento" },
+              { rango: "00", en: "Winged Boots", es: "Botas Aladas" }
+            ],
+            raro: [
+              { rango: "01", en: "Bag of Beans", es: "Bolsa de Frijoles" },
+              { rango: "02-03", en: "Bead of Force", es: "Cuenta de Fuerza" },
+              { rango: "04", en: "Bowl of Commanding Water Elementals", es: "Cuenco de Dominio de Elementales de Agua" },
+              { rango: "05-06", en: "Bracers of Defense", es: "Brazales de Defensa" },
+              { rango: "07", en: "Brazier of Commanding Fire Elementals", es: "Brasero de Dominio de Elementales de Fuego" },
+              { rango: "08-09", en: "Cape of the Mountebank", es: "Capa del Truhán" },
+              { rango: "10", en: "Censer of Controlling Air Elementals", es: "Incensario de Control de Elementales de Aire" },
+              { rango: "11-12", en: "Chime of Opening", es: "Campana de Apertura" },
+              { rango: "13-14", en: "Cloak of Displacement", es: "Capa de Desplazamiento" },
+              { rango: "15-16", en: "Cloak of the Bat", es: "Capa del Murciélago" },
+              { rango: "17", en: "Cube of Force", es: "Cubo de Fuerza" },
+              { rango: "18", en: "Cube of Summoning", es: "Cubo de Invocación" },
+              { rango: "19", en: "Daern's Instant Fortress", es: "Fortaleza Instantánea de Daern" },
+              { rango: "20-21", en: "Enspelled Staff (level 2 or 3 spell)", es: "Bastón Hechizado (nivel 2 o 3)" },
+              { rango: "22-23", en: "Figurine of Wondrous Power (bronze griffon, ebony fly, golden lions, ivory goats, marble elephant, onyx dog, or serpentine owl)", es: "Figurilla de Poder Maravilloso (grifón de bronce, mosca de ébano, leones dorados, cabras de marfil, elefante de mármol, perro de ónix o búho de serpentina)" },
+              { rango: "24-25", en: "Folding Boat", es: "Barco Plegable" },
+              { rango: "26-27", en: "Gem of Seeing", es: "Gema de Visión" },
+              { rango: "28", en: "Helm of Teleportation", es: "Yelmo de Teleportación" },
+              { rango: "29-30", en: "Heward's Handy Haversack", es: "Mochila Práctica de Heward" },
+              { rango: "31-32", en: "Horseshoes of Speed", es: "Herraduras de Velocidad" },
+              { rango: "33-34", en: "Ioun Stone (reserve)", es: "Piedra de Ioun (reserva)" },
+              { rango: "35", en: "Iron Bands of Bilarro", es: "Bandas de Hierro de Bilarro" },
+              { rango: "36", en: "Mantle of Spell Resistance", es: "Manto de Resistencia a Hechizos" },
+              { rango: "37-38", en: "Necklace of Fireballs", es: "Collar de Bolas de Fuego" },
+              { rango: "39", en: "Oil of Etherealness", es: "Aceite de Eterealidad" },
+              { rango: "40", en: "Portable Hole", es: "Agujero Portátil" },
+              { rango: "41-42", en: "Potion of Clairvoyance", es: "Poción de Clarividencia" },
+              { rango: "43-44", en: "Potion of Diminution", es: "Poción de Reducción" },
+              { rango: "45-46", en: "Potion of Gaseous Form", es: "Poción de Forma Gaseosa" },
+              { rango: "47", en: "Potion of Giant Strength (fire)", es: "Poción de Fuerza de Gigante (fuego)" },
+              { rango: "48-49", en: "Potion of Giant Strength (frost or stone)", es: "Poción de Fuerza de Gigante (escarcha o piedra)" },
+              { rango: "50-51", en: "Potion of Heroism", es: "Poción de Heroísmo" },
+              { rango: "52-53", en: "Potion of Invisibility", es: "Poción de Invisibilidad" },
+              { rango: "54-55", en: "Potion of Invulnerability", es: "Poción de Invulnerabilidad" },
+              { rango: "56-57", en: "Potion of Mind Reading", es: "Poción de Lectura Mental" },
+              { rango: "58-59", en: "Quaal's Feather Token (bird, swan boat, or whip)", es: "Pluma de Quaal (pájaro, bote cisne o látigo)" },
+              { rango: "60-61", en: "Ring of Feather Falling", es: "Anillo de Caída de Pluma" },
+              { rango: "62", en: "Ring of Spell Storing", es: "Anillo de Almacenamiento de Hechizos" },
+              { rango: "63", en: "Ring of X-ray Vision", es: "Anillo de Visión de Rayos X" },
+              { rango: "64-65", en: "Robe of Eyes", es: "Túnica de Ojos" },
+              { rango: "66", en: "Rod of Rulership", es: "Vara de Dominio" },
+              { rango: "67-68", en: "Rod of the Pact Keeper, +2", es: "Vara del Guardián del Pacto, +2" },
+              { rango: "69-70", en: "Scroll of Protection", es: "Pergamino de Protección" },
+              { rango: "71-75", en: "Spell Scroll (level 4 or level 5 spell)", es: "Pergamino de Hechizo (nivel 4 o 5)" },
+              { rango: "76-77", en: "Staff of Charming", es: "Bastón de Encantamiento" },
+              { rango: "78-79", en: "Staff of Swarming Insects", es: "Bastón de Insectos Enjambre" },
+              { rango: "80-81", en: "Staff of Withering", es: "Bastón de Marchitamiento" },
+              { rango: "82", en: "Stone of Controlling Earth Elementals", es: "Piedra de Control de Elementales de Tierra" },
+              { rango: "83-84", en: "Wand of Binding", es: "Varita de Atadura" },
+              { rango: "85-86", en: "Wand of Fear", es: "Varita de Miedo" },
+              { rango: "87-90", en: "Wand of Fireballs", es: "Varita de Bolas de Fuego" },
+              { rango: "91-94", en: "Wand of Lightning Bolts", es: "Varita de Rayos" },
+              { rango: "95-96", en: "Wand of the War Mage, +2", es: "Varita del Mago de Guerra, +2" },
+              { rango: "97-98", en: "Wand of Wonder", es: "Varita de Maravillas" },
+              { rango: "99-00", en: "Wings of Flying", es: "Alas de Vuelo" }
+            ],
+            "muy raro": [
+              { rango: "01-02", en: "Amulet of the Planes", es: "Amuleto de los Planos" },
+              { rango: "03-04", en: "Bag of Devouring", es: "Bolsa Devoradora" },
+              { rango: "05-06", en: "Carpet of Flying", es: "Alfombra Voladora" },
+              { rango: "07-08", en: "Cauldron of Rebirth", es: "Caldero de Renacimiento" },
+              { rango: "09-10", en: "Cloak of Arachnida", es: "Capa de Arácnido" },
+              { rango: "11-12", en: "Crystal Ball", es: "Bola de Cristal" },
+              { rango: "13", en: "Dancing Sword", es: "Espada Danzante" },
+              { rango: "14", en: "Efreeti Bottle", es: "Botella de Efreeti" },
+              { rango: "15-16", en: "Enspelled Staff (level 4 or 5 spell)", es: "Bastón Hechizado (nivel 4 o 5)" },
+              { rango: "17-18", en: "Figurine of Wondrous Power (obsidian steed)", es: "Figurilla de Poder Maravilloso (corcel de obsidiana)" },
+              { rango: "19-20", en: "Hat of Many Spells", es: "Sombrero de Muchos Hechizos" },
+              { rango: "21-22", en: "Helm of Brilliance", es: "Yelmo de Brillantez" },
+              { rango: "23-24", en: "Horseshoes of a Zephyr", es: "Herraduras de Céfiro" },
+              { rango: "25-26", en: "Ioun Stone (absorption, fortitude, intellect, or leadership)", es: "Piedra de Ioun (absorción, fortaleza, intelecto o liderazgo)" },
+              { rango: "27-28", en: "Manual of Golems (clay, flesh, iron, or stone)", es: "Manual de Gólems (arcilla, carne, hierro o piedra)" },
+              { rango: "29", en: "Mirror of Life Trapping", es: "Espejo de Trampa Vital" },
+              { rango: "30-31", en: "Nolzur's Marvelous Pigments", es: "Pigmentos Maravillosos de Nolzur" },
+              { rango: "32-34", en: "Oil of Sharpness", es: "Aceite de Filo" },
+              { rango: "35-38", en: "Potion of Flying", es: "Poción de Vuelo" },
+              { rango: "39-42", en: "Potion of Giant Strength (cloud)", es: "Poción de Fuerza de Gigante (nube)" },
+              { rango: "43-46", en: "Potion of Greater Invisibility", es: "Poción de Invisibilidad Mayor" },
+              { rango: "47-49", en: "Potion of Longevity", es: "Poción de Longevidad" },
+              { rango: "50-53", en: "Potion of Speed", es: "Poción de Velocidad" },
+              { rango: "54-57", en: "Potion of Vitality", es: "Poción de Vitalidad" },
+              { rango: "58-59", en: "Ring of Regeneration", es: "Anillo de Regeneración" },
+              { rango: "60-61", en: "Ring of Shooting Stars", es: "Anillo de Estrellas Fugaces" },
+              { rango: "62-63", en: "Ring of Telekinesis", es: "Anillo de Telequinesis" },
+              { rango: "64-65", en: "Robe of Scintillating Colors", es: "Túnica de Colores Cintilantes" },
+              { rango: "66-67", en: "Robe of Stars", es: "Túnica de Estrellas" },
+              { rango: "68-69", en: "Rod of Absorption", es: "Vara de Absorción" },
+              { rango: "70-71", en: "Rod of Security", es: "Vara de Seguridad" },
+              { rango: "72-73", en: "Rod of the Pact Keeper, +3", es: "Vara del Guardián del Pacto, +3" },
+              { rango: "74-85", en: "Spell Scroll (level 6, level 7, or level 8 spell)", es: "Pergamino de Hechizo (nivel 6, 7 u 8)" },
+              { rango: "86-87", en: "Staff of Fire", es: "Bastón de Fuego" },
+              { rango: "88-89", en: "Staff of Frost", es: "Bastón de Escarcha" },
+              { rango: "90", en: "Staff of Power", es: "Bastón de Poder" },
+              { rango: "91-92", en: "Staff of Thunder and Lightning", es: "Bastón de Trueno y Relámpago" },
+              { rango: "93-96", en: "Tome of Clear Thought", es: "Libro del Pensamiento Claro" },
+              { rango: "97-99", en: "Wand of Polymorph", es: "Varita de Polimorfia" },
+              { rango: "98-00", en: "Wand of the War Mage, +3", es: "Varita del Mago de Guerra, +3" }
+            ],
+            legendario: [
+              { rango: "01-04", en: "Apparatus of Kwalish", es: "Aparato de Kwalish" },
+              { rango: "05-08", en: "Cloak of Invisibility", es: "Capa de Invisibilidad" },
+              { rango: "09-12", en: "Crystal Ball of Mind Reading", es: "Bola de Cristal de Lectura Mental" },
+              { rango: "13-16", en: "Crystal Ball of Telepathy", es: "Bola de Cristal de Telepatía" },
+              { rango: "17-20", en: "Crystal Ball of True Seeing", es: "Bola de Cristal de Visión Verdadera" },
+              { rango: "21-22", en: "Cubic Gate", es: "Cubo Portal" },
+              { rango: "23", en: "Deck of Many Things", es: "Baraja de Muchas Cosas" },
+              { rango: "24-27", en: "Enspelled Staff (level 6, 7, or 8 spell)", es: "Bastón Hechizado (nivel 6, 7 u 8)" },
+              { rango: "28-31", en: "Ioun Stone (greater absorption, mastery, or regeneration)", es: "Piedra de Ioun (gran absorción, maestría o regeneración)" },
+              { rango: "32-33", en: "Iron Flask", es: "Frasco de Hierro" },
+              { rango: "34-41", en: "Potion of Storm Giant Strength (storm)", es: "Poción de Fuerza de Gigante de Tormenta" },
+              { rango: "42-45", en: "Ring of Djinni Summoning", es: "Anillo de Invocación de Djinni" },
+              { rango: "46-49", en: "Ring of Elemental Command (air, earth, fire, or water)", es: "Anillo de Mando Elemental (aire, tierra, fuego o agua)" },
+              { rango: "50-53", en: "Ring of Invisibility", es: "Anillo de Invisibilidad" },
+              { rango: "54-57", en: "Ring of Spell Turning", es: "Anillo de Retorno de Hechizos" },
+              { rango: "58", en: "Ring of Three Wishes", es: "Anillo de Tres Deseos" },
+              { rango: "59", en: "Robe of the Archmagi", es: "Túnica del Archimago" },
+              { rango: "60-61", en: "Scroll of Titan Summoning", es: "Pergamino de Invocación de Titán" },
+              { rango: "62-65", en: "Sovereign Glue", es: "Pegamento Soberano" },
+              { rango: "66-83", en: "Spell Scroll (level 9 spell)", es: "Pergamino de Hechizo (nivel 9)" },
+              { rango: "84", en: "Sphere of Annihilation", es: "Esfera de Aniquilación" },
+              { rango: "85", en: "Staff of the Magi", es: "Bastón de los Magos" },
+              { rango: "86-88", en: "Talisman of the Sphere", es: "Talismán de la Esfera" },
+              { rango: "89-92", en: "Tome of the Stilled Tongue", es: "Libro de la Lengua Silenciada" },
+              { rango: "93-96", en: "Universal Solvent", es: "Disolvente Universal" },
+              { rango: "97-00", en: "Well of Many Worlds", es: "Pozo de Muchos Mundos" }
+            ]
+          },
+          armamento: {
+            comun: [
+              { rango: "01-10", en: "Armor of Gleaming", es: "Armadura Reluciente" },
+              { rango: "11-20", en: "Cast-Off Armor", es: "Armadura Desprendible" },
+              { rango: "21-30", en: "Dread Helm", es: "Yelmo Aterrador" },
+              { rango: "31-40", en: "Moon-Touched Sword", es: "Espada Tocada por la Luna" },
+              { rango: "41-50", en: "Shield of Expression", es: "Escudo de Expresión" },
+              { rango: "51-60", en: "Silvered Weapon", es: "Arma Plateada" },
+              { rango: "61-70", en: "Smoldering Armor", es: "Armadura Humeante" },
+              { rango: "71-80", en: "Sylvan Talon", es: "Garra Silvana" },
+              { rango: "81-90", en: "Veteran's Cane", es: "Bastón de Veterano" },
+              { rango: "91-00", en: "Walloping Ammunition", es: "Munición Demoledora" }
+            ],
+            pococomun: [
+              { rango: "01-04", en: "Adamantine Armor", es: "Armadura de Adamantina" },
+              { rango: "05-08", en: "Adamantine Weapon", es: "Arma de Adamantina" },
+              { rango: "09-13", en: "Ammunition, +1", es: "Munición +1" },
+              { rango: "14-18", en: "Bracers of Archery", es: "Brazales de Tiro con Arco" },
+              { rango: "19-23", en: "Enspelled Armor (truco o nivel 1)", es: "Armadura Hechizada (truco o nivel 1)" },
+              { rango: "24-28", en: "Enspelled Weapon (truco o nivel 1)", es: "Arma Hechizada (truco o nivel 1)" },
+              { rango: "29-33", en: "Gauntlets of Ogre Power", es: "Guanteletes de Poder de Ogro" },
+              { rango: "34-38", en: "Javelin of Lightning", es: "Jabalina de Relámpago" },
+              { rango: "39-43", en: "Mariner's Armor", es: "Armadura de Marinero" },
+              { rango: "44-48", en: "Mithral Armor", es: "Armadura de Mithril" },
+              { rango: "49-53", en: "Potion of Giant Strength (hill)", es: "Poción de Fuerza de Gigante (colina)" },
+              { rango: "54-58", en: "Potion of Pugilism", es: "Poción de Pugilismo" },
+              { rango: "59-62", en: "Quiver of Ehlonna", es: "Aljaba de Ehlonna" },
+              { rango: "63-66", en: "Saddle of the Cavalier", es: "Silla de Montar del Caballero" },
+              { rango: "67-71", en: "Sentinel Shield", es: "Escudo Centinela" },
+              { rango: "72-76", en: "Shield, +1", es: "Escudo +1" },
+              { rango: "77-81", en: "Sword of Vengeance", es: "Espada de la Venganza" },
+              { rango: "82-85", en: "Trident of Fish Command", es: "Tridente de Mando de Peces" },
+              { rango: "86-90", en: "Weapon, +1", es: "Arma +1" },
+              { rango: "91-95", en: "Weapon of Warning", es: "Arma de Advertencia" },
+              { rango: "96-00", en: "Wraps of Unarmed Power, +1", es: "Vendajes de Poder Desarmado +1" }
+            ],
+            raro: [
+              { rango: "01-03", en: "Ammunition, +2", es: "Munición +2" },
+              { rango: "04-07", en: "Armor, +1", es: "Armadura +1" },
+              { rango: "08-10", en: "Armor of Resistance", es: "Armadura de Resistencia" },
+              { rango: "11-13", en: "Armor of Vulnerability", es: "Armadura de Vulnerabilidad" },
+              { rango: "14-15", en: "Arrow-Catching Shield", es: "Escudo Atrapaflechas" },
+              { rango: "16-18", en: "Belt of Giant Strength (hill)", es: "Cinturón de Fuerza de Gigante (colina)" },
+              { rango: "19-20", en: "Berserker Axe", es: "Hacha de Berserker" },
+              { rango: "21-22", en: "Daern's Instant Fortress", es: "Fortaleza Instantánea de Daern" },
+              { rango: "23-25", en: "Dagger of Venom", es: "Daga de Veneno" },
+              { rango: "26-28", en: "Dragon Slayer", es: "Matadragones" },
+              { rango: "29-31", en: "Elven Chain", es: "Cota Élfica" },
+              { rango: "32-34", en: "Enspelled Armor (nivel 2 o 3 spell)", es: "Armadura Hechizada (nivel 2 o 3)" },
+              { rango: "35-37", en: "Enspelled Weapon (nivel 2 o 3 spell)", es: "Arma Hechizada (nivel 2 o 3)" },
+              { rango: "38-40", en: "Flame Tongue", es: "Lengua Llameante" },
+              { rango: "41-43", en: "Giant Slayer", es: "Matagigantes" },
+              { rango: "44-46", en: "Horn of Blasting", es: "Cuerno de Explosión" },
+              { rango: "47-48", en: "Horn of Valhalla (brass or silver)", es: "Cuerno de Valhalla (latón o plata)" },
+              { rango: "49-51", en: "Ioun Stone (protection)", es: "Piedra de Ioun (protección)" },
+              { rango: "52-54", en: "Mace of Disruption", es: "Maza de Disrupción" },
+              { rango: "55-57", en: "Mace of Smiting", es: "Maza de Golpe" },
+              { rango: "58-60", en: "Mace of Terror", es: "Maza de Terror" },
+              { rango: "61-63", en: "Potion of Giant Strength (fire)", es: "Poción de Fuerza de Gigante (fuego)" },
+              { rango: "64-66", en: "Potion of Giant Strength (frost or stone)", es: "Poción de Fuerza de Gigante (escarcha o piedra)" },
+              { rango: "67-69", en: "Potion of Heroism", es: "Poción de Heroísmo" },
+              { rango: "70-72", en: "Potion of Invulnerability", es: "Poción de Invulnerabilidad" },
+              { rango: "73-75", en: "Ring of Protection", es: "Anillo de Protección" },
+              { rango: "76-78", en: "Ring of the Ram", es: "Anillo del Carnero" },
+              { rango: "79-81", en: "Shield, +2", es: "Escudo +2" },
+              { rango: "82-84", en: "Shield of Missile Attraction", es: "Escudo de Atracción de Proyectiles" },
+              { rango: "85-86", en: "Sun Blade", es: "Espada Solar" },
+              { rango: "87-88", en: "Sword of Life Stealing", es: "Espada Robavidas" },
+              { rango: "89-90", en: "Sword of Wounding", es: "Espada de Heridas" },
+              { rango: "91-92", en: "Tentacle Rod", es: "Vara de Tentáculos" },
+              { rango: "93-94", en: "Vicious Weapon", es: "Arma Cruel" },
+              { rango: "95-97", en: "Weapon, +2", es: "Arma +2" },
+              { rango: "98-00", en: "Wraps of Unarmed Power, +2", es: "Vendajes de Poder Desarmado +2" }
+            ],
+            "muy raro": [
+              { rango: "01-03", en: "Ammunition, +3", es: "Munición +3" },
+              { rango: "04-06", en: "Ammunition of Slaying", es: "Munición de Exterminio" },
+              { rango: "07-09", en: "Animated Shield", es: "Escudo Animado" },
+              { rango: "10-12", en: "Armor, +2", es: "Armadura +2" },
+              { rango: "13-14", en: "Belt of Giant Strength (fire)", es: "Cinturón de Fuerza de Gigante (fuego)" },
+              { rango: "15-17", en: "Belt of Giant Strength (frost or stone)", es: "Cinturón de Fuerza de Gigante (escarcha o piedra)" },
+              { rango: "18-19", en: "Dancing Sword", es: "Espada Danzante" },
+              { rango: "20-22", en: "Demon Armor", es: "Armadura Demoníaca" },
+              { rango: "23-25", en: "Dragon Scale Mail", es: "Cota de Escamas de Dragón" },
+              { rango: "26-28", en: "Dwarven Plate", es: "Armadura Enana" },
+              { rango: "29-31", en: "Dwarven Thrower", es: "Lanzador Enano" },
+              { rango: "32-34", en: "Energy Bow", es: "Arco de Energía" },
+              { rango: "35-37", en: "Enspelled Armor (nivel 4 o 5 spell)", es: "Armadura Hechizada (nivel 4 o 5)" },
+              { rango: "38-40", en: "Enspelled Weapon (nivel 4 o 5 spell)", es: "Arma Hechizada (nivel 4 o 5)" },
+              { rango: "41-43", en: "Executioner's Axe", es: "Hacha de Verdugo" },
+              { rango: "44-46", en: "Frost Brand", es: "Marca de Escarcha" },
+              { rango: "47-49", en: "Horn of Valhalla (bronze)", es: "Cuerno de Valhalla (bronce)" },
+              { rango: "50-52", en: "Ioun Stone (strength)", es: "Piedra de Ioun (fuerza)" },
+              { rango: "53-55", en: "Lute of Thunderous Thumping", es: "Laúd de Golpes Tronadores" },
+              { rango: "56-58", en: "Manual of Gainful Exercise", es: "Manual de Ejercicio Provechoso" },
+              { rango: "59-61", en: "Nine Lives Stealer", es: "Robavidas de Nueve Vidas" },
+              { rango: "62-64", en: "Oathbow", es: "Arco del Juramento" },
+              { rango: "65-68", en: "Oil of Sharpness", es: "Aceite de Filo" },
+              { rango: "69-72", en: "Potion of Giant Strength (cloud)", es: "Poción de Fuerza de Gigante (nube)" },
+              { rango: "73-75", en: "Quarterstaff of the Acrobat", es: "Bastón del Acróbata" },
+              { rango: "76-78", en: "Scimitar of Speed", es: "Cimitarra de Velocidad" },
+              { rango: "79-82", en: "Shield, +3", es: "Escudo +3" },
+              { rango: "83-85", en: "Shield of the Cavalier", es: "Escudo del Caballero" },
+              { rango: "86-88", en: "Spellguard Shield", es: "Escudo Guardián de Hechizos" },
+              { rango: "89-91", en: "Sword of Sharpness", es: "Espada de Filo" },
+              { rango: "92-94", en: "Thunderous Greatclub", es: "Gran Garrote Tronador" },
+              { rango: "95-97", en: "Weapon, +3", es: "Arma +3" },
+              { rango: "98-00", en: "Wraps of Unarmed Power, +3", es: "Vendajes de Poder Desarmado +3" }
+            ],
+            legendario: [
+              { rango: "01-06", en: "Armor, +3", es: "Armadura +3" },
+              { rango: "07-12", en: "Armor of Invulnerability", es: "Armadura de Invulnerabilidad" },
+              { rango: "13-18", en: "Belt of Giant Strength (cloud)", es: "Cinturón de Fuerza de Gigante (nube)" },
+              { rango: "19-21", en: "Belt of Giant Strength (storm)", es: "Cinturón de Fuerza de Gigante (tormenta)" },
+              { rango: "22-27", en: "Defender", es: "Defensor" },
+              { rango: "28-33", en: "Efreeti Chain", es: "Cota de Efreeti" },
+              { rango: "34-39", en: "Enspelled Armor (nivel 6, 7, o 8 spell)", es: "Armadura Hechizada (nivel 6, 7 u 8)" },
+              { rango: "40-45", en: "Enspelled Weapon (nivel 6, 7, o 8 spell)", es: "Arma Hechizada (nivel 6, 7 u 8)" },
+              { rango: "46-51", en: "Hammer of Thunderbolts", es: "Martillo de Rayos" },
+              { rango: "52-56", en: "Holy Avenger", es: "Santo Vengador" },
+              { rango: "57-62", en: "Horn of Valhalla (iron)", es: "Cuerno de Valhalla (hierro)" },
+              { rango: "63-68", en: "Luck Blade", es: "Espada de la Suerte" },
+              { rango: "69-72", en: "Moonblade", es: "Espada Lunar" },
+              { rango: "73-78", en: "Plate Armor of Etherealness", es: "Armadura de Placas de Eterealidad" },
+              { rango: "79-87", en: "Potion of Giant Strength (storm)", es: "Poción de Fuerza de Gigante (tormenta)" },
+              { rango: "88-90", en: "Rod of Lordly Might", es: "Vara del Poder Supremo" },
+              { rango: "91-95", en: "Sword of Answering", es: "Espada de Respuesta" },
+              { rango: "96-00", en: "Vorpal Sword", es: "Espada Vorpal" }
+            ]
+          },
+          implementos: {
+            comun: [
+              { rango: "01-02", en: "Bead of Nourishment", es: "Cuenta de Alimento" },
+              { rango: "03-04", en: "Bead of Refreshment", es: "Cuenta Refrescante" },
+              { rango: "05-06", en: "Boots of False Tracks", es: "Botas de Huellas Falsas" },
+              { rango: "07-08", en: "Candle of the Deep", es: "Vela de las Profundidades" },
+              { rango: "09-10", en: "Charlatan's Die", es: "Dado del Charlatán" },
+              { rango: "11-13", en: "Cloak of Many Fashions", es: "Capa de Muchos Estilos" },
+              { rango: "14-15", en: "Clockwork Amulet", es: "Amuleto Mecánico" },
+              { rango: "16-17", en: "Ear Horn of Hearing", es: "Trompetilla Auditiva" },
+              { rango: "18-19", en: "Ersatz Eye", es: "Ojo Sustituto" },
+              { rango: "20-21", en: "Heward's Handy Spice Pouch", es: "Bolsa de Especias de Heward" },
+              { rango: "22-23", en: "Horn of Silent Alarm", es: "Cuerno de Alarma Silenciosa" },
+              { rango: "24-25", en: "Instrument of Illusions", es: "Instrumento de Ilusiones" },
+              { rango: "26-27", en: "Instrument of Scribing", es: "Instrumento de Escritura" },
+              { rango: "28-29", en: "Lock of Trickery", es: "Cerradura de Travesura" },
+              { rango: "30-32", en: "Moon-Touched Sword", es: "Espada Tocada por la Luna" },
+              { rango: "33-34", en: "Mystery Key", es: "Llave Misteriosa" },
+              { rango: "35-36", en: "Orb of Direction", es: "Orbe de Dirección" },
+              { rango: "37-38", en: "Orb of Time", es: "Orbe del Tiempo" },
+              { rango: "39-40", en: "Perfume of Bewitching", es: "Perfume de Hechizo" },
+              { rango: "41-42", en: "Pipe of Smoke Monsters", es: "Pipa de Monstruos de Humo" },
+              { rango: "43-44", en: "Pole of Angling", es: "Caña de Pescar" },
+              { rango: "45-46", en: "Pole of Collapsing", es: "Pértiga Colapsable" },
+              { rango: "47-52", en: "Potion of Climbing", es: "Poción de Escalada" },
+              { rango: "53-58", en: "Potion of Comprehension", es: "Poción de Comprensión" },
+              { rango: "59-74", en: "Potion of Healing", es: "Poción de Curación" },
+              { rango: "75-76", en: "Prosthetic Limb", es: "Extremidad protésica" },
+              { rango: "77-78", en: "Rope of Mending", es: "Cuerda de Remiendo" },
+              { rango: "79-80", en: "Staff of Birdcalls", es: "Bastón de Canto de Pájaros" },
+              { rango: "81-82", en: "Sylvan Talon", es: "Garra Silvana" },
+              { rango: "83-84", en: "Talking Doll", es: "Muñeca Parlante" },
+              { rango: "85-86", en: "Tankard of Sobriety", es: "Jarra de Sobriedad" },
+              { rango: "87-90", en: "Veteran's Cane", es: "Bastón de Veterano" },
+              { rango: "91-92", en: "Walloping Ammunition", es: "Munición Demoledora" },
+              { rango: "93-94", en: "Wand of Conducting", es: "Varita de Dirección" },
+              { rango: "95-97", en: "Wand of Enemy Detection", es: "Varita de Detección de Enemigos" },
+              { rango: "98-00", en: "Wand of Pyrotechnics", es: "Varita de Pirotecnia" }
+            ],
+            pococomun: [
+              { rango: "01-02", en: "Alchemy Jug", es: "Jarra de Alquimia" },
+              { rango: "03-06", en: "Ammunition, +1", es: "Munición +1" },
+              { rango: "07-10", en: "Bag of Holding", es: "Bolsa de Contención" },
+              { rango: "11-12", en: "Boots of Elvenkind", es: "Botas élficas" },
+              { rango: "13-14", en: "Boots of Striding and Springing", es: "Botas de Zancada y Salto" },
+              { rango: "15-16", en: "Boots of the Winterlands", es: "Botas de las Tierras Invernal" },
+              { rango: "17-18", en: "Broom of Flying", es: "Escoba Voladora" },
+              { rango: "19-20", en: "Cap of Water Breathing", es: "Gorro de Respiración Acuática" },
+              { rango: "21-22", en: "Cloak of Elvenkind", es: "Capa élfica" },
+              { rango: "23-24", en: "Cloak of Protection", es: "Capa de Protección" },
+              { rango: "25-26", en: "Cloak of the Manta Ray", es: "Capa de la Mantarraya" },
+              { rango: "27", en: "Decanter of Endless Water", es: "Botella de Agua Infinita" },
+              { rango: "28-30", en: "Driftglobe", es: "Globo Flotante" },
+              { rango: "31-32", en: "Dust of Disappearance", es: "Polvo de Desaparición" },
+              { rango: "33-34", en: "Dust of Dryness", es: "Polvo de Sequedad" },
+              { rango: "35-36", en: "Dust of Sneezing and Choking", es: "Polvo de Estornudos y Asfixia" },
+              { rango: "37-38", en: "Enspelled Weapon (truco o nivel 1)", es: "Arma Hechizada (truco o nivel 1)" },
+              { rango: "39-40", en: "Eyes of Minute Seeing", es: "Ojos de Visión Minuciosa" },
+              { rango: "41-42", en: "Eyes of the Eagle", es: "Ojos de Ýguila" },
+              { rango: "43-44", en: "Gloves of Missile Snaring", es: "Guantes de Intercepción de Proyectiles" },
+              { rango: "45-46", en: "Gloves of Swimming and Climbing", es: "Guantes de Nadar y Trepar" },
+              { rango: "47-48", en: "Gloves of Thievery", es: "Guantes de Latrocinio" },
+              { rango: "49-50", en: "Goggles of Night", es: "Gafas de la Noche" },
+              { rango: "51", en: "Hag Eye", es: "Ojo de Bruja" },
+              { rango: "52-54", en: "Helm of Comprehending Languages", es: "Yelmo de Comprensión de Idiomas" },
+              { rango: "55", en: "Immovable Rod", es: "Barra Inamovible" },
+              { rango: "56-57", en: "Instrument of the Bards (Doss lute, Fochlucan bandore, or Mac-Fuirmidh cittern)", es: "Instrumento de los Bardos (laúd Doss, bandore Fochlucan o cítara Mac-Fuirmidh)" },
+              { rango: "58-59", en: "Lantern of Revealing", es: "Linterna Reveladora" },
+              { rango: "60-61", en: "Nature's Mantle", es: "Manto de la Naturaleza" },
+              { rango: "62-63", en: "Oil of Slipperiness", es: "Aceite de Resbaladizo" },
+              { rango: "64-65", en: "Pipes of Haunting", es: "Flautas de Aullidos" },
+              { rango: "66-67", en: "Pipes of the Sewers", es: "Flautas de las Alcantarillas" },
+              { rango: "68-71", en: "Potion of Growth", es: "Poción de Crecimiento" },
+              { rango: "72-80", en: "Potion of Healing (greater)", es: "Poción de Curación (mayor)" },
+              { rango: "81-84", en: "Potion of Water Breathing", es: "Poción de Respiración Acuática" },
+              { rango: "85-86", en: "Quaal's Feather Token (anchor, fan, or tree)", es: "Pluma de Quaal (ancla, abanico o árbol)" },
+              { rango: "87-88", en: "Ring of Jumping", es: "Anillo de Salto" },
+              { rango: "89-90", en: "Ring of Swimming", es: "Anillo de Nadar" },
+              { rango: "91-92", en: "Ring of Warmth", es: "Anillo de Calor" },
+              { rango: "93-94", en: "Robe of Useful Items", es: "Túnica de Objetos Útiles" },
+              { rango: "95-96", en: "Rope of Climbing", es: "Cuerda de Escalada" },
+              { rango: "97-98", en: "Stone of Good Luck", es: "Piedra de la Buena Suerte" },
+              { rango: "99-00", en: "Wand of Secrets", es: "Varita de Secretos" }
+            ],
+            raro: [
+              { rango: "01-04", en: "Ammunition, +2", es: "Munición +2" },
+              { rango: "05-08", en: "Bag of Beans", es: "Bolsa de Frijoles" },
+              { rango: "09-12", en: "Belt of Dwarvenkind", es: "Cinturón de Enanidad" },
+              { rango: "13-16", en: "Boots of Levitation", es: "Botas de Levitación" },
+              { rango: "17-20", en: "Boots of Speed", es: "Botas de Velocidad" },
+              { rango: "21-24", en: "Chime of Opening", es: "Campana de Apertura" },
+              { rango: "25-28", en: "Dimensional Shackles", es: "Grilletes Dimensionales" },
+              { rango: "29-32", en: "Enspelled Weapon (nivel 2 o 3 spell)", es: "Arma Hechizada (nivel 2 o 3)" },
+              { rango: "33-36", en: "Folding Boat", es: "Barco Plegable" },
+              { rango: "37-40", en: "Glamoured Studded Leather", es: "Armadura de Cuero Tachonado Ilusionado" },
+              { rango: "41-44", en: "Heward's Handy Haversack", es: "Mochila Práctica de Heward" },
+              { rango: "45-48", en: "Horseshoes of Speed", es: "Herraduras de Velocidad" },
+              { rango: "49-52", en: "Instrument of the Bards (Canaith mandolin or Cli lyre)", es: "Instrumento de los Bardos (mandolina Canaith o lira Cli)" },
+              { rango: "53-56", en: "Ioun Stone (awareness)", es: "Piedra de Ioun (conciencia)" },
+              { rango: "57-60", en: "Portable Hole", es: "Agujero Portátil" },
+              { rango: "61-64", en: "Potion of Diminution", es: "Poción de Reducción" },
+              { rango: "65-68", en: "Potion of Gaseous Form", es: "Poción de Forma Gaseosa" },
+              { rango: "69-76", en: "Potion of Healing (superior)", es: "Poción de Curación (superior)" },
+              { rango: "77-80", en: "Quaal's Feather Token (bird, swan boat, or whip)", es: "Pluma de Quaal (pájaro, bote cisne o látigo)" },
+              { rango: "81-84", en: "Ring of Evasion", es: "Anillo de Evasión" },
+              { rango: "85-88", en: "Ring of Free Action", es: "Anillo de Acción Libre" },
+              { rango: "89-92", en: "Rope of Entanglement", es: "Cuerda de Enredo" },
+              { rango: "93-96", en: "Staff of Healing", es: "Bastón de Curación" },
+              { rango: "97-00", en: "Wand of Enemy Detection", es: "Varita de Detección de Enemigos" }
+            ],
+            "muy raro": [
+              { rango: "01-07", en: "Ammunition, +3", es: "Munición +3" },
+              { rango: "08-14", en: "Bag of Devouring", es: "Bolsa Devoradora" },
+              { rango: "15-21", en: "Carpet of Flying", es: "Alfombra Voladora" },
+              { rango: "22-28", en: "Enspelled Weapon (nivel 4 o 5 spell)", es: "Arma Hechizada (nivel 4 o 5)" },
+              { rango: "29-35", en: "Horseshoes of a Zephyr", es: "Herraduras de Céfiro" },
+              { rango: "36-42", en: "Instrument of the Bards (Anstruth harp)", es: "Instrumento de los Bardos (arpa Anstruth)" },
+              { rango: "43-49", en: "Ioun Stone (agility)", es: "Piedra de Ioun (agilidad)" },
+              { rango: "50-56", en: "Lute of Thunderous Thumping", es: "Laúd de Golpes Tronadores" },
+              { rango: "57-63", en: "Manual of Quickness of Action", es: "Manual de Rapidez de Acción" },
+              { rango: "64-70", en: "Nolzur's Marvelous Pigments", es: "Pigmentos Maravillosos de Nolzur" },
+              { rango: "71-77", en: "Potion of Flying", es: "Poción de Vuelo" },
+              { rango: "78-86", en: "Potion of Healing (supreme)", es: "Poción de Curación (suprema)" },
+              { rango: "87-93", en: "Potion of Speed", es: "Poción de Velocidad" },
+              { rango: "94-00", en: "Tome of Leadership and Influence", es: "Libro de Liderazgo e Influencia" }
+            ],
+            legendario: [
+              { rango: "01-17", en: "Enspelled Weapon (nivel 6, 7, o 8 spell)", es: "Arma Hechizada (nivel 6, 7 u 8)" },
+              { rango: "18-34", en: "Instrument of the Bards (Ollamh harp)", es: "Instrumento de los Bardos (arpa Ollamh)" },
+              { rango: "35-54", en: "Sovereign Glue", es: "Pegamento Soberano" },
+              { rango: "55-70", en: "Sphere of Annihilation", es: "Esfera de Aniquilación" },
+              { rango: "71-83", en: "Talisman of the Sphere", es: "Talismán de la Esfera" },
+              { rango: "84-00", en: "Universal Solvent", es: "Disolvente Universal" }
+            ]
+          },
+          reliquias: {
+            comun: [
+              { rango: "01-08", en: "Ear Horn of Hearing", es: "Trompetilla Auditiva" },
+              { rango: "09-28", en: "Potion of Healing", es: "Poción de Curación" },
+              { rango: "29-36", en: "Pot of Awakening", es: "Maceta del Despertar" },
+              { rango: "37-44", en: "Ruby of the War Mage", es: "Rubí del Mago de Guerra" },
+              { rango: "45-52", en: "Shield of Expression", es: "Escudo de Expresión" },
+              { rango: "53-60", en: "Smoldering Armor", es: "Armadura Humeante" },
+              { rango: "61-80", en: "Spell Scroll (truco o nivel 1)", es: "Pergamino de Hechizo (truco o nivel 1)" },
+              { rango: "81-90", en: "Staff of Adornment", es: "Bastón de Adorno" },
+              { rango: "91-00", en: "Staff of Flowers", es: "Bastón de Flores" }
+            ],
+            pococomun: [
+              { rango: "01-05", en: "Enspelled Staff (truco o nivel 1)", es: "Bastón Hechizado (truco o nivel 1)" },
+              { rango: "06-10", en: "Keoghtom's Ointment", es: "Ungüento de Keoghtom" },
+              { rango: "11-15", en: "Mariner's Armor", es: "Armadura de Marinero" },
+              { rango: "16-20", en: "Nature's Mantle", es: "Manto de la Naturaleza" },
+              { rango: "21-25", en: "Pearl of Power", es: "Perla de Poder" },
+              { rango: "26-30", en: "Periapt of Health", es: "Amuleto de Salud" },
+              { rango: "31-35", en: "Periapt of Wound Closure", es: "Amuleto de Cierre de Heridas" },
+              { rango: "36-40", en: "Potion of Animal Friendship", es: "Poción de Amistad Animal" },
+              { rango: "41-55", en: "Potion of Healing (greater)", es: "Poción de Curación (mayor)" },
+              { rango: "56-60", en: "Potion of Resistance", es: "Poción de Resistencia" },
+              { rango: "61-65", en: "Ring of Water Walking", es: "Anillo de Caminar sobre el Agua" },
+              { rango: "66-70", en: "Sending Stones", es: "Piedras de Envío" },
+              { rango: "71-80", en: "Spell Scroll (nivel 2 o 3 spell)", es: "Pergamino de Hechizo (nivel 2 o 3)" },
+              { rango: "81-85", en: "Staff of the Adder", es: "Bastón de la Víbora" },
+              { rango: "86-90", en: "Staff of the Python", es: "Bastón de la Pitón" },
+              { rango: "91-95", en: "Wand of Magic Detection", es: "Varita de Detección Mágica" },
+              { rango: "96-00", en: "Wand of the War Mage, +1", es: "Varita del Mago de Guerra, +1" }
+            ],
+            raro: [
+              { rango: "01-03", en: "Amulet of Health", es: "Amuleto de Salud" },
+              { rango: "04-07", en: "Armor, +1", es: "Armadura +1" },
+              { rango: "08-09", en: "Bowl of Commanding Water Elementals", es: "Cuenco de Dominio de Elementales de Agua" },
+              { rango: "10-11", en: "Brazier of Commanding Fire Elementals", es: "Brasero de Dominio de Elementales de Fuego" },
+              { rango: "12-13", en: "Censer of Controlling Air Elementals", es: "Incensario de Control de Elementales de Aire" },
+              { rango: "14-16", en: "Elixir of Health", es: "Elixir de Salud" },
+              { rango: "17-19", en: "Enspelled Staff (nivel 2 o 3 spell)", es: "Bastón Hechizado (nivel 2 o 3)" },
+              { rango: "20-22", en: "Horn of Blasting", es: "Cuerno de Explosión" },
+              { rango: "23-25", en: "Horn of Valhalla (brass or silver)", es: "Cuerno de Valhalla (latón o plata)" },
+              { rango: "26-28", en: "Ioun Stone (reserva o sustento)", es: "Piedra de Ioun (reserva o sustento)" },
+              { rango: "29-31", en: "Mace of Disruption", es: "Maza de Disrupción" },
+              { rango: "32-34", en: "Mace of Smiting", es: "Maza de Golpe" },
+              { rango: "35-37", en: "Mace of Terror", es: "Maza de Terror" },
+              { rango: "38-40", en: "Necklace of Prayer Beads", es: "Collar de Cuentas de Oración" },
+              { rango: "41-43", en: "Periapt of Proof against Poison", es: "Amuleto de Prueba contra Veneno" },
+              { rango: "44-51", en: "Potion of Healing (superior)", es: "Poción de Curación (superior)" },
+              { rango: "52-54", en: "Ring of Animal Influence", es: "Anillo de Influencia Animal" },
+              { rango: "55-58", en: "Ring of Resistance", es: "Anillo de Resistencia" },
+              { rango: "59-61", en: "Ring of Spell Storing", es: "Anillo de Almacenamiento de Hechizos" },
+              { rango: "62-65", en: "Scroll of Protection", es: "Pergamino de Protección" },
+              { rango: "66-73", en: "Spell Scroll (nivel 4 o 5 spell)", es: "Pergamino de Hechizo (nivel 4 o 5)" },
+              { rango: "74-76", en: "Staff of Charming", es: "Bastón de Encantamiento" },
+              { rango: "77-79", en: "Staff of Healing", es: "Bastón de Curación" },
+              { rango: "80-82", en: "Staff of Swarming Insects", es: "Bastón de Insectos Enjambre" },
+              { rango: "83-85", en: "Staff of the Woodlands", es: "Bastón del Bosque" },
+              { rango: "86-88", en: "Staff of Withering", es: "Bastón de Marchitamiento" },
+              { rango: "89-90", en: "Stone of Controlling Earth Elementals", es: "Piedra de Control de Elementales de Tierra" },
+              { rango: "91-93", en: "Tentacle Rod", es: "Vara de Tentáculos" },
+              { rango: "94-96", en: "Wand of Paralysis", es: "Varita de Parálisis" },
+              { rango: "97-00", en: "Wand of the War Mage, +2", es: "Varita del Mago de Guerra, +2" }
+            ],
+            "muy raro": [
+              { rango: "01-05", en: "Armor, +2", es: "Armadura +2" },
+              { rango: "06-10", en: "Candle of Invocation", es: "Vela de Invocación" },
+              { rango: "11-15", en: "Cauldron of Rebirth", es: "Caldero de Renacimiento" },
+              { rango: "16-20", en: "Enspelled Staff (nivel 4 o 5 spell)", es: "Bastón Hechizado (nivel 4 o 5)" },
+              { rango: "21-25", en: "Horn of Valhalla (bronce)", es: "Cuerno de Valhalla (bronce)" },
+              { rango: "26-30", en: "Ioun Stone (insight)", es: "Piedra de Ioun (perspicacia)" },
+              { rango: "31-35", en: "Manual of Bodily Health", es: "Manual de Salud Corporal" },
+              { rango: "36-43", en: "Potion of Healing (supreme)", es: "Poción de Curación (suprema)" },
+              { rango: "44-50", en: "Potion of Vitality", es: "Poción de Vitalidad" },
+              { rango: "51-55", en: "Rod of Alertness", es: "Vara de Alerta" },
+              { rango: "56-65", en: "Spell Scroll (nivel 6, 7, o 8 spell)", es: "Pergamino de Hechizo (nivel 6, 7 u 8)" },
+              { rango: "66-70", en: "Spirit Board", es: "Tablero Espiritual" },
+              { rango: "71-75", en: "Staff of Fire", es: "Bastón de Fuego" },
+              { rango: "76-80", en: "Staff of Frost", es: "Bastón de Escarcha" },
+              { rango: "81-85", en: "Staff of Striking", es: "Bastón de Golpeo" },
+              { rango: "86-90", en: "Staff of Thunder and Lightning", es: "Bastón de Trueno y Relámpago" },
+              { rango: "91-95", en: "Tome of Understanding", es: "Libro de la Comprensión" },
+              { rango: "96-00", en: "Wand of the War Mage, +3", es: "Varita del Mago de Guerra, +3" }
+            ],
+            legendario: [
+              { rango: "01-08", en: "Armor of Invulnerability", es: "Armadura de Invulnerabilidad" },
+              { rango: "09-18", en: "Armor, +3", es: "Armadura +3" },
+              { rango: "19-27", en: "Enspelled Staff (nivel 6, 7, o 8 spell)", es: "Bastón Hechizado (nivel 6, 7 u 8)" },
+              { rango: "28-36", en: "Holy Avenger", es: "Santo Vengador" },
+              { rango: "37-45", en: "Horn of Valhalla (iron)", es: "Cuerno de Valhalla (hierro)" },
+              { rango: "46-54", en: "Rod of Resurrection", es: "Vara de Resurrección" },
+              { rango: "55-63", en: "Scarab of Protection", es: "Escarabajo de Protección" },
+              { rango: "64-72", en: "Scroll of Titan Summoning", es: "Pergamino de Invocación de Titán" },
+              { rango: "73-80", en: "Spell Scroll (nivel 9 spell)", es: "Pergamino de Hechizo (nivel 9)" },
+              { rango: "81-90", en: "Talisman of Pure Good", es: "Talismán de la Bondad Pura" },
+              { rango: "91-00", en: "Talisman of Ultimate Evil", es: "Talismán del Mal Supremo" }
+            ]
+          }
+        };
+        // Función para buscar el objeto según la tirada y la tabla
+        function buscarObjetoPorTirada(tabla, tirada) {
+          for (const obj of tabla) {
+            if (!obj.rango) continue; // Saltar objetos sin rango (placeholders)
+            const [min, max] = obj.rango.split('-').map(x => parseInt(x));
+            if (tirada >= min && tirada <= max) return obj;
+          }
+          return null;
+        }
+
+        // Agregar objetos mágicos personalizados (normalización mejorada)
+        (function() {
+          // Objetos a agregar: rareza, nombre, sintonización
+          const nuevosObjetos = [
+            // Común
+            { rareza: 'comun', es: 'Tatuaje del iluminador', en: 'Illuminator\u2019s Tattoo' },
+            { rareza: 'comun', es: 'Tatuaje de mascarada', en: 'Masquerade Tattoo' },
+            { rareza: 'comun', es: 'Tatuaje ortográfico', en: 'Spellwrought Tattoo' },
+            // Poco común
+            { rareza: 'pococomun', es: 'Herramienta multiusos', en: 'All-Purpose Tool' },
+            { rareza: 'pococomun', es: 'Amuleto del devoto', en: 'Amulet of the Devout' },
+            { rareza: 'pococomun', es: 'Grimorio arcano', en: 'Arcane Grimoire' },
+            { rareza: 'pococomun', es: 'Tatuaje de barrera', en: 'Barrier Tattoo' },
+            { rareza: 'pococomun', es: 'Vial Bloodwell', en: 'Bloodwell Vial' },
+            { rareza: 'pococomun', es: 'Tatuaje de garra de Eldritch', en: 'Eldritch Claw Tattoo' },
+            { rareza: 'pococomun', es: 'Fragmento de Feywild', en: 'Feywild Shard' },
+            { rareza: 'pococomun', es: 'Emblema guardián', en: 'Guardian Emblem' },
+            { rareza: 'pococomun', es: 'Hoz de luna', en: 'Moon Sickle' },
+            { rareza: 'pococomun', es: 'Tambor del creador de ritmos', en: 'Rhythm-Maker\u2019s Drum' },
+            // Raro
+            { rareza: 'raro', es: 'Compendio alquímico', en: 'Alchemical Compendium' },
+            { rareza: 'raro', es: 'Fragmento astral', en: 'Astral Shard' },
+            { rareza: 'raro', es: 'Archivo de astromancia', en: 'Astromancy Archive' },
+            { rareza: 'raro', es: 'Atlas de horizontes infinitos', en: 'Atlas of Endless Horizons' },
+            { rareza: 'raro', es: 'Sucursal Bell', en: 'Bell Branch' },
+            { rareza: 'raro', es: 'Manuscrito duplicado', en: 'Duplicant Manuscript' },
+            { rareza: 'raro', es: 'Fragmento de esencia elemental', en: 'Elemental Essence Shard' },
+            { rareza: 'raro', es: 'Fragmento del Reino Lejano', en: 'Far Realm Shard' },
+            { rareza: 'raro', es: 'Tratado Fulminante', en: 'Fulminating Treatise' },
+            { rareza: 'raro', es: 'Introducción a Heart Weaver', en: 'Heart Weaver\u2019s Primer' },
+            { rareza: 'raro', es: 'Libram de almas y carne', en: 'Libram of Souls and Flesh' },
+            { rareza: 'raro', es: 'Lira del edificio', en: 'Lyre of Building' },
+            { rareza: 'raro', es: 'Fragmento de esencia exterior', en: 'Outer Essence Shard' },
+            { rareza: 'raro', es: 'Códice de Planecaller', en: 'Planecaller\u2019s Codex' },
+            { rareza: 'raro', es: 'Versos protectores', en: 'Protective Verses' },
+            { rareza: 'raro', es: 'Concertina del Revelador', en: 'Reveler\u2019s Concertina' },
+            { rareza: 'raro', es: 'Tatuaje de la marca Shadowfell', en: 'Shadowfell Brand Tattoo' },
+            { rareza: 'raro', es: 'Fragmento de Shadowfell', en: 'Shadowfell Shard' },
+            // Muy raro
+            { rareza: 'muyraro', es: 'Tatuaje absorbente', en: 'Absorbing Tattoo' },
+            { rareza: 'muyraro', es: 'Crónica cristalina', en: 'Crystalline Chronicle' },
+            { rareza: 'muyraro', es: 'Tatuaje de pasos fantasma', en: 'Ghost Step Tattoo' },
+            { rareza: 'muyraro', es: 'Tatuaje de Lifewell', en: 'Lifewell Tattoo' },
+            // Legendario
+            { rareza: 'legendario', es: 'Tatuaje de furia de sangre', en: 'Blood Fury Tattoo' },
+            // Artefacto
+            { rareza: 'artefacto', es: 'Mortero de Baba Yaga', en: 'Baba Yaga\u2019s Mortar and Pestle' },
+            { rareza: 'artefacto', es: 'Ladrón de Rao', en: 'Crook of Rao' },
+            { rareza: 'artefacto', es: 'Demonomicon de Iggwilv', en: 'Demonomicon of Iggwilv' },
+            { rareza: 'artefacto', es: 'El Tarokka de las Almas de Luba', en: 'Luba\u2019s Tarokka of Souls' },
+            { rareza: 'artefacto', es: 'Poderoso sirviente de Leuk-o', en: 'Mighty Servant of Leuk-o' },
+            { rareza: 'artefacto', es: 'Dientes de Dahlver-Nar', en: 'Teeth of Dahlver-Nar' },
+          ];
+
+          // Añadir a la tabla adecuada (por defecto a arcana)
+          for (const obj of nuevosObjetos) {
+            let tabla = tablasObjetos.arcana;
+            const rarezaNorm = normalizarRareza(obj.rareza);
+            
+            if (rarezaNorm === 'artefacto') {
+              if (!tabla.artefacto) tabla.artefacto = [];
+              if (!tabla.artefacto.some(o => o.es === obj.es || o.en === obj.en)) {
+                tabla.artefacto.push({ es: obj.es, en: obj.en });
+              }
+              continue;
+            }
+            
+            // Asegurar que la rareza existe
+            if (!tabla[rarezaNorm]) tabla[rarezaNorm] = [];
+            
+            // Si no existe ya, agregarlo
+            if (!tabla[rarezaNorm].some(o => o.es === obj.es || o.en === obj.en)) {
+              tabla[rarezaNorm].push({ es: obj.es, en: obj.en });
+            }
+          }
+        })();
+
+        // Lista de objetos mágicos adicionales (normalización completa)
+        const objetosExtra = [
+          { rareza: 'comun', es: 'Varita de Sonrisas', en: 'Wand of Smiles', tipo: 'arcana' },
+          { rareza: 'comun', es: 'Varita de Caras Largas', en: 'Wand of Scowls', tipo: 'arcana' },
+          { rareza: 'comun', es: 'Flecha Irrompible', en: 'Unbreakable Arrow', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Escudo de Vista Lejana', en: 'Shield of Far Sight', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Látigo Mental', en: 'Mind Lash', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Armadura de Caparazón Mental', en: 'Mind Carapace Armor', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Hoja Mental', en: 'Mind Blade', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Contador de Huesos', en: 'Bonecounter', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Piedra Sensorial', en: 'Sensory Stone', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Brújula de Portales', en: 'Portal Compass', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Mimir', en: 'Mimir', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Arnés Infernal', en: 'Infernal Tack', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Gran Espada Plateada', en: 'Greater Silver Sword', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Bolsa de Almas', en: 'Soul Bag', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Piedra de Corazón', en: 'Heartstone', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Adorno de Escamas Despierto', en: 'Wakened Scaled Ornament', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Vasija de Dragón Despierta', en: 'Wakened Dragon Vessel', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Adorno de Escamas Estimulante', en: 'Stirring Scaled Ornament', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Vasija de Dragón Estimulante', en: 'Stirring Dragon Vessel', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Adorno de Escamas Adormecido', en: 'Slumbering Scaled Ornament', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Vasija de Dragón Adormecida', en: 'Slumbering Dragon Vessel', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Adorno de Escamas Ascendiente', en: 'Ascendant Scaled Ornament', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Vasija de Dragón Ascendiente', en: 'Ascendant Dragon Vessel', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Foco de Toque de Dragón Despierto', en: 'Wakened Dragon-Touched Focus', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Foco de Toque de Dragón Estimulante', en: 'Stirring Dragon-Touched Focus', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Foco de Toque de Dragón Adormecido', en: 'Slumbering Dragon-Touched Focus', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Foco de Toque de Dragón Ascendiente', en: 'Ascendant Dragon-Touched Focus', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Arma de Ira de Dragón Despierta', en: 'Wakened Dragon\'s Wrath Weapon', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Arma de Ira de Dragón Estimulante', en: 'Stirring Dragon\'s Wrath Weapon', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Arma de Ira de Dragón Adormecida', en: 'Slumbering Dragon\'s Wrath Weapon', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Arma de Ira de Dragón Ascendiente', en: 'Ascendant Dragon\'s Wrath Weapon', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Aniquilador de Topacio', en: 'Topaz Annihilator', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Broquel de Zafiro', en: 'Sapphire Buckler', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Gema de Tejido de Rubí', en: 'Ruby Weave Gem', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Poción de Majestad de Dragón', en: 'Potion of Dragon\'s Majesty', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Bufanda de Platino', en: 'Platinum Scarf', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Figurilla de Canario Dorado de Poder Maravilloso', en: 'Gold Canary Figurine of Wondrous Power', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Flail de Tiamat', en: 'Flail of Tiamat', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Pluma de Esmeralda', en: 'Emerald Pen', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Dragonlance', en: 'Dragonlance', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Arco de Ala de Dragón', en: 'Dragon Wing Bow', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Cinturón de Piel de Dragón +3', en: '+3 Dragonhide Belt', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Cinturón de Piel de Dragón +2', en: '+2 Dragonhide Belt', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Cinturón de Piel de Dragón +1', en: '+1 Dragonhide Belt', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Hoja de Cristal', en: 'Crystal Blade', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Piedra Imán de Amatista', en: 'Amethyst Lodestone', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Grebas Chillantes', en: 'Shrieking Greaves', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Gafas Destrozadas', en: 'Blasted Goggles', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Transportador Telescópico', en: 'Telescopic Transporter', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Munición Alada', en: 'Winged Ammunition', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Tridente Llamador de Mareas', en: 'Tidecaller Trident', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Espada de los Planos', en: 'Sword of the Planes', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Pico de Guerra Creador de Piedra', en: 'Stonemaker War Pick', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Honda Derribadora de Gigantes', en: 'Sling of Giant Felling', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Escudo de la Tortuga', en: 'Shield of the Tortoise', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Martillo de Enfoque Rúnico', en: 'Hammer of Runic Focus', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Látigo Asidor', en: 'Grasping Whip', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Armadura Gloomwrought', en: 'Gloomwrought Armor', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Arma Rompedora de Fuerza', en: 'Forcebreaker Weapon', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Armadura Feywrought', en: 'Feywrought Armor', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Sanguijuela Seca', en: 'Dried Leech', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Armadura Mecánica', en: 'Clockwork Armor', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Arco de Melodías', en: 'Bow of Melodies', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Arco de Conflagración', en: 'Bow of Conflagration', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Escudo Búmeran', en: 'Boomerang Shield', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Munición Buscadora de Sangre', en: 'Bloodseeker Ammunition', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Hacha de Sangre', en: 'Bloodrage Greataxe', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Armadura de Ingravidez', en: 'Armor of Weightlessness', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Armadura de los Caídos', en: 'Armor of the Fallen', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Armadura de Esporas Fúngicas', en: 'Armor of Fungal Spores', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Armadura Antimágica', en: 'Antimagic Armor', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Casa de Naipes', en: 'House of Cards', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Tijeras Cortadoras del Destino', en: 'Fate Cutter Shears', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Baraja de Oráculos', en: 'Deck of Oracles', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Baraja del Repartidor del Destino +3', en: '+3 Fate Dealer\'s Deck', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Baraja del Repartidor del Destino +2', en: '+2 Fate Dealer\'s Deck', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Baraja del Repartidor del Destino +1', en: '+1 Fate Dealer\'s Deck', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Baraja de la Maravilla', en: 'Deck of Wonder', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Baraja de Muchas Más Cosas', en: 'Deck of Many More Things', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Baraja de Cartas Salvajes', en: 'Deck of Wild Cards', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Baraja de Miscelánea', en: 'Deck of Miscellany', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Baraja de Dimensiones', en: 'Deck of Dimensions', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Baraja del Tahúr', en: 'Card Sharp\'s Deck', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Arma de Mando del Trono', en: 'Weapon of Throne\'s Command', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Llave Maestra del Guerrero', en: 'Warrior\'s Passkey', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Armadura Caminante del Vacío', en: 'Voidwalker Armor', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Bastón Solar', en: 'Sun Staff', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Ballesta Disparadora de Estrellas', en: 'Starshot Crossbow', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Huso del Destino', en: 'Spindle of Fate', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Yelmo de Calavera', en: 'Skull Helm', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Sello del Sabio (Lobo)', en: 'Sage\'s Signet (Wolf)', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Sello del Sabio (Pájaro Cantor)', en: 'Sage\'s Signet (Songbird)', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Sello del Sabio (Serpiente)', en: 'Sage\'s Signet (Serpent)', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Sello del Sabio (León)', en: 'Sage\'s Signet (Lion)', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Sello del Sabio (Ciervo)', en: 'Sage\'s Signet (Hart)', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Sello del Sabio (Oso)', en: 'Sage\'s Signet (Bear)', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Flail Ruinoso', en: 'Ruinous Flail', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Manto del Pícaro', en: 'Rogue\'s Mantle', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Vara de Llamas Infernal', en: 'Rod of Hellish Flames', tipo: 'arcana' },
+          { rareza: 'pococomun', es: 'Anillo de Ingenio del Acertijo', en: 'Ring of Puzzler\'s Wit', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Armadura de la Hermandad del Caballero', en: 'Plate of Knight\'s Fellowship', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Máscara del Bufón', en: 'Jester\'s Mask', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Arco Lunar Brillante', en: 'Glimmering Moonbow', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Hoja del Necio', en: 'Fool\'s Blade', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Gema del Fabulista', en: 'Fabulist Gem', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Égida de Euryale', en: 'Euryale\'s Aegis', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Esfera de Ruptura de Donjon', en: 'Donjon\'s Sundering Sphere', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Corona de Cometas Giratorios', en: 'Crown of Whirling Comets', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Coraza del Equilibrio', en: 'Breastplate of Balance', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Garra Funesta', en: 'Baleful Talon', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Carta del Vacío', en: 'Void Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta del Trono', en: 'Throne Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta de Garras', en: 'Talons Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta del Sol', en: 'Sun Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta de las Llamas', en: 'Flames Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta de los Destinos', en: 'Fates Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta de Euryale', en: 'Euryale Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta de Donjon', en: 'Donjon Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta del Cometa', en: 'Comet Card', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Carta del Equilibrio', en: 'Balance Card', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Armadura de Céfiro', en: 'Zephyr Armor', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Guanteletes Rebanadores de Dragón', en: 'Wyrmreaver Gauntlets', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Botas del Caminante', en: 'Wayfarer\'s Boots', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Cuerno de Guerra del Valor', en: 'War Horn of Valor', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Coraza Rompedora de Piedra', en: 'Stonebreaker\'s Breastplate', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Bastón de las Colinas Enraizadas', en: 'Staff of the Rooted Hills', tipo: 'arcana' },
+          { rareza: 'legendario', es: 'Escudo del Acorazado Llameante', en: 'Shield of the Blazing Dreadnought', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Amuleto del Santuario', en: 'Sanctum Amulet', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Anillo de Amistad', en: 'Ring of Amity', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Grito del Segador', en: 'Reaper\'s Scream', tipo: 'armamento' },
+          { rareza: 'pococomun', es: 'Figurilla Prehistórica de Poder Maravilloso, Plesiosaurio de Pirita', en: 'Prehistoric Figurine of Wondrous Power, Pyrite Plesiosaurus', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Figurilla Prehistórica de Poder Maravilloso, Pteranodon de Cianita', en: 'Prehistoric Figurine of Wondrous Power, Kyanite Pteranodon', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Figurilla Prehistórica de Poder Maravilloso, Tyrannosaurus Rex de Jaspe', en: 'Prehistoric Figurine of Wondrous Power, Jasper Tyrannosaurus Rex', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Figurilla Prehistórica de Poder Maravilloso, Triceratops de Cornalina', en: 'Prehistoric Figurine of Wondrous Power, Carnelian Triceratops', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Orbe de Skoraeus', en: 'Orb of Skoraeus', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Corona de Nimbus', en: 'Nimbus Coronet', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Manto de Mistral', en: 'Mistral Mantle', tipo: 'implementos' },
+          { rareza: 'legendario', es: 'Arco Largo del Hogar Sanador', en: 'Longbow of the Healing Hearth', tipo: 'armamento' },
+          { rareza: 'raro', es: 'Látigo de Inmolación', en: 'Lash of Immolation', tipo: 'armamento' },
+          { rareza: 'legendario', es: 'Arpa de la Abundancia Dorada', en: 'Harp of Gilded Plenty', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Pigmento de Runa Brillante', en: 'Glowrune Pigment', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Garras del Excavador', en: 'Delver\'s Claws', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Corona del Portador de la Ira', en: 'Crown of the Wrath Bringer', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Hoja de Sangre', en: 'Bloodshed Blade', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Armadura de Salvaguarda', en: 'Armor of Safeguarding', tipo: 'armamento' },
+          { rareza: 'muyraro', es: 'Lanzador Élfico', en: 'Elven Thrower', tipo: 'armamento' },
+          { rareza: 'comun', es: 'Anillo de aventurero', en: 'Adventurer\'s Ring', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Amuleto de mando de plantas', en: 'Charm of Plant Command', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Piedra de suerte maldita', en: 'Cursed Luckstone', tipo: 'implementos' },
+          { rareza: 'muyraro', es: 'Traje de pez', en: 'Fish Suit', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Broche de Harper', en: 'Harper Pin', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Yelmo de acción submarina', en: 'Helm of Underwater Action', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Maravilla mecánica (doméstica)', en: 'Mechanical Wonder (Domestic)', tipo: 'implementos' },
+          { rareza: 'comun', es: 'Maravilla mecánica (voladora)', en: 'Mechanical Wonder (Flying)', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Maravilla mecánica (girocóptero)', en: 'Mechanical Wonder (Gyrocopter)', tipo: 'implementos' },
+          { rareza: 'comun', es: 'Maravilla mecánica (movilidad)', en: 'Mechanical Wonder (Mobility)', tipo: 'implementos' },
+          { rareza: 'comun', es: 'Pipa del recuerdo', en: 'Pipe of Remembrance', tipo: 'implementos' },
+          { rareza: 'comun', es: 'Cápsula de presión', en: 'Pressure Capsule', tipo: 'implementos' },
+          { rareza: 'comun', es: 'Estatuilla adoradora de Sekolah', en: 'Sekolahian Worshiping Statuette', tipo: 'reliquias' },
+          { rareza: 'raro', es: 'Timón de spelljamming', en: 'Spelljamming Helm', tipo: 'implementos' },
+          { rareza: 'pococomun', es: 'Tatuaje de hechizo Thayan', en: 'Thayan Spell Tattoo', tipo: 'arcana' },
+          { rareza: 'legendario', es: 'Tomo del dragón', en: 'Tome of the Dragon', tipo: 'arcana' },
+          { rareza: 'pococomun', es: 'Planetario de Wildspace', en: 'Wildspace Orrery', tipo: 'implementos' },
+          { rareza: 'raro', es: 'Esquife de viento', en: 'Windskiff', tipo: 'implementos' }
+        ];
+        // Agregar objetos extra con normalización de rarezas
+        for (const obj of objetosExtra) {
+          const tipoNorm = normalizarTipo(obj.tipo);
+          const rarezaNorm = normalizarRareza(obj.rareza);
+          
+          let tabla = tablasObjetos[tipoNorm] || tablasObjetos.arcana;
+          if (!tabla[rarezaNorm]) tabla[rarezaNorm] = [];
+          
+          // Evitar duplicados por nombre español o inglés
+          if (!tabla[rarezaNorm].some(o => o.es === obj.es || o.en === obj.en)) {
+            tabla[rarezaNorm].push({ es: obj.es, en: obj.en });
+          }
+        }
+
+        // Parche de robustez para tablas de objetos mágicos
+        (function() {
+          const tipos = ['arcana', 'armamento', 'implementos', 'reliquias'];
+          const rarezas = ['comun', 'pococomun', 'raro', 'muyraro', 'legendario', 'artefacto'];
+          for (const tipo of tipos) {
+            if (!tablasObjetos[tipo]) tablasObjetos[tipo] = {};
+            // Normalizar todas las variantes de rarezas a formato estándar
+            if (tablasObjetos[tipo]['muy raro']) {
+              tablasObjetos[tipo]['muyraro'] = tablasObjetos[tipo]['muy raro'];
+              delete tablasObjetos[tipo]['muy raro'];
+            }
+            if (tablasObjetos[tipo]['poco comun']) {
+              tablasObjetos[tipo]['pococomun'] = tablasObjetos[tipo]['poco comun'];
+              delete tablasObjetos[tipo]['poco comun'];
+            }
+            // Asegurar que todas las rarezas existen y tienen al menos un objeto
+            for (const rareza of rarezas) {
+              if (!tablasObjetos[tipo][rareza] || !Array.isArray(tablasObjetos[tipo][rareza])) {
+                tablasObjetos[tipo][rareza] = [{ rango: "01-00", es: 'Sin objetos', en: 'No items' }];
+              } else if (tablasObjetos[tipo][rareza].length === 0) {
+                tablasObjetos[tipo][rareza].push({ rango: "01-00", es: 'Sin objetos', en: 'No items' });
+              }
+            }
+          }
+        })();
+
+        // Función para normalizar rarezas (elimina acentos y espacios)
+        function normalizarRareza(rareza) {
+          const mapa = {
+            'común': 'comun',
+            'comun': 'comun',
+            'poco común': 'pococomun',
+            'poco comun': 'pococomun',
+            'pococomun': 'pococomun',
+            'raro': 'raro',
+            'muy raro': 'muyraro',
+            'muyraro': 'muyraro',
+            'legendario': 'legendario',
+            'artefacto': 'artefacto'
+          };
+          const rarezaNorm = rareza
+            .toLowerCase()
+            .replace(/ú/g, 'u')
+            .replace(/ó/g, 'o')
+            .replace(/é/g, 'e')
+            .replace(/í/g, 'i')
+            .replace(/á/g, 'a')
+            .replace(/ñ/g, 'n')
+            .trim();
+          
+          return mapa[rarezaNorm] || rarezaNorm.replace(/\s+/g, '');
+        }
+
+        // Parche en la generación de objetos mágicos
+        // Busca en la función generarTesoro la sección de generación de objetos mágicos y reemplaza el push por:
+        // if (objeto && objeto.es && objeto.en && objeto.es !== 'Sin objetos') { ...push... }
+        // Si no hay objetos mágicos posibles, muestra un mensaje claro en el HTML
+        // ... existing code ...
+        // En la función generarTesoro, reemplaza:
+        // objetosMagicos.push({ es: objeto.es, en: objeto.en, ... })
+        // por:
+        // if (objeto && objeto.es && objeto.en && objeto.es !== 'Sin objetos') { objetosMagicos.push({ es: objeto.es, en: objeto.en, ... }) }
+        // ... existing code ...
+
+        // Función para normalizar tipos de objetos mágicos
+        function normalizarTipo(tipo) {
+          const mapa = {
+            'arcanos': 'arcana',
+            'arcana': 'arcana',
+            'arcano': 'arcana',
+            'armamento': 'armamento',
+            'armamentos': 'armamento',
+            'armas': 'armamento',
+            'variados': 'implementos',
+            'implementos': 'implementos',
+            'implemento': 'implementos',
+            'reliquias': 'reliquias',
+            'reliquia': 'reliquias'
+          };
+          return mapa[tipo.toLowerCase().trim()] || 'arcana';
+        }
+
+        // En la generación de objetos mágicos, usa:
+        // const tipoElegidoNorm = normalizarTipo(tipoElegido);
+        // const subtabla = (tablasObjetos[tipoElegidoNorm] && tablasObjetos[tipoElegidoNorm][rarezaNorm]) ? tablasObjetos[tipoElegidoNorm][rarezaNorm] : [];
+        // ... existing code ...
+
+        // --- Tabla de conjuros (ejemplo, solo algunos para muestra; completar con todos los que has pasado) ---
+        const CONJUROS = [
+          { en: 'Acid Splash', es: 'Salpicaduras de ácido', nivel: 0 },
+          { en: 'Blade Ward', es: 'Barrera de la espada', nivel: 0 },
+          { en: 'Booming Blade', es: 'Hoja retumbante', nivel: 0 },
+          { en: 'Chill Touch', es: 'Toque frío', nivel: 0 },
+          { en: 'Control Flames', es: 'Controlar llamas', nivel: 0 },
+          { en: 'Create Bonfire', es: 'Crea una hoguera', nivel: 0 },
+          { en: 'Dancing Lights', es: 'Luces danzantes', nivel: 0 },
+          { en: 'Druidcraft', es: 'Druidismo', nivel: 0 },
+          { en: 'Eldritch Blast', es: 'Ráfaga sobrenatural', nivel: 0 },
+          { en: 'Elementalism', es: 'Elementalismo', nivel: 0 },
+          { en: 'Fire Bolt', es: 'Rayo de fuego', nivel: 0 },
+          { en: 'Friends', es: 'Amistad', nivel: 0 },
+          { en: 'Frostbite', es: 'Mordedura de escarcha', nivel: 0 },
+          { en: 'Green-Flame Blade', es: 'Hoja de llama verde', nivel: 0 },
+          { en: 'Guidance', es: 'Guía', nivel: 0 },
+          { en: 'Gust', es: 'Ráfaga', nivel: 0 },
+          { en: 'Infestation', es: 'Infestación', nivel: 0 },
+          { en: 'Light', es: 'Luz', nivel: 0 },
+          { en: 'Lightning Lure', es: 'Látigo relampagueante', nivel: 0 },
+          { en: 'Mage Hand', es: 'Mano de mago', nivel: 0 },
+          { en: 'Magic Stone', es: 'Piedra mágica', nivel: 0 },
+          { en: 'Mending', es: 'Remendar', nivel: 0 },
+          { en: 'Message', es: 'Mensaje', nivel: 0 },
+          { en: 'Mind Sliver', es: 'Astilla mental', nivel: 0 },
+          { en: 'Minor Illusion', es: 'Ilusión menor', nivel: 0 },
+          { en: 'Mold Earth', es: 'Modelar tierra', nivel: 0 },
+          { en: 'Poison Spray', es: 'Rociada venenosa', nivel: 0 },
+          { en: 'Prestidigitation', es: 'Prestidigitación', nivel: 0 },
+          { en: 'Primal Savagery', es: 'Salvajismo primordial', nivel: 0 },
+          { en: 'Produce Flame', es: 'Producir llama', nivel: 0 },
+          { en: 'Ray of Frost', es: 'Rayo de escarcha', nivel: 0 },
+          { en: 'Resistance', es: 'Resistencia', nivel: 0 },
+          { en: 'Sacred Flame', es: 'Llama sagrada', nivel: 0 },
+          { en: 'Shape Water', es: 'Moldear agua', nivel: 0 },
+          { en: 'Shillelagh', es: 'Shillelagh', nivel: 0 },
+          { en: 'Shocking Grasp', es: 'Toque electrizante', nivel: 0 },
+          { en: 'Sorcerous Burst', es: 'Explosión de hechicero', nivel: 0 },
+          { en: 'Spare the Dying', es: 'Salvar al moribundo', nivel: 0 },
+          { en: 'Starry Wisp', es: 'Brizna estelar', nivel: 0 },
+          { en: 'Sword Burst', es: 'Explosión de espadas', nivel: 0 },
+          { en: 'Thaumaturgy', es: 'Taumaturgia', nivel: 0 },
+          { en: 'Thorn Whip', es: 'Látigo de espinas', nivel: 0 },
+          { en: 'Thunderclap', es: 'Aplauso atronador', nivel: 0 },
+          { en: 'Toll the Dead', es: 'Doblar de los muertos', nivel: 0 },
+          { en: 'True Strike', es: 'Golpe certero', nivel: 0 },
+          { en: 'Vicious Mockery', es: 'Mofa cruel', nivel: 0 },
+          { en: 'Word of Radiance', es: 'Palabra de radiancia', nivel: 0 },
+          { en: 'Absorb Elements', es: 'Absorber elementos', nivel: 1 },
+          { en: 'Alarm', es: 'Alarma', nivel: 1 },
+          { en: 'Animal Friendship', es: 'Amistad con los animales', nivel: 1 },
+          { en: 'Armor of Agathys', es: 'Armadura de Agathys', nivel: 1 },
+          { en: 'Arms of Hadar', es: 'Brazos de Hadar', nivel: 1 },
+          { en: 'Bane', es: 'Perdición', nivel: 1 },
+          { en: 'Beast Bond', es: 'Vínculo con bestia', nivel: 1 },
+          { en: 'Bless', es: 'Bendecir', nivel: 1 },
+          { en: 'Burning Hands', es: 'Manos ardientes', nivel: 1 },
+          { en: 'Catapult', es: 'Catapulta', nivel: 1 },
+          { en: 'Cause Fear', es: 'Causar miedo', nivel: 1 },
+          { en: 'Ceremony', es: 'Ceremonia', nivel: 1 },
+          { en: 'Chaos Bolt', es: 'Rayo del caos', nivel: 1 },
+          { en: 'Charm Person', es: 'Hechizar persona', nivel: 1 },
+          { en: 'Chromatic Orb', es: 'Orbe cromático', nivel: 1 },
+          { en: 'Color Spray', es: 'Rociada de color', nivel: 1 },
+          { en: 'Command', es: 'Ordenar', nivel: 1 },
+          { en: 'Compelled Duel', es: 'Duelo obligado', nivel: 1 },
+          { en: 'Comprehend Languages', es: 'Comprender idiomas', nivel: 1 },
+          { en: 'Create or Destroy Water', es: 'Crear o destruir agua', nivel: 1 },
+          { en: 'Cure Wounds', es: 'Curar heridas', nivel: 1 },
+          { en: 'Detect Evil and Good', es: 'Detectar el bien y el mal', nivel: 1 },
+          { en: 'Detect Magic', es: 'Detectar magia', nivel: 1 },
+          { en: 'Detect Poison and Disease', es: 'Detectar veneno y enfermedad', nivel: 1 },
+          { en: 'Disguise Self', es: 'Disfrazarse', nivel: 1 },
+          { en: 'Dissonant Whispers', es: 'Susurros disonantes', nivel: 1 },
+          { en: 'Divine Favor', es: 'Favor divino', nivel: 1 },
+          { en: 'Divine Smite', es: 'Golpe divino', nivel: 1 },
+          { en: 'Earth Tremor', es: 'Tremor terrestre', nivel: 1 },
+          { en: 'Ensnaring Strike', es: 'Golpe atrapador', nivel: 1 },
+          { en: 'Entangle', es: 'Enredar', nivel: 1 },
+          { en: 'Expeditious Retreat', es: 'Retirada expeditiva', nivel: 1 },
+          { en: 'Faerie Fire', es: 'Fuego feérico', nivel: 1 },
+          { en: 'False Life', es: 'Falsa vida', nivel: 1 },
+          { en: 'Feather Fall', es: 'Caída de pluma', nivel: 1 },
+          { en: 'Find Familiar', es: 'Encontrar familiar', nivel: 1 },
+          { en: 'Fog Cloud', es: 'Nube de niebla', nivel: 1 },
+          { en: 'Frost Fingers', es: 'Dedos de escarcha', nivel: 1 },
+          { en: 'Goodberry', es: 'Baya buena', nivel: 1 },
+          { en: 'Grease', es: 'Grasa', nivel: 1 },
+          { en: 'Guiding Bolt', es: 'Rayo guiador', nivel: 1 },
+          { en: 'Hail of Thorns', es: 'Granizo de espinas', nivel: 1 },
+          { en: 'Healing Word', es: 'Palabra curativa', nivel: 1 },
+          { en: 'Hellish Rebuke', es: 'Reprensión infernal', nivel: 1 },
+          { en: 'Heroism', es: 'Heroísmo', nivel: 1 },
+          { en: 'Hex', es: 'Maleficio', nivel: 1 },
+          { en: 'Hunter\'s Mark', es: 'Marca del cazador', nivel: 1 },
+          { en: 'Ice Knife', es: 'Cuchillo de hielo', nivel: 1 },
+          { en: 'Identify', es: 'Identificar', nivel: 1 },
+          { en: 'Illusory Script', es: 'Escritura ilusoria', nivel: 1 },
+          { en: 'Inflict Wounds', es: 'Infligir heridas', nivel: 1 },
+          { en: 'Jump', es: 'Saltar', nivel: 1 },
+          { en: 'Longstrider', es: 'Zancada larga', nivel: 1 },
+          { en: 'Mage Armor', es: 'Armadura de mago', nivel: 1 },
+          { en: 'Magic Missile', es: 'Proyectil mágico', nivel: 1 },
+          { en: 'Protection from Evil and Good', es: 'Protección contra el bien y el mal', nivel: 1 },
+          { en: 'Purify Food and Drink', es: 'Purificar comida y bebida', nivel: 1 },
+          { en: 'Ray of Sickness', es: 'Rayo de enfermedad', nivel: 1 },
+          { en: 'Sanctuary', es: 'Santuario', nivel: 1 },
+          { en: 'Searing Smite', es: 'Golpe ardiente', nivel: 1 },
+          { en: 'Shield', es: 'Escudo', nivel: 1 },
+          { en: 'Shield of Faith', es: 'Escudo de fe', nivel: 1 },
+          { en: 'Silent Image', es: 'Imagen silenciosa', nivel: 1 },
+          { en: 'Silvery Barbs', es: 'Zarpas plateadas', nivel: 1 },
+          { en: 'Sleep', es: 'Dormir', nivel: 1 },
+          { en: 'Snare', es: 'Trampa', nivel: 1 },
+          { en: 'Speak with Animals', es: 'Hablar con los animales', nivel: 1 },
+          { en: 'Tasha\'s Caustic Brew', es: 'Brecha cáustica de Tasha', nivel: 1 },
+          { en: 'Tasha\'s Hideous Laughter', es: 'Risa horrible de Tasha', nivel: 1 },
+          { en: 'Tenser\'s Floating Disk', es: 'Disco flotante de Tenser', nivel: 1 },
+          { en: 'Thunderous Smite', es: 'Golpe atronador', nivel: 1 },
+          { en: 'Thunderwave', es: 'Onda atronadora', nivel: 1 },
+          { en: 'Unseen Servant', es: 'Sirviente invisible', nivel: 1 },
+          { en: 'Witch Bolt', es: 'Rayo de bruja', nivel: 1 },
+          { en: 'Spellfire Flare', es: 'Destello de fuego mágico', nivel: 1 },
+          { en: 'Wardaway', es: 'Repeler guardas', nivel: 1 },
+          { en: 'Wrathful Smite', es: 'Golpe iracundo', nivel: 1 },
+          { en: 'Zephyr Strike', es: 'Golpe de céfiro', nivel: 1 },
+          { en: "Aganazzar's Scorcher", es: 'Azote de Aganazzar', nivel: 2 },
+          { en: 'Aid', es: 'Auxilio', nivel: 2 },
+          { en: 'Air Bubble', es: 'Burbuja de aire', nivel: 2 },
+          { en: 'Alter Self', es: 'Alterar el ser', nivel: 2 },
+          { en: 'Animal Messenger', es: 'Mensajero animal', nivel: 2 },
+          { en: 'Arcane Lock', es: 'Cerradura arcana', nivel: 2 },
+          { en: 'Arcane Vigor', es: 'Vigor arcano', nivel: 2 },
+          { en: 'Augury', es: 'Augurio', nivel: 2 },
+          { en: 'Barkskin', es: 'Piel de corteza', nivel: 2 },
+          { en: 'Beast Sense', es: 'Sentido animal', nivel: 2 },
+          { en: 'Blindness/Deafness', es: 'Ceguera/Sordera', nivel: 2 },
+          { en: 'Blur', es: 'Desenfoque', nivel: 2 },
+          { en: 'Borrowed Knowledge', es: 'Conocimiento prestado', nivel: 2 },
+          { en: 'Calm Emotions', es: 'Calmar emociones', nivel: 2 },
+          { en: 'Cloud of Daggers', es: 'Nube de dagas', nivel: 2 },
+          { en: 'Continual Flame', es: 'Llama continua', nivel: 2 },
+          { en: 'Cordon of Arrows', es: 'Cordón de flechas', nivel: 2 },
+          { en: 'Crown of Madness', es: 'Corona de locura', nivel: 2 },
+          { en: 'Darkness', es: 'Oscuridad', nivel: 2 },
+          { en: 'Darkvision', es: 'Visión en la oscuridad', nivel: 2 },
+          { en: 'Detect Thoughts', es: 'Detectar pensamientos', nivel: 2 },
+          { en: "Dragon's Breath", es: 'Aliento de dragón', nivel: 2 },
+          { en: 'Dust Devil', es: 'Diablillo de polvo', nivel: 2 },
+          { en: 'Earthbind', es: 'Atadura terrestre', nivel: 2 },
+          { en: 'Enhance Ability', es: 'Mejorar habilidad', nivel: 2 },
+          { en: 'Enlarge/Reduce', es: 'Agrandar/Reducir', nivel: 2 },
+          { en: 'Enthrall', es: 'Cautivar', nivel: 2 },
+          { en: 'Find Steed', es: 'Encontrar corcel', nivel: 2 },
+          { en: 'Find Traps', es: 'Encontrar trampas', nivel: 2 },
+          { en: 'Flame Blade', es: 'Hoja de llama', nivel: 2 },
+          { en: 'Flaming Sphere', es: 'Esfera llameante', nivel: 2 },
+          { en: 'Gentle Repose', es: 'Reposo gentil', nivel: 2 },
+          { en: 'Gust of Wind', es: 'Ráfaga de viento', nivel: 2 },
+          { en: 'Healing Spirit', es: 'Espíritu curativo', nivel: 2 },
+          { en: 'Heat Metal', es: 'Calor metálico', nivel: 2 },
+          { en: 'Hold Person', es: 'Sujetar persona', nivel: 2 },
+          { en: 'Invisibility', es: 'Invisibilidad', nivel: 2 },
+          { en: 'Kinetic Jaunt', es: 'Zancada cinética', nivel: 2 },
+          { en: 'Knock', es: 'Llamar', nivel: 2 },
+          { en: 'Lesser Restoration', es: 'Restauración menor', nivel: 2 },
+          { en: 'Levitate', es: 'Levitar', nivel: 2 },
+          { en: 'Locate Animals or Plants', es: 'Localizar animales o plantas', nivel: 2 },
+          { en: 'Locate Object', es: 'Localizar objeto', nivel: 2 },
+          { en: 'Magic Mouth', es: 'Boca mágica', nivel: 2 },
+          { en: 'Magic Weapon', es: 'Arma mágica', nivel: 2 },
+          { en: "Maximilian's Earthen Grasp", es: 'Agarre terrenal de Maximilian', nivel: 2 },
+          { en: "Melf's Acid Arrow", es: 'Flecha ácida de Melf', nivel: 2 },
+          { en: 'Mind Spike', es: 'Púa mental', nivel: 2 },
+          { en: 'Mirror Image', es: 'Imagen múltiple', nivel: 2 },
+          { en: 'Misty Step', es: 'Paso brumoso', nivel: 2 },
+          { en: 'Moonbeam', es: 'Rayo lunar', nivel: 2 },
+          { en: "Nathair's Mischief", es: 'Travesura de Nathair', nivel: 2 },
+          { en: "Nystul's Magic Aura", es: 'Aura mágica de Nystul', nivel: 2 },
+          { en: 'Pass without Trace', es: 'Pasar sin dejar rastro', nivel: 2 },
+          { en: 'Phantasmal Force', es: 'Fuerza fantasmal', nivel: 2 },
+          { en: 'Prayer of Healing', es: 'Oración curativa', nivel: 2 },
+          { en: 'Protection from Poison', es: 'Protección contra el veneno', nivel: 2 },
+          { en: 'Pyrotechnics', es: 'Pirotecnia', nivel: 2 },
+          { en: 'Ray of Enfeeblement', es: 'Rayo debilitador', nivel: 2 },
+          { en: "Rime's Binding Ice", es: 'Hielo vinculante de Rime', nivel: 2 },
+          { en: 'Rope Trick', es: 'Truco de cuerda', nivel: 2 },
+          { en: 'Scorching Ray', es: 'Rayo abrasador', nivel: 2 },
+          { en: 'See Invisibility', es: 'Ver lo invisible', nivel: 2 },
+          { en: 'Shadow Blade', es: 'Hoja sombría', nivel: 2 },
+          { en: 'Shatter', es: 'Quebrantar', nivel: 2 },
+          { en: 'Shining Smite', es: 'Golpe brillante', nivel: 2 },
+          { en: 'Silence', es: 'Silencio', nivel: 2 },
+          { en: 'Skywrite', es: 'Escribir en el cielo', nivel: 2 },
+          { en: "Snilloc's Snowball Swarm", es: 'Avalancha de bolas de nieve de Snilloc', nivel: 2 },
+          { en: 'Spider Climb', es: 'Trepar como una araña', nivel: 2 },
+          { en: 'Spike Growth', es: 'Crecimiento espinoso', nivel: 2 },
+          { en: 'Spiritual Weapon', es: 'Arma espiritual', nivel: 2 },
+          { en: 'Spray of Cards', es: 'Rociada de cartas', nivel: 2 },
+          { en: 'Suggestion', es: 'Sugestión', nivel: 2 },
+          { en: 'Summon Beast', es: 'Invocar bestia', nivel: 2 },
+          { en: "Tasha's Mind Whip", es: 'Látigo mental de Tasha', nivel: 2 },
+          { en: 'Vortex Warp', es: 'Distorsión de vórtice', nivel: 2 },
+          { en: 'Warding Bond', es: 'Vínculo protector', nivel: 2 },
+          { en: 'Warding Wind', es: 'Viento protector', nivel: 2 },
+          { en: 'Warp Sense', es: 'Sentido de distorsión', nivel: 2 },
+          { en: 'Death Armor', es: 'Armadura de muerte', nivel: 2 },
+          { en: "Deryan's Helpful Homunculi", es: 'Homúnculos serviciales de Deryan', nivel: 2 },
+          { en: "Elminster's Elusion", es: 'Elusión de Elminster', nivel: 2 },
+          { en: 'Web', es: 'Telaraña', nivel: 2 },
+          { en: 'Wither and Bloom', es: 'Marchitar y florecer', nivel: 2 },
+          { en: 'Zone of Truth', es: 'Zona de la verdad', nivel: 2 },
+          { en: 'Animate Dead', es: 'Animar a los muertos', nivel: 3 },
+          { en: 'Antagonize', es: 'Antagonizar', nivel: 3 },
+          { en: "Ashardalon's Stride", es: 'Zancada de Ashardalon', nivel: 3 },
+          { en: 'Aura of Vitality', es: 'Aura de vitalidad', nivel: 3 },
+          { en: 'Beacon of Hope', es: 'Señal de esperanza', nivel: 3 },
+          { en: 'Bestow Curse', es: 'Imponer maldición', nivel: 3 },
+          { en: 'Blinding Smite', es: 'Golpe cegador', nivel: 3 },
+          { en: 'Blink', es: 'Destello', nivel: 3 },
+          { en: 'Call Lightning', es: 'Llamar relámpagos', nivel: 3 },
+          { en: 'Catnap', es: 'Siesta', nivel: 3 },
+          { en: 'Clairvoyance', es: 'Clarividencia', nivel: 3 },
+          { en: 'Conjure Animals', es: 'Invocar animales', nivel: 3 },
+          { en: 'Conjure Barrage', es: 'Invocar andanada', nivel: 3 },
+          { en: 'Counterspell', es: 'Contraconjuro', nivel: 3 },
+          { en: 'Create Food and Water', es: 'Crear comida y agua', nivel: 3 },
+          { en: "Crusader's Mantle", es: 'Manto del cruzado', nivel: 3 },
+          { en: 'Daylight', es: 'Luz del día', nivel: 3 },
+          { en: 'Dispel Magic', es: 'Disipar magia', nivel: 3 },
+          { en: 'Elemental Weapon', es: 'Arma elemental', nivel: 3 },
+          { en: 'Enemies Abound', es: 'Enemigos por doquier', nivel: 3 },
+          { en: 'Erupting Earth', es: 'Tierra en erupción', nivel: 3 },
+          { en: 'Fear', es: 'Miedo', nivel: 3 },
+          { en: 'Feign Death', es: 'Fingir muerte', nivel: 3 },
+          { en: 'Fireball', es: 'Bola de fuego', nivel: 3 },
+          { en: 'Flame Arrows', es: 'Flechas llameantes', nivel: 3 },
+          { en: 'Fly', es: 'Volar', nivel: 3 },
+          { en: 'Gaseous Form', es: 'Forma gaseosa', nivel: 3 },
+          { en: 'Glyph of Warding', es: 'Glifo de protección', nivel: 3 },
+          { en: 'Haste', es: 'Acelerar', nivel: 3 },
+          { en: 'Hunger of Hadar', es: 'Hambre de Hadar', nivel: 3 },
+          { en: 'Hypnotic Pattern', es: 'Patrón hipnótico', nivel: 3 },
+          { en: 'Intellect Fortress', es: 'Fortaleza intelectual', nivel: 3 },
+          { en: "Leomund's Tiny Hut", es: 'Cabaña diminuta de Leomund', nivel: 3 },
+          { en: 'Life Transference', es: 'Transferencia de vida', nivel: 3 },
+          { en: 'Lightning Arrow', es: 'Flecha relampagueante', nivel: 3 },
+          { en: 'Lightning Bolt', es: 'Rayo relampagueante', nivel: 3 },
+          { en: 'Magic Circle', es: 'Círculo mágico', nivel: 3 },
+          { en: 'Major Image', es: 'Imagen mayor', nivel: 3 },
+          { en: 'Mass Healing Word', es: 'Palabra curativa en masa', nivel: 3 },
+          { en: 'Meld into Stone', es: 'Fundirse con la piedra', nivel: 3 },
+          { en: "Melf's Minute Meteors", es: 'Meteoritos diminutos de Melf', nivel: 3 },
+          { en: 'Nondetection', es: 'No detección', nivel: 3 },
+          { en: 'Phantom Steed', es: 'Corcel fantasmal', nivel: 3 },
+          { en: 'Plant Growth', es: 'Crecimiento vegetal', nivel: 3 },
+          { en: 'Protection from Energy', es: 'Protección contra la energía', nivel: 3 },
+          { en: 'Remove Curse', es: 'Eliminar maldición', nivel: 3 },
+          { en: 'Revivify', es: 'Revivir', nivel: 3 },
+          { en: 'Sending', es: 'Enviar mensaje', nivel: 3 },
+          { en: 'Sleet Storm', es: 'Tormenta de aguanieve', nivel: 3 },
+          { en: 'Slow', es: 'Lentitud', nivel: 3 },
+          { en: 'Speak with Dead', es: 'Hablar con los muertos', nivel: 3 },
+          { en: 'Speak with Plants', es: 'Hablar con las plantas', nivel: 3 },
+          { en: 'Spirit Guardians', es: 'Guardianes espirituales', nivel: 3 },
+          { en: 'Spirit Shroud', es: 'Sudario espiritual', nivel: 3 },
+          { en: 'Stinking Cloud', es: 'Nube apestosa', nivel: 3 },
+          { en: 'Summon Fey', es: 'Invocar feérico', nivel: 3 },
+          { en: 'Summon Lesser Demons', es: 'Invocar demonios menores', nivel: 3 },
+          { en: 'Summon Shadowspawn', es: 'Invocar engendro sombrío', nivel: 3 },
+          { en: 'Summon Undead', es: 'Invocar no-muerto', nivel: 3 },
+          { en: 'Thunder Step', es: 'Paso atronador', nivel: 3 },
+          { en: 'Tidal Wave', es: 'Ola gigante', nivel: 3 },
+          { en: 'Tiny Servant', es: 'Sirviente diminuto', nivel: 3 },
+          { en: 'Tongues', es: 'Lenguas', nivel: 3 },
+          { en: 'Vampiric Touch', es: 'Toque vampírico', nivel: 3 },
+          { en: 'Wall of Sand', es: 'Muro de arena', nivel: 3 },
+          { en: 'Wall of Water', es: 'Muro de agua', nivel: 3 },
+          { en: 'Cacophonic Shield', es: 'Escudo cacofónico', nivel: 3 },
+          { en: 'Conjure Constructs', es: 'Invocar constructos', nivel: 3 },
+          { en: "Laeral's Silver Lance", es: 'Lanza plateada de Laeral', nivel: 3 },
+          { en: "Syluné's Viper", es: 'Víbora de Syluné', nivel: 3 },
+          { en: 'Water Breathing', es: 'Respirar bajo el agua', nivel: 3 },
+          { en: 'Water Walk', es: 'Caminar sobre el agua', nivel: 3 },
+          { en: 'Wind Wall', es: 'Muro de viento', nivel: 3 },
+          { en: 'Arcane Eye', es: 'Ojo arcano', nivel: 4 },
+          { en: 'Aura of Life', es: 'Aura de vida', nivel: 4 },
+          { en: 'Aura of Purity', es: 'Aura de pureza', nivel: 4 },
+          { en: 'Banishment', es: 'Destierro', nivel: 4 },
+          { en: 'Blight', es: 'Tizón', nivel: 4 },
+          { en: 'Charm Monster', es: 'Hechizar monstruo', nivel: 4 },
+          { en: 'Compulsion', es: 'Compulsión', nivel: 4 },
+          { en: 'Confusion', es: 'Confusión', nivel: 4 },
+          { en: 'Conjure Minor Elementals', es: 'Invocar elementales menores', nivel: 4 },
+          { en: 'Conjure Woodland Beings', es: 'Invocar seres del bosque', nivel: 4 },
+          { en: 'Control Water', es: 'Controlar agua', nivel: 4 },
+          { en: 'Death Ward', es: 'Protección contra la muerte', nivel: 4 },
+          { en: 'Dimension Door', es: 'Puerta dimensional', nivel: 4 },
+          { en: 'Divination', es: 'Adivinación', nivel: 4 },
+          { en: 'Dominate Beast', es: 'Dominar bestia', nivel: 4 },
+          { en: 'Elemental Bane', es: 'Perjuicio elemental', nivel: 4 },
+          { en: "Evard's Black Tentacles", es: 'Tentáculos negros de Evard', nivel: 4 },
+          { en: 'Fabricate', es: 'Fabricar', nivel: 4 },
+          { en: 'Find Greater Steed', es: 'Encontrar corcel superior', nivel: 4 },
+          { en: 'Fire Shield', es: 'Escudo de fuego', nivel: 4 },
+          { en: 'Fount of Moonlight', es: 'Fuente de luz lunar', nivel: 4 },
+          { en: 'Freedom of Movement', es: 'Libertad de movimiento', nivel: 4 },
+          { en: 'Gate Seal', es: 'Sello de portal', nivel: 4 },
+          { en: 'Giant Insect', es: 'Insecto gigante', nivel: 4 },
+          { en: 'Grasping Vine', es: 'Vid asidora', nivel: 4 },
+          { en: 'Greater Invisibility', es: 'Invisibilidad mayor', nivel: 4 },
+          { en: 'Guardian of Faith', es: 'Guardián de la fe', nivel: 4 },
+          { en: 'Guardian of Nature', es: 'Guardián de la naturaleza', nivel: 4 },
+          { en: 'Hallucinatory Terrain', es: 'Terreno ilusorio', nivel: 4 },
+          { en: 'Ice Storm', es: 'Tormenta de hielo', nivel: 4 },
+          { en: "Leomund's Secret Chest", es: 'Cofre secreto de Leomund', nivel: 4 },
+          { en: 'Locate Creature', es: 'Localizar criatura', nivel: 4 },
+          { en: "Mordenkainen's Faithful Hound", es: 'Sabueso fiel de Mordenkainen', nivel: 4 },
+          { en: "Mordenkainen's Private Sanctum", es: 'Santuario privado de Mordenkainen', nivel: 4 },
+          { en: "Otiluke's Resilient Sphere", es: 'Esfera resiliente de Otiluke', nivel: 4 },
+          { en: 'Phantasmal Killer', es: 'Asesino fantasmal', nivel: 4 },
+          { en: 'Polymorph', es: 'Polimorfar', nivel: 4 },
+          { en: "Raulothim's Psychic Lance", es: 'Lanza psíquica de Raulothim', nivel: 4 },
+          { en: 'Shadow of Moil', es: 'Sombra de Moil', nivel: 4 },
+          { en: 'Sickening Radiance', es: 'Radiancia enfermiza', nivel: 4 },
+          { en: 'Spirit of Death', es: 'Espíritu de la muerte', nivel: 4 },
+          { en: 'Staggering Smite', es: 'Golpe tambaleante', nivel: 4 },
+          { en: 'Stone Shape', es: 'Forma de piedra', nivel: 4 },
+          { en: 'Stoneskin', es: 'Piel pétrea', nivel: 4 },
+          { en: 'Storm Sphere', es: 'Esfera de tormenta', nivel: 4 },
+          { en: 'Summon Aberration', es: 'Invocar aberración', nivel: 4 },
+          { en: 'Summon Construct', es: 'Invocar constructo', nivel: 4 },
+          { en: 'Summon Elemental', es: 'Invocar elemental', nivel: 4 },
+          { en: 'Summon Greater Demon', es: 'Invocar demonio mayor', nivel: 4 },
+          { en: 'Backlash', es: 'Contragolpe', nivel: 4 },
+          { en: 'Doomtide', es: 'Marea de perdición', nivel: 4 },
+          { en: 'Spellfire Storm', es: 'Tormenta de fuego mágico', nivel: 4 },
+          { en: 'Vitriolic Sphere', es: 'Esfera vitriólica', nivel: 4 },
+          { en: 'Wall of Fire', es: 'Muro de fuego', nivel: 4 },
+          { en: 'Watery Sphere', es: 'Esfera acuática', nivel: 4 },
+          { en: 'Animate Objects', es: 'Animar objetos', nivel: 5 },
+          { en: 'Antilife Shell', es: 'Cúpula antívida', nivel: 5 },
+          { en: 'Awaken', es: 'Despertar', nivel: 5 },
+          { en: 'Banishing Smite', es: 'Golpe desterrador', nivel: 5 },
+          { en: "Bigby's Hand", es: 'Mano de Bigby', nivel: 5 },
+          { en: 'Circle of Power', es: 'Círculo de poder', nivel: 5 },
+          { en: 'Cloudkill', es: 'Nube mortal', nivel: 5 },
+          { en: 'Commune', es: 'Comunión', nivel: 5 },
+          { en: 'Commune with Nature', es: 'Comunión con la naturaleza', nivel: 5 },
+          { en: 'Cone of Cold', es: 'Cono de frío', nivel: 5 },
+          { en: 'Conjure Elemental', es: 'Invocar elemental', nivel: 5 },
+          { en: 'Conjure Volley', es: 'Invocar andanada', nivel: 5 },
+          { en: 'Contact Other Plane', es: 'Contactar con otro plano', nivel: 5 },
+          { en: 'Contagion', es: 'Contagio', nivel: 5 },
+          { en: 'Control Winds', es: 'Controlar vientos', nivel: 5 },
+          { en: 'Create Spelljamming Helm', es: 'Crear timón de spelljamming', nivel: 5 },
+          { en: 'Creation', es: 'Creación', nivel: 5 },
+          { en: 'Danse Macabre', es: 'Danza macabra', nivel: 5 },
+          { en: 'Dawn', es: 'Amanecer', nivel: 5 },
+          { en: 'Destructive Wave', es: 'Ola destructiva', nivel: 5 },
+          { en: 'Dispel Evil and Good', es: 'Disipar el bien y el mal', nivel: 5 },
+          { en: 'Dominate Person', es: 'Dominar persona', nivel: 5 },
+          { en: 'Dream', es: 'Sueño', nivel: 5 },
+          { en: 'Enervation', es: 'Enervación', nivel: 5 },
+          { en: 'Far Step', es: 'Paso lejano', nivel: 5 },
+          { en: 'Flame Strike', es: 'Golpe de llama', nivel: 5 },
+          { en: 'Geas', es: 'Geas', nivel: 5 },
+          { en: 'Greater Restoration', es: 'Restauración mayor', nivel: 5 },
+          { en: 'Hallow', es: 'Consagrar', nivel: 5 },
+          { en: 'Hold Monster', es: 'Sujetar monstruo', nivel: 5 },
+          { en: 'Holy Weapon', es: 'Arma sagrada', nivel: 5 },
+          { en: 'Immolation', es: 'Inmolación', nivel: 5 },
+          { en: 'Infernal Calling', es: 'Llamada infernal', nivel: 5 },
+          { en: 'Insect Plague', es: 'Plaga de insectos', nivel: 5 },
+          { en: "Jallarzi's Storm of Radiance", es: 'Tormenta de radiancia de Jallarzi', nivel: 5 },
+          { en: 'Legend Lore', es: 'Conocimiento legendario', nivel: 5 },
+          { en: 'Maelstrom', es: 'Remolino', nivel: 5 },
+          { en: 'Mass Cure Wounds', es: 'Curar heridas en masa', nivel: 5 },
+          { en: 'Mislead', es: 'Engañar', nivel: 5 },
+          { en: 'Modify Memory', es: 'Modificar memoria', nivel: 5 },
+          { en: 'Negative Energy Flood', es: 'Inundación de energía negativa', nivel: 5 },
+          { en: 'Passwall', es: 'Atravesar muro', nivel: 5 },
+          { en: 'Planar Binding', es: 'Vínculo planar', nivel: 5 },
+          { en: 'Raise Dead', es: 'Resucitar a los muertos', nivel: 5 },
+          { en: "Rary's Telepathic Bond", es: 'Vínculo telepático de Rary', nivel: 5 },
+          { en: 'Reincarnate', es: 'Reencarnar', nivel: 5 },
+          { en: 'Scrying', es: 'Clarividencia', nivel: 5 },
+          { en: 'Seeming', es: 'Apariencia ilusoria', nivel: 5 },
+          { en: 'Skill Empowerment', es: 'Potenciar habilidad', nivel: 5 },
+          { en: 'Steel Wind Strike', es: 'Golpe de viento de acero', nivel: 5 },
+          { en: 'Summon Celestial', es: 'Invocar celestial', nivel: 5 },
+          { en: 'Summon Dragon', es: 'Invocar dragón', nivel: 5 },
+          { en: 'Swift Quiver', es: 'Aljaba veloz', nivel: 5 },
+          { en: 'Synaptic Static', es: 'Estática sináptica', nivel: 5 },
+          { en: 'Telekinesis', es: 'Telequinesis', nivel: 5 },
+          { en: 'Teleportation Circle', es: 'Círculo de teletransportación', nivel: 5 },
+          { en: 'Transmute Rock', es: 'Transmutar roca', nivel: 5 },
+          { en: 'Tree Stride', es: 'Zancada arbórea', nivel: 5 },
+          { en: 'Wall of Force', es: 'Muro de fuerza', nivel: 5 },
+          { en: 'Wall of Light', es: 'Muro de luz', nivel: 5 },
+          { en: "Alustriel's Mooncloak", es: 'Capa lunar de Alustriel', nivel: 5 },
+          { en: "Songal's Elemental Suffusion", es: 'Sufusión elemental de Songal', nivel: 5 },
+          { en: 'Wall of Stone', es: 'Muro de piedra', nivel: 5 },
+          { en: 'Wrath of Nature', es: 'Ira de la naturaleza', nivel: 5 },
+          { en: "Yolande's Regal Presence", es: 'Presencia regia de Yolande', nivel: 5 },
+          { en: 'Arcane Gate', es: 'Portal arcano', nivel: 6 },
+          { en: 'Blade Barrier', es: 'Barrera de cuchillas', nivel: 6 },
+          { en: 'Bones of the Earth', es: 'Huesos de la tierra', nivel: 6 },
+          { en: 'Chain Lightning', es: 'Rayo en cadena', nivel: 6 },
+          { en: 'Circle of Death', es: 'Círculo de la muerte', nivel: 6 },
+          { en: 'Conjure Fey', es: 'Invocar feérico', nivel: 6 },
+          { en: 'Contingency', es: 'Contingencia', nivel: 6 },
+          { en: 'Create Homunculus', es: 'Crear homúnculo', nivel: 6 },
+          { en: 'Create Undead', es: 'Crear no-muerto', nivel: 6 },
+          { en: 'Disintegrate', es: 'Desintegrar', nivel: 6 },
+          { en: "Drawmij's Instant Summons", es: 'Invocación instantánea de Drawmij', nivel: 6 },
+          { en: 'Druid Grove', es: 'Arboleda druídica', nivel: 6 },
+          { en: 'Eyebite', es: 'Mordisco ocular', nivel: 6 },
+          { en: 'Find the Path', es: 'Encontrar el camino', nivel: 6 },
+          { en: "Fizban's Platinum Shield", es: 'Escudo de platino de Fizban', nivel: 6 },
+          { en: 'Flesh to Stone', es: 'Carne a piedra', nivel: 6 },
+          { en: 'Forbiddance', es: 'Prohibición', nivel: 6 },
+          { en: 'Globe of Invulnerability', es: 'Globo de invulnerabilidad', nivel: 6 },
+          { en: 'Guards and Wards', es: 'Guardianes y barreras', nivel: 6 },
+          { en: 'Harm', es: 'Dañar', nivel: 6 },
+          { en: 'Heal', es: 'Curar', nivel: 6 },
+          { en: "Heroes' Feast", es: 'Banquete de los héroes', nivel: 6 },
+          { en: 'Investiture of Flame', es: 'Investidura de llamas', nivel: 6 },
+          { en: 'Investiture of Ice', es: 'Investidura de hielo', nivel: 6 },
+          { en: 'Investiture of Stone', es: 'Investidura de piedra', nivel: 6 },
+          { en: 'Investiture of Wind', es: 'Investidura de viento', nivel: 6 },
+          { en: 'Magic Jar', es: 'Frasco mágico', nivel: 6 },
+          { en: 'Mass Suggestion', es: 'Sugestión en masa', nivel: 6 },
+          { en: 'Mental Prison', es: 'Prisión mental', nivel: 6 },
+          { en: 'Move Earth', es: 'Mover tierra', nivel: 6 },
+          { en: "Otiluke's Freezing Sphere", es: 'Esfera congelante de Otiluke', nivel: 6 },
+          { en: "Otto's Irresistible Dance", es: 'Danza irresistible de Otto', nivel: 6 },
+          { en: 'Planar Ally', es: 'Aliado planar', nivel: 6 },
+          { en: 'Primordial Ward', es: 'Protección primordial', nivel: 6 },
+          { en: 'Programmed Illusion', es: 'Ilusión programada', nivel: 6 },
+          { en: 'Scatter', es: 'Dispersar', nivel: 6 },
+          { en: 'Soul Cage', es: 'Jaula de almas', nivel: 6 },
+          { en: 'Summon Fiend', es: 'Invocar demonio', nivel: 6 },
+          { en: 'Sunbeam', es: 'Rayo solar', nivel: 6 },
+          { en: "Tasha's Bubbling Cauldron", es: 'Caldero burbujeante de Tasha', nivel: 6 },
+          { en: "Tasha's Otherworldly Guise", es: 'Apariencia de otro mundo de Tasha', nivel: 6 },
+          { en: "Tenser's Transformation", es: 'Transformación de Tenser', nivel: 6 },
+          { en: 'Transport via Plants', es: 'Transporte a través de plantas', nivel: 6 },
+          { en: 'True Seeing', es: 'Visión verdadera', nivel: 6 },
+          { en: 'Wall of Ice', es: 'Muro de hielo', nivel: 6 },
+          { en: 'Dirge', es: 'Endecha', nivel: 6 },
+          { en: "Elminster's Effulgent Spheres", es: 'Esferas refulgentes de Elminster', nivel: 6 },
+          { en: 'Wall of Thorns', es: 'Muro de espinas', nivel: 6 },
+          { en: 'Wind Walk', es: 'Caminar en el viento', nivel: 6 },
+          { en: 'Word of Recall', es: 'Palabra de recuerdo', nivel: 6 },
+          { en: 'Conjure Celestial', es: 'Invocar celestial', nivel: 7 },
+          { en: 'Create Magen', es: 'Crear magen', nivel: 7 },
+          { en: 'Crown of Stars', es: 'Corona de estrellas', nivel: 7 },
+          { en: 'Delayed Blast Fireball', es: 'Bola de fuego retardada', nivel: 7 },
+          { en: 'Divine Word', es: 'Palabra divina', nivel: 7 },
+          { en: 'Draconic Transformation', es: 'Transformación dracónica', nivel: 7 },
+          { en: 'Dream of the Blue Veil', es: 'Sueño del velo azul', nivel: 7 },
+          { en: 'Etherealness', es: 'Eterealidad', nivel: 7 },
+          { en: 'Finger of Death', es: 'Dedo de la muerte', nivel: 7 },
+          { en: 'Fire Storm', es: 'Tormenta de fuego', nivel: 7 },
+          { en: 'Forcecage', es: 'Jaula de fuerza', nivel: 7 },
+          { en: 'Mirage Arcane', es: 'Espejismo arcano', nivel: 7 },
+          { en: "Mordenkainen's Magnificent Mansion", es: 'Mansión magnífica de Mordenkainen', nivel: 7 },
+          { en: "Mordenkainen's Sword", es: 'Espada de Mordenkainen', nivel: 7 },
+          { en: 'Plane Shift', es: 'Cambio planar', nivel: 7 },
+          { en: 'Power Word Fortify', es: 'Palabra de poder: fortificar', nivel: 7 },
+          { en: 'Power Word Pain', es: 'Palabra de poder: dolor', nivel: 7 },
+          { en: 'Prismatic Spray', es: 'Rociada prismática', nivel: 7 },
+          { en: 'Project Image', es: 'Proyectar imagen', nivel: 7 },
+          { en: 'Regenerate', es: 'Regenerar', nivel: 7 },
+          { en: 'Resurrection', es: 'Resurrección', nivel: 7 },
+          { en: 'Reverse Gravity', es: 'Gravedad invertida', nivel: 7 },
+          { en: 'Sequester', es: 'Secuestrar', nivel: 7 },
+          { en: 'Simulacrum', es: 'Simulacro', nivel: 7 },
+          { en: "Simbul's Synostodweomer", es: 'Sinostodweomer de Simbul', nivel: 7 },
+          { en: 'Symbol', es: 'Símbolo', nivel: 7 },
+          { en: 'Teleport', es: 'Teletransportar', nivel: 7 },
+          { en: 'Temple of the Gods', es: 'Templo de los dioses', nivel: 7 },
+          { en: 'Whirlwind', es: 'Torbellino', nivel: 7 },
+          { en: "Abi-Dalzim's Horrid Wilting", es: 'Marchitamiento horrendo de Abi-Dalzim', nivel: 8 },
+          { en: 'Animal Shapes', es: 'Formas animales', nivel: 8 },
+          { en: 'Antimagic Field', es: 'Campo antimagia', nivel: 8 },
+          { en: 'Antipathy/Sympathy', es: 'Antipatía/Simpatía', nivel: 8 },
+          { en: 'Befuddlement', es: 'Confusión extrema', nivel: 8 },
+          { en: 'Clone', es: 'Clon', nivel: 8 },
+          { en: 'Control Weather', es: 'Controlar el clima', nivel: 8 },
+          { en: 'Demiplane', es: 'Semiplano', nivel: 8 },
+          { en: 'Dominate Monster', es: 'Dominar monstruo', nivel: 8 },
+          { en: 'Earthquake', es: 'Terremoto', nivel: 8 },
+          { en: 'Glibness', es: 'Facundia', nivel: 8 },
+          { en: 'Holy Aura', es: 'Aura sagrada', nivel: 8 },
+          { en: 'Illusory Dragon', es: 'Dragón ilusorio', nivel: 8 },
+          { en: 'Incendiary Cloud', es: 'Nube incendiaria', nivel: 8 },
+          { en: 'Maddening Darkness', es: 'Oscuridad enloquecedora', nivel: 8 },
+          { en: 'Maze', es: 'Laberinto', nivel: 8 },
+          { en: 'Mighty Fortress', es: 'Fortaleza imponente', nivel: 8 },
+          { en: 'Mind Blank', es: 'Mente en blanco', nivel: 8 },
+          { en: 'Holy Star of Mystra', es: 'Estrella sagrada de Mystra', nivel: 8 },
+          { en: 'Power Word Stun', es: 'Palabra de poder: aturdir', nivel: 8 },
+          { en: 'Sunburst', es: 'Ráfaga solar', nivel: 8 },
+          { en: 'Telepathy', es: 'Telepatía', nivel: 8 },
+          { en: 'Tsunami', es: 'Tsunami', nivel: 8 },
+          { en: 'Astral Projection', es: 'Proyección astral', nivel: 9 },
+          { en: 'Blade of Disaster', es: 'Hoja del desastre', nivel: 9 },
+          { en: 'Foresight', es: 'Previsión', nivel: 9 },
+          { en: 'Gate', es: 'Portal', nivel: 9 },
+          { en: 'Imprisonment', es: 'Prisión', nivel: 9 },
+          { en: 'Invulnerability', es: 'Invulnerabilidad', nivel: 9 },
+          { en: 'Mass Heal', es: 'Curación en masa', nivel: 9 },
+          { en: 'Mass Polymorph', es: 'Polimorfar en masa', nivel: 9 },
+          { en: 'Meteor Swarm', es: 'Lluvia de meteoritos', nivel: 9 },
+          { en: 'Power Word Heal', es: 'Palabra de poder: curar', nivel: 9 },
+          { en: 'Power Word Kill', es: 'Palabra de poder: matar', nivel: 9 },
+          { en: 'Prismatic Wall', es: 'Muro prismático', nivel: 9 },
+          { en: 'Psychic Scream', es: 'Grito psíquico', nivel: 9 },
+          { en: 'Shapechange', es: 'Cambio de forma', nivel: 9 },
+          { en: 'Storm of Vengeance', es: 'Tormenta de venganza', nivel: 9 },
+          { en: 'Time Stop', es: 'Detener el tiempo', nivel: 9 },
+          { en: 'True Polymorph', es: 'Polimorfar verdadero', nivel: 9 },
+          { en: 'True Resurrection', es: 'Resurrección verdadera', nivel: 9 },
+          { en: 'Weird', es: 'Visión aterradora', nivel: 9 },
+          { en: 'Wish', es: 'Deseo', nivel: 9 }
+        ];
+
+        // ... existing code ...
+        // Dentro de la generación de objetos mágicos, después de obtener el objeto:
+        // Añadir lógica para objetos mágicos de tipo pergamino, tatuaje, spellwrought, etc.:
+  
+        // ... existing code ...
+
+        // --- Tabla de armas ---
+        const ARMAS = [
+          { es: 'Garrote', en: 'Club', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Daga', en: 'Dagger', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Gran garrote', en: 'Greatclub', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: true, alcance: false },
+          { es: 'Hacha de mano', en: 'Handaxe', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Jabalina', en: 'Javelin', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: true },
+          { es: 'Martillo ligero', en: 'Light Hammer', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Maza', en: 'Mace', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Bastón', en: 'Quarterstaff', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Hoz', en: 'Sickle', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Lanza', en: 'Spear', tipo: 'simple', categoria: 'cuerpo a cuerpo', pesada: false, alcance: true },
+          { es: 'Dardo', en: 'Dart', tipo: 'simple', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Ballesta ligera', en: 'Light Crossbow', tipo: 'simple', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Arco corto', en: 'Shortbow', tipo: 'simple', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Honda', en: 'Sling', tipo: 'simple', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Hacha de batalla', en: 'Battleaxe', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Mangual', en: 'Flail', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Guja', en: 'Glaive', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: true },
+          { es: 'Gran hacha', en: 'Greataxe', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: false },
+          { es: 'Espadón', en: 'Greatsword', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: false },
+          { es: 'Alabarda', en: 'Halberd', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: true },
+          { es: 'Lanza de caballería', en: 'Lance', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: true },
+          { es: 'Espada larga', en: 'Longsword', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Martillo a dos manos', en: 'Maul', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: false },
+          { es: 'Maza de armas', en: 'Morningstar', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Pica', en: 'Pike', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: true, alcance: true },
+          { es: 'Estoque', en: 'Rapier', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Cimitarra', en: 'Scimitar', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Espada corta', en: 'Shortsword', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Tridente', en: 'Trident', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: true },
+          { es: 'Martillo de guerra', en: 'Warhammer', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Pico de guerra', en: 'War Pick', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: false },
+          { es: 'Látigo', en: 'Whip', tipo: 'marcial', categoria: 'cuerpo a cuerpo', pesada: false, alcance: true },
+          { es: 'Cerbatana', en: 'Blowgun', tipo: 'marcial', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Ballesta de mano', en: 'Hand Crossbow', tipo: 'marcial', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Ballesta pesada', en: 'Heavy Crossbow', tipo: 'marcial', categoria: 'a distancia', pesada: true, alcance: true },
+          { es: 'Arco largo', en: 'Longbow', tipo: 'marcial', categoria: 'a distancia', pesada: true, alcance: true },
+          { es: 'Mosquete', en: 'Musket', tipo: 'marcial', categoria: 'a distancia', pesada: false, alcance: true },
+          { es: 'Pistola', en: 'Pistol', tipo: 'marcial', categoria: 'a distancia', pesada: false, alcance: true }
+        ];
+        // ... existing code ...
+        // Cambiar todas las claves 'muy raro' por 'muyraro' en las tablas de objetos mágicos
+        // ... existing code ...
+
+        // --- Tabla de armaduras ---
+        const ARMADURAS = [
+          { es: 'Armadura acolchada', en: 'Padded Armor', metal: false },
+          { es: 'Armadura de cuero', en: 'Leather Armor', metal: false },
+          { es: 'Armadura de cuero con tachuelas', en: 'Studded Leather Armor', metal: false },
+          { es: 'Armadura de pieles', en: 'Hide Armor', metal: false },
+          { es: 'Camisa de mallas', en: 'Chain Shirt', metal: true },
+          { es: 'Cota de escamas', en: 'Scale Mail', metal: true },
+          { es: 'Coraza', en: 'Breastplate', metal: true },
+          { es: 'Armadura de media placa', en: 'Half Plate Armor', metal: true },
+          { es: 'Armadura de anillos', en: 'Ring Mail', metal: true },
+          { es: 'Cota de mallas', en: 'Chain Mail', metal: true },
+          { es: 'Armadura de láminas', en: 'Splint Armor', metal: true },
+          { es: 'Armadura de placas', en: 'Plate Armor', metal: true }
+        ];
+        // ... existing code ...
+    </script>
+</body>
+</html>
