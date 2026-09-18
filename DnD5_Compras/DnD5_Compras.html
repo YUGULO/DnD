@@ -1,0 +1,4029 @@
+<!------------------------------------------------------>
+<!-- COMPRA DE OBJETOS --------------------------------->
+<!-- Creado por YUGULO --------------------------------->
+<!-- Testeado por el rey de las pizzas con salchicha --->
+<!-- y la dama del corazón helado con látigo de cuero -->
+<!------------------------------------------------------>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda D&D 5E (2024)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8b0000;
+            --secondary-color: #2c1810;
+            --accent-color: #d4af37;
+            --bg-color: #f4e4bc;
+            --text-color: #2c1810;
+            --border-color: #8b4513;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Crimson Text', serif;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--secondary-color);
+            font-family: 'MedievalSharp', cursive;
+            border: none;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(139, 0, 0, 0.1);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background-color: transparent;
+            border: 2px solid var(--border-color);
+            border-bottom: none;
+        }
+
+        .accordion-button {
+            background-color: var(--secondary-color);
+            color: white;
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .accordion-body {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border-color);
+        }
+
+        .table {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .carrito-contenedor {
+            position: sticky;
+            top: 180px; /* Ajustar según la altura del header */
+            z-index: 900;
+        }
+
+        .carrito-medieval {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .carrito-medieval h3 {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .cantidad-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cantidad-control button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .cantidad-control button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .cantidad-control input {
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .moneda {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .oro { color: var(--accent-color); }
+        .plata { color: #c0c0c0; }
+        .cobre { color: #cd7f32; }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--border-color);
+            font-family: 'MedievalSharp', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab-pane {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        .medieval-checkbox {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .medieval-checkbox .form-check-input {
+            margin-left: 0.5rem;  /* Añadir margen izquierdo */
+            margin-top: 0.3rem;
+            border: 1px solid var(--border-color);
+            position: relative;  /* Cambiar a posición relativa */
+            float: right;  /* Mover a la derecha */
+        }
+
+        .medieval-checkbox .form-check-label {
+            margin-right: 2rem;  /* Espacio para el checkbox */
+            display: block;  /* Asegurar que el label ocupe todo el ancho */
+        }
+
+        /* Ajustar el contenedor del checkbox */
+        .medieval-checkbox.form-check {
+            padding-left: 1rem;  /* Reducir el padding izquierdo predeterminado */
+        }
+
+        .dote-title {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--primary-color);
+            font-weight: bold;
+            display: block;  /* Para que el título y la descripción queden en líneas separadas */
+            margin-bottom: 0.2rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--border-color);
+        }
+
+        /* Añadir estilos para el contenedor principal fijo */
+        .header-fixed {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* Ajustar el margen superior del contenido principal */
+        .content-wrapper {
+            margin-top: 1rem;
+        }
+
+        .btn-vendedora {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            width: 64px;
+            height: 64px;
+            margin-left: 2rem;
+        }
+
+        .vendedora-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            transition: all 0.3s ease;
+            object-fit: cover;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-vendedora:hover .vendedora-img {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+
+        .btn-vendedora.active .vendedora-img {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color),
+                        0 0 30px var(--accent-color);
+            animation: vendedora-glow 2s infinite;
+        }
+
+        @keyframes vendedora-glow {
+            0% {
+                box-shadow: 0 0 15px var(--accent-color);
+                border-color: var(--accent-color);
+            }
+            50% {
+                box-shadow: 0 0 30px var(--accent-color),
+                            0 0 45px var(--accent-color);
+                border-color: var(--primary-color);
+            }
+            100% {
+                box-shadow: 0 0 15px var(--accent-color);
+                border-color: var(--accent-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="header-fixed">
+            <div class="d-flex align-items-center justify-content-center mb-4">
+                <h1 class="text-center mb-0 me-5">Tienda de Aventureros</h1>
+                <button id="vendedoraBtn" class="btn-vendedora ms-4" onclick="toggleVendedora()">
+                    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbG5rc3d2MTAyZ2ZtZXgwZm5mNTVkYzIycGd2d3U2NzI2bHV3MnZyMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5bqnXdRMHHNUX0klVE/giphy.gif" alt="Vendedora" class="vendedora-img">
+                </button>
+            </div>
+            
+            <ul class="nav nav-tabs" id="tiendaTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#armas">Armas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#armaduras">Armaduras</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#equipo">Equipo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#herramientas">Herramientas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#monturas">Monturas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#servicios">Servicios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#bienesComerciales">Bienes comerciales</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="row">
+                <!-- Columna de productos -->
+                <div class="col-md-8">
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="armas">
+                            <div class="accordion" id="acordeonArmas">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armasCuerpoACuerpoSencillas">
+                                            Armas Cuerpo a Cuerpo Sencillas
+                                        </button>
+                                    </h2>
+                                    <div id="armasCuerpoACuerpoSencillas" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Coste</th>
+                                                            <th>Daño</th>
+                                                            <th>Peso</th>
+                                                            <th>Propiedades</th>
+                                                            <th>Dominio</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaCuerpoACuerpoSencillas">
+                                                        <!-- Se llenará dinámicamente -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armasDistanciaSencillas">
+                                            Armas a Distancia Sencillas
+                                        </button>
+                                    </h2>
+                                    <div id="armasDistanciaSencillas" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Coste</th>
+                                                            <th>Daño</th>
+                                                            <th>Peso</th>
+                                                            <th>Propiedades</th>
+                                                            <th>Dominio</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaDistanciaSencillas">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armasCuerpoACuerpoMarciales">
+                                            Armas Cuerpo a Cuerpo Marciales
+                                        </button>
+                                    </h2>
+                                    <div id="armasCuerpoACuerpoMarciales" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Coste</th>
+                                                            <th>Daño</th>
+                                                            <th>Peso</th>
+                                                            <th>Propiedades</th>
+                                                            <th>Dominio</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaCuerpoACuerpoMarciales">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armasDistanciaMarciales">
+                                            Armas a Distancia Marciales
+                                        </button>
+                                    </h2>
+                                    <div id="armasDistanciaMarciales" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Coste</th>
+                                                            <th>Daño</th>
+                                                            <th>Peso</th>
+                                                            <th>Propiedades</th>
+                                                            <th>Dominio</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaDistanciaMarciales">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="armaduras">
+                            <div class="accordion" id="acordeonArmaduras">
+                                <!-- Armaduras Ligeras -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armadurasLigeras">
+                                            Armaduras Ligeras (1 minuto para ponérsela o quitársela)
+                                        </button>
+                                    </h2>
+                                    <div id="armadurasLigeras" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Clase de Armadura</th>
+                                                            <th>Fuerza</th>
+                                                            <th>Sigilo</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaArmadurasLigeras">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Armaduras Medias -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armaduraMedias">
+                                            Armaduras Medias (5 minutos para ponérsela y 1 minuto para quitársela)
+                                        </button>
+                                    </h2>
+                                    <div id="armaduraMedias" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Clase de Armadura</th>
+                                                            <th>Fuerza</th>
+                                                            <th>Sigilo</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaArmadurasMedias">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Armaduras Pesadas -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armadurasPesadas">
+                                            Armaduras Pesadas (10 minutos para ponérsela y 5 minutos para quitársela)
+                                        </button>
+                                    </h2>
+                                    <div id="armadurasPesadas" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Clase de Armadura</th>
+                                                            <th>Fuerza</th>
+                                                            <th>Sigilo</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaArmadurasPesadas">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Escudos -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#escudos">
+                                            Escudos (Utilizar acción para ponérselo o quitárselo)
+                                        </button>
+                                    </h2>
+                                    <div id="escudos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Clase de Armadura</th>
+                                                            <th>Fuerza</th>
+                                                            <th>Sigilo</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaEscudos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="equipo">
+                            <div class="accordion" id="acordeonEquipo">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#equipoGeneral">
+                                            Equipo General
+                                        </button>
+                                    </h2>
+                                    <div id="equipoGeneral" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaEquipoGeneral">
+                                                        <!-- Se llenará dinámicamente -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paquetes">
+                                            Paquetes
+                                        </button>
+                                    </h2>
+                                    <div id="paquetes" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaPaquetes">
+                                                        <!-- Se llenará dinámicamente -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pergaminosYPociones">
+                                            Pergaminos y Pociones
+                                        </button>
+                                    </h2>
+                                    <div id="pergaminosYPociones" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaPergaminosYPociones">
+                                                        <!-- Se llenará dinámicamente -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dentro del acordeonEquipo, después de pergaminosYPociones -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#municiones">
+                                            Municiones
+                                        </button>
+                                    </h2>
+                                    <div id="municiones" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Cantidad por paquete</th>
+                                                            <th>Almacenamiento</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaMuniciones">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dentro del acordeonEquipo, después de municiones -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#focosArcanos">
+                                            Focos Arcanos
+                                        </button>
+                                    </h2>
+                                    <div id="focosArcanos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaFocosArcanos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dentro del acordeonEquipo, después de focosArcanos -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#focosDruidicos">
+                                            Focos Druídicos
+                                        </button>
+                                    </h2>
+                                    <div id="focosDruidicos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaFocosDruidicos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dentro del acordeonEquipo, después de focosDruidicos -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#simbolosSagrados">
+                                            Símbolos Sagrados
+                                        </button>
+                                    </h2>
+                                    <div id="simbolosSagrados" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaSímbolosSagrados">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="herramientas">
+                            <div class="accordion" id="acordeonHerramientas">
+                                <!-- Herramientas de Artesano -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#herramientasArtesano">
+                                            Herramientas de Artesano
+                                        </button>
+                                    </h2>
+                                    <div id="herramientasArtesano" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Habilidad</th>
+                                                            <th>Fabricación</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaHerramientasArtesano">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Otras Herramientas -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#otrasHerramientas">
+                                            Otras Herramientas
+                                        </button>
+                                    </h2>
+                                    <div id="otrasHerramientas" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Habilidad</th>
+                                                            <th>Fabricación</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaOtrasHerramientas">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Instrumentos Musicales -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#instrumentosMusicales">
+                                            Instrumentos Musicales
+                                        </button>
+                                    </h2>
+                                    <div id="instrumentosMusicales" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Habilidad</th>
+                                                            <th>fabricacion</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaInstrumentosMusicales">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="monturas">
+                            <div class="accordion" id="acordeonMonturas">
+                                <!-- Monturas y otros animales -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#monturasAnimales">
+                                            Monturas y otros animales
+                                        </button>
+                                    </h2>
+                                    <div id="monturasAnimales" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Capacidad de carga</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaMonturasAnimales">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Vehículos y aparejos -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vehiculosAparejos">
+                                            Aparejos, arneses y vehículos tirados
+                                        </button>
+                                    </h2>
+                                    <div id="vehiculosAparejos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaVehiculosAparejos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modificar la estructura del acordeonMonturas para añadir la nueva sección -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vehiculosTerrrestres">
+                                            Vehículos Terrestres
+                                        </button>
+                                    </h2>
+                                    <div id="vehiculosTerrrestres" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Peso</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaVehiculosTerrestres">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dentro del acordeonMonturas, después de vehiculosTerrrestres -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#vehiculosAereosAcuaticos">
+                                            Vehículos Aéreos y Acuáticos
+                                        </button>
+                                    </h2>
+                                    <div id="vehiculosAereosAcuaticos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nombre</th>
+                                                            <th>Velocidad</th>
+                                                            <th>Tripulación</th>
+                                                            <th>Pasajeros</th>
+                                                            <th>Carga</th>
+                                                            <th>C.A.</th>
+                                                            <th>Caballos de fuerza</th>
+                                                            <th>Umbral de daño</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaVehiculosAereosAcuaticos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="servicios">
+                            <div class="accordion" id="acordeonServicios">
+                                <!-- Gastos de estilo de vida -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#estilosDeVida">
+                                            Gastos de estilo de vida
+                                        </button>
+                                    </h2>
+                                    <div id="estilosDeVida" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p>Los gastos de estilo de vida resumen el costo de vida en un mundo de fantasía. Incluyen alojamiento, comida, mantenimiento de equipos y otras necesidades.</p>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Estilo</th>
+                                                            <th>Descripción</th>
+                                                            <th>Coste</th>
+                                                            <th>Periodo</th>
+                                                            <th>Cantidad de días</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaEstilosVida">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Comida, bebida y alojamiento -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#comidaBebidaAlojamiento">
+                                            Comida, bebida y alojamiento
+                                        </button>
+                                    </h2>
+                                    <div id="comidaBebidaAlojamiento" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h5>Bebidas</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Coste</th>
+                                                                    <th>Cantidad</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tablaBebidas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Comidas</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                    <th>Coste</th>
+                                                                    <th>Cantidad</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tablaComidas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-6">
+                                                    <h5>Estancia en posada (por día)</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Calidad</th>
+                                                                    <th>Coste</th>
+                                                                    <th>Cantidad de días</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tablaEstancias">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Comidas completas</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Calidad</th>
+                                                                    <th>Coste</th>
+                                                                    <th>Cantidad</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tablaComidasCompletas">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Viajes -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#viajes">
+                                            Viajes
+                                        </button>
+                                    </h2>
+                                    <div id="viajes" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Servicio</th>
+                                                            <th>Coste</th>
+                                                            <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaViajes">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Asalariados -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#asalariados">
+                                            Asalariados
+                                        </button>
+                                    </h2>
+                                    <div id="asalariados" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Servicio</th>
+                                                            <th>Coste</th>
+                                                            <th>Unidad</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaAsalariados">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Arrojadiza de hechizos -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ArrojadizaHechizos">
+                                            Lanzamiento de hechizos
+                                        </button>
+                                    </h2>
+                                    <div id="ArrojadizaHechizos" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p>La mayoría de los asentamientos contienen personas que están dispuestas a lanzar hechizos a cambio de un pago. Si un hechizo tiene componentes costosos, agregue el costo de esos componentes al costo que figura en la tabla.</p>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nivel</th>
+                                                            <th>Disponibilidad</th>
+                                                            <th>Coste</th>
+                                                            <th>Cantidad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tablaHechizos">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="bienesComerciales">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Coste</th>
+                                            <th>Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaBienesComerciales">
+                                        <!-- Se llenará dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna del carrito -->
+                <div class="col-md-4">
+                    <div class="carrito-contenedor">
+                        <div class="carrito-medieval">
+                            <h3>🛒 Tu Carrito</h3>
+                            <div id="items-carrito">
+                                <!-- Items del carrito se mostrarán aquí -->
+                            </div>
+                            <hr>
+                            <div id="total-carrito">
+                                <h4>Total:</h4>
+                                <p>
+                                    <span class="moneda oro">●</span><span id="total-oro">0</span> po
+                                    <span class="moneda plata">●</span><span id="total-plata">0</span> pp
+                                    <span class="moneda cobre">●</span><span id="total-cobre">0</span> pc
+                                </p>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-3" onclick="copiarADiscord()">
+                                Copiar a Discord
+                            </button>
+                        </div>
+                        <div class="mt-3 form-check medieval-checkbox">
+                            <input class="form-check-input" type="checkbox" id="doteCrafter" onchange="actualizarCarrito()">
+                            <label class="form-check-label" for="doteCrafter">
+                                <span class="dote-title">Dote: Crafter</span>
+                                <small class="text-muted d-block">20% de descuento solo en las compras de objetos.</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Añadir al inicio del script, junto con las otras variables globales
+        const IconoTiendadeAventureros = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbG5rc3d2MTAyZ2ZtZXgwZm5mNTVkYzIycGd2d3U2NzI2bHV3MnZyMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5bqnXdRMHHNUX0klVE/giphy.gif"; // Imagen de vendedora medieval estática
+
+        const armas = {
+            "cuerpo_a_cuerpo_sencillas": [
+                   {
+                    "nombre": "Garrote",
+                    "daño": "1d4 Contundente",
+                    "propiedades": ["Ligera"],
+                    "dominio": "Retardar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Daga",
+                    "daño": "1d4 Perforante",
+                    "propiedades": ["Sutil", "Ligera", "Arrojadiza (Alcance 20/60)"],
+                    "dominio": "Pinchar",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Gran garrote",
+                    "daño": "1d8 Contundente",
+                    "propiedades": ["A dos manos"],
+                    "dominio": "Empujar",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadido
+                },
+                {
+                    "nombre": "Hacha de mano",
+                    "daño": "1d6 Cortante",
+                    "propiedades": ["Ligera", "Arrojadizo (Alcance 20/60)"],
+                    "dominio": "Marcar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las armas
+                },
+                {
+                    "nombre": "Jabalina",
+                    "daño": "1d6 Perforante",
+                    "propiedades": ["Arrojadiza (Alcance 30/120)"],
+                    "dominio": "Retardar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Martillo Ligera",
+                    "daño": "1d4 Contundente",
+                    "propiedades": ["Ligera", "Arrojadizo (Alcance 20/60)"],
+                    "dominio": "Pinchar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Maza",
+                    "daño": "1d6 Contundente",
+                    "propiedades": ["—"],
+                    "dominio": "Agotar",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Bastón de combate",
+                    "daño": "1d6 Contundente",
+                    "propiedades": ["Versátil (1d8)"],
+                    "dominio": "Derribar",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 }
+                },
+                {
+                    "nombre": "Hoz",
+                    "daño": "1d4 Cortante",
+                    "propiedades": ["Ligera"],
+                    "dominio": "Pinchar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Lanza",
+                    "daño": "1d6 Perforante",
+                    "propiedades": ["Arrojadiza (Alcance 20/60)", "Versátil (1d8)"],
+                    "dominio": "Agotar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 }
+                }
+            ],
+            "distancia_sencillas": [
+                {
+                    "nombre": "Dardo",
+                    "daño": "1d4 Perforante",
+                    "propiedades": ["Sutil", "Arrojadiza (Alcance 20/60)"],
+                    "dominio": "Marcar",
+                    "peso": "1/4 libra.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "SI"  // Añadir a todas las armas
+                },
+                {
+                    "nombre": "Ballesta ligera",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["Munición (Alcance 80/320; Virote)", "Recarga", "A dos manos"],
+                    "dominio": "Retardar",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las armas
+                },
+                {
+                    "nombre": "Arco corto",
+                    "daño": "1d6 Perforante",
+                    "propiedades": ["Munición (Alcance 80/320; Flecha)", "A dos manos"],
+                    "dominio": "Marcar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las armas
+                },
+                {
+                    "nombre": "Honda",
+                    "daño": "1d4 Contundente",
+                    "propiedades": ["Munición (Alcance 30/120; Bala)"],
+                    "dominio": "Retardar",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las armas
+                }
+            ],
+            "cuerpo_a_cuerpo_marciales": [
+                {
+                    "nombre": "Hacha de batalla",
+                    "daño": "1d8 Cortante",
+                    "propiedades": ["Versátil (1d10)"],
+                    "dominio": "Mella",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Mayal",
+                    "daño": "1d8 Contundente",
+                    "propiedades": ["—"],
+                    "dominio": "Agotar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Guja",
+                    "daño": "1d10 Cortante",
+                    "propiedades": ["Pesado", "Alcance", "A dos manos"],
+                    "dominio": "Pacer",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Gran hacha",
+                    "daño": "1d12 Cortante",
+                    "propiedades": ["Pesado", "A dos manos"],
+                    "dominio": "Adherirse",
+                    "peso": "7 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Mandoble",
+                    "daño": "2d6 Cortante",
+                    "propiedades": ["Pesado", "A dos manos"],
+                    "dominio": "Pacer",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Alabarda",
+                    "daño": "1d10 Cortante",
+                    "propiedades": ["Pesado", "Alcance", "A dos manos"],
+                    "dominio": "Adherirse",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Lanza",
+                    "daño": "1d10 Perforante",
+                    "propiedades": ["Pesado", "Alcance", "A dos manos (a menos que esté montado)"],
+                    "dominio": "Derribar",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Espada larga",
+                    "daño": "1d8 Cortante",
+                    "propiedades": ["Versátil (1d10)"],
+                    "dominio": "Agotar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Mazo",
+                    "daño": "2d6 Contundente",
+                    "propiedades": ["Pesado", "A dos manos"],
+                    "dominio": "Derribar",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Lucero del alba",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["—"],
+                    "dominio": "Agotar",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Pica",
+                    "daño": "1d10 Perforante",
+                    "propiedades": ["Pesado", "Alcance", "A dos manos"],
+                    "dominio": "Empujar",
+                    "peso": "18 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Estoque",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["Sutil"],
+                    "dominio": "Marcar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Cimitarra",
+                    "daño": "1d6 Cortante",
+                    "propiedades": ["Sutil", "Ligera"],
+                    "dominio": "Pinchar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Espada corta",
+                    "daño": "1d6 Perforante",
+                    "propiedades": ["Sutil", "Ligera"],
+                    "dominio": "Marcar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Tridente",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["Arrojadiza (Alcance 20/60)", "Versátil (1d10)"],
+                    "dominio": "Derribar",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Martillo de guerra",
+                    "daño": "1d8 Contundente",
+                    "propiedades": ["Versátil (1d10)"],
+                    "dominio": "Empujar",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Pico de guerra",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["Versátil (1d10)"],
+                    "dominio": "Agotar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Látigo",
+                    "daño": "1d4 Cortante",
+                    "propiedades": ["Sutil", "Alcance"],
+                    "dominio": "Retardar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                }
+            ],
+            "distancia_marciales": [
+                {
+                    "nombre": "Cerbatana",
+                    "daño": "1 Perforante",
+                    "propiedades": ["Munición (Alcance 25/100; Aguja)", "Recarga"],
+                    "dominio": "Marcar",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Ballesta de mano",
+                    "daño": "1d6 Perforante",
+                    "propiedades": ["Munición (Alcance 30/120; Virote)", "Ligera", "Recarga"],
+                    "dominio": "Marcar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 75, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Ballesta pesada",
+                    "daño": "1d10 Perforante",
+                    "propiedades": ["Munición (Alcance 100/400; Virote)", "Pesada", "Rearga", "A dos manos"],
+                    "dominio": "Empujar",
+                    "peso": "18 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Arco largo",
+                    "daño": "1d8 Perforante",
+                    "propiedades": ["Munición (Alcance 150/600; Flecha)", "Pesada", "A dos manos"],
+                    "dominio": "Retardar",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Mosquete",
+                    "daño": "1d12 Perforante",
+                    "propiedades": ["Munición (Alcance 40/120; Bala)", "Recarga", "A dos manos"],
+                    "dominio": "Retardar",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 500, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Pistola",
+                    "daño": "1d10 Perforante",
+                    "propiedades": ["Munición (Alcance 30/90; Bala)", "Recarga"],
+                    "dominio": "Marcar",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 250, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                }
+            ]
+        };
+
+        const armaduras = {
+            "armaduras_ligeras": [
+                {
+                    "nombre": "Armadura acolchada",
+                    "clase_armadura": "11 + modificador de Dex",
+                    "Fuerza": "—",
+                    "sigilo": "Desventaja",
+                    "peso": "8 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Armadura de cuero",
+                    "clase_armadura": "11 + modificador de Dex",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Armadura de cuero tachonado",
+                    "clase_armadura": "12 + modificador de Dex",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "13 libras.",
+                    "coste": { "oro": 45, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                }
+            ],
+            "armaduras_medias": [
+                {
+                    "nombre": "Armadura de pieles",
+                    "clase_armadura": "12 + modificador de Dex (máximo 2)",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "12 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "5 minutos para ponérsela y 1 minuto para quitársela",
+                    "EsObjeto": "SI"  // Añadir a todas las armaduras
+                },
+                {
+                    "nombre": "Camisa de malla",
+                    "clase_armadura": "13 + modificador de Dex (máximo 2)",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "20 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "5 minutos para ponérsela y 1 minuto para quitársela",
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Armadura de escamas",
+                    "clase_armadura": "14 + modificador de Dex (máximo 2)",
+                    "Fuerza": "—",
+                    "sigilo": "Desventaja",
+                    "peso": "45 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "5 minutos para ponérsela y 1 minuto para quitársela"
+                },
+                {
+                    "nombre": "Coraza",
+                    "clase_armadura": "14 + modificador de Dex (máximo 2)",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "20 libras.",
+                    "coste": { "oro": 400, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "5 minutos para ponérsela y 1 minuto para quitársela"
+                },
+                {
+                    "nombre": "Armadura de media placa",
+                    "clase_armadura": "15 + modificador de Dex (máximo 2)",
+                    "Fuerza": "—",
+                    "sigilo": "Desventaja",
+                    "peso": "40 libras.",
+                    "coste": { "oro": 750, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "5 minutos para ponérsela y 1 minuto para quitársela"
+                }
+            ],
+            "armaduras_pesadas": [
+                {
+                    "nombre": "Armadura de anillas",
+                    "clase_armadura": "14",
+                    "Fuerza": "—",
+                    "sigilo": "Desventaja",
+                    "peso": "40 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "10 minutos para ponérsela y 5 minutos para quitársela",
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Cota de mallas",
+                    "clase_armadura": "16",
+                    "Fuerza": "Fuerza 13",
+                    "sigilo": "Desventaja",
+                    "peso": "55 libras.",
+                    "EsObjeto": "SI",
+                    "coste": { "oro": 75, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "10 minutos para ponérsela y 5 minutos para quitársela"
+                },
+                {
+                    "nombre": "Brigandina",
+                    "clase_armadura": "17",
+                    "Fuerza": "Fuerza 15",
+                    "sigilo": "Desventaja",
+                    "peso": "60 libras.",
+                    "EsObjeto": "SI",
+                    "coste": { "oro": 200, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "10 minutos para ponérsela y 5 minutos para quitársela"
+                },
+                {
+                    "nombre": "Armadura de placas",
+                    "clase_armadura": "18",
+                    "Fuerza": "Fuerza 15",
+                    "sigilo": "Desventaja",
+                    "peso": "65 libras.",
+                    "EsObjeto": "SI",
+                    "coste": { "oro": 1500, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "10 minutos para ponérsela y 5 minutos para quitársela"
+                }
+            ],
+            "escudos": [
+                {
+                    "nombre": "Escudo",
+                    "clase_armadura": "+2",
+                    "Fuerza": "—",
+                    "sigilo": "—",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "tiempo_equipar": "Utilizar acción para ponérselo o quitárselo",
+                    "EsObjeto": "SI"
+                }
+            ]
+        };
+
+        const equipo = {
+            "equipo_general": [
+                {
+                    "nombre": "Ácido",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Fuego del alquimista",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Antitoxina",
+                    "peso": "—",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Mochila",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Rodamientos de bolas",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Barril",
+                    "peso": "70 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Cesta",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 0, "plata": 4, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Saco de dormir",
+                    "peso": "7 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Campana",
+                    "peso": "—",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Frazada (manta)",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Aparejo de poleas",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Libro",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Botella, vidrio",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Balde",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Abrojos (púas)",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Vela",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Estuche, perno de ballesta",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Estuche, mapa o pergamino",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Cadena",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Kit de escalada",
+                    "peso": "12 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Ropa, fina",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Ropa de viajero",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Bolsa de componentes",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Traje",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Palanca",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Frasco",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Gancho de agarre",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Kit del sanador",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Agua bendita",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Trampa de caza",
+                    "peso": "25 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Tinta",
+                    "peso": "—",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Pluma de tinta",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Jarra",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Escalera",
+                    "peso": "25 libras.",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Lámpara",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Linterna, ojo de buey",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Linterna con capucha",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Cerradura",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Lupa",
+                    "peso": "—",
+                    "coste": { "oro": 100, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Esposas",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Mapa",
+                    "peso": "—",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Espejo",
+                    "peso": "1/2 libra.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Red",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Aceite",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Papel",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Pergamino",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Perfume",
+                    "peso": "—",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Veneno, básico",
+                    "peso": "—",
+                    "coste": { "oro": 100, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Pértiga",
+                    "peso": "7 libras.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Olla de hierro",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Bolsa",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Carcaj",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Ariete portátil",
+                    "peso": "35 libras.",
+                    "coste": { "oro": 4, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Raciones",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Túnica",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Soga",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Saco",
+                    "peso": "1/2 libra.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Pala",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Silbato de señal",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Picos de hierro",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Catalejo",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Cuerda",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Carpa",
+                    "peso": "20 libras.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Yesquero",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Antorcha",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Frasco",
+                    "peso": "—",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                },
+                {
+                    "nombre": "Odre de agua",
+                    "peso": "5 libras (lleno)",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todo el equipo
+                }
+            ],
+            "paquetes": [
+                {
+                    "nombre": "Paquete del diplomático",
+                    "peso": "39 libras.",
+                    "coste": { "oro": 39, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                },
+                {
+                    "nombre": "Paquete del mazmorrista",
+                    "peso": "55 libras.",
+                    "coste": { "oro": 12, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                },
+                {
+                    "nombre": "Paquete de entretenimiento",
+                    "peso": "58½ libras.",
+                    "coste": { "oro": 40, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                },
+                {
+                    "nombre": "Paquete del explorador",
+                    "peso": "55 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                },
+                {
+                    "nombre": "Paquete del sacerdote",
+                    "peso": "29 libras.",
+                    "coste": { "oro": 33, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                },
+                {
+                    "nombre": "Paquete del erudito",
+                    "peso": "22 libras.",
+                    "coste": { "oro": 40, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los paquetes
+                }
+            ],
+            "pergaminos_y_pociones": [
+                {
+                    "nombre": "Poción de curación",
+                    "peso": "1/2 libra.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"  // Añadir a todos los pergaminos y pociones
+                },
+                {
+                    "nombre": "Pergamino de hechizo (truco)",
+                    "peso": "—",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"  // Añadir a todos los pergaminos y pociones
+                },
+                {
+                    "nombre": "Pergamino de hechizo (nivel 1)",
+                    "peso": "—",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"  // Añadir a todos los pergaminos y pociones
+                }
+            ],
+            "municiones": [
+                {
+                    "nombre": "Flechas",
+                    "cantidad_paquete": "20",
+                    "almacenamiento": "Carcaj",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las municiones
+                },
+                {
+                    "nombre": "Virotes",
+                    "cantidad_paquete": "20",
+                    "almacenamiento": "Caja",
+                    "peso": "1½ libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las municiones
+                },
+                {
+                    "nombre": "Balas, Arma de fuego",
+                    "cantidad_paquete": "10",
+                    "almacenamiento": "Bolsa",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 3, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las municiones
+                },
+                {
+                    "nombre": "Balas, Honda",
+                    "cantidad_paquete": "20",
+                    "almacenamiento": "Bolsa",
+                    "peso": "1½ libra.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 4 },
+                    "EsObjeto": "SI"  // Añadir a todas las municiones
+                },
+                {
+                    "nombre": "Agujas",
+                    "cantidad_paquete": "50",
+                    "almacenamiento": "Bolsa",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todas las municiones
+                }
+            ],
+            "focos_arcanos": [
+                {
+                    "nombre": "Cristal",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos arcanos
+                },
+                {
+                    "nombre": "Orbe",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos arcanos
+                },
+                {
+                    "nombre": "Vara",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos arcanos
+                },
+                {
+                    "nombre": "Bastón",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos arcanos
+                },
+                {
+                    "nombre": "Varita mágica",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos arcanos
+                }
+            ],
+            "focos_druidicos": [
+                {
+                    "nombre": "Ramita de muérdago",
+                    "peso": "—",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos druídicos
+                },
+                {
+                    "nombre": "Bastón de madera",
+                    "peso": "4 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos druídicos
+                },
+                {
+                    "nombre": "Varita de tejo",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los focos druídicos
+                }
+            ],
+            "simbolos_sagrados": [
+                {
+                    "nombre": "Amuleto (colgado o sujeto)",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los símbolos sagrados
+                },
+                {
+                    "nombre": "Emblema (llevado sobre tela o escudo)",
+                    "peso": "—",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los símbolos sagrados
+                },
+                {
+                    "nombre": "Relicario (sujeto)",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"  // Añadir a todos los símbolos sagrados
+                }
+            ]
+        };
+
+        const herramientas = {
+            "herramientas_artesano": [
+                {
+                    "nombre": "Suministros del alquimista",
+                    "peso": "8 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Ácido", "Fuego de alquimista", "Bolsa de componentes", "Aceite", "Papel", "Perfume"],
+                    "EsObjeto": "SI"  // Añadir a todas las herramientas
+                },
+                {
+                    "nombre": "Suministros de cervecería",
+                    "peso": "9 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Antitoxina"]
+                },
+                {
+                    "nombre": "Suministros de calígrafo",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Tinta", "Pergamino de hechizos"]
+                },
+                {
+                    "nombre": "Herramientas de carpintero",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 8, "plata": 0, "cobre": 0 },
+                    "habilidad": "Fuerza",
+                    "fabricacion": ["Garrote", "Gran garrote", "Bastón", "Barril", "Cofre", "Escalera", "Pértiga", "Ariete portátil", "Antorcha"]
+                },
+                {
+                    "nombre": "Herramientas del cartógrafo",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": ["Mapa"]
+                },
+                {
+                    "nombre": "Herramientas de zapatero",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Kit de escalada"]
+                },
+                {
+                    "nombre": "Utensilios de cocina",
+                    "peso": "8 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": ["Raciones"]
+                },
+                {
+                    "nombre": "Herramientas de soplador de vidrio",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Botella de vidrio", "Lupa", "Catalejo", "Frasco"]
+                },
+                {
+                    "nombre": "Herramientas de joyero",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Foco arcano", "Símbolo sagrado"]
+                },
+                {
+                    "nombre": "Herramientas de peletero",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Honda", "Látigo", "Armadura de piel", "Armadura de cuero", "Armadura de cuero tachonado", "Mochila", "Estuche para saetas de ballesta", "Estuche para mapas o pergaminos", "Pergamino", "Bolsa", "Carcaj", "Odre de agua"]
+                },
+                {
+                    "nombre": "Herramientas de albañil",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "habilidad": "Fuerza",
+                    "fabricacion": ["Bloques y aparejos"]
+                },
+                {
+                    "nombre": "Suministros de pintor",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": ["Foco druídico", "Símbolo sagrado"]
+                },
+                {
+                    "nombre": "Herramientas de alfarero",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Jarra", "Lámpara"]
+                },
+                {
+                    "nombre": "Herramientas de herrero",
+                    "peso": "8 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "habilidad": "Fuerza",
+                    "fabricacion": ["Armas cuerpo a cuerpo (excepto maza, maza mayor, bastón y látigo)", "Armadura media (excepto piel)", "Armadura pesada", "Cojinetes de bolas", "Balde", "Abrojos", "Cadena", "Palanca", "Balas de arma de fuego", "Gancho de agarre", "Olla de hierro", "Púas de hierro", "Balas de honda"]
+                },
+                {
+                    "nombre": "Herramientas del manitas",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Mosquete", "Pistola", "Campana", "Linterna con forma de diana", "Frasco", "Linterna con capucha", "Trampa de cazador", "Cerradura", "Esposas", "Espejo", "Pala", "Silbato de señales", "Yesquero"]
+                },
+                {
+                    "nombre": "Herramientas del tejedor",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Armadura acolchada", "Cesta", "Saco de dormir", "Manta", "Ropa fina", "Red", "Bata", "Cuerda", "Saco", "Cordel", "Tienda de campaña", "Ropa de viajero"]
+                },
+                {
+                    "nombre": "Herramientas de tallador de madera",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": ["Garrote", "Gran garrote", "Bastón", "Armas a distancia (excepto pistola, mosquete y honda)", "Foco arcano", "Flechas", "Virotes", "Foco druídico", "Pluma de tinta", "Agujas"]
+                }
+            ],
+            "otras_herramientas": [
+                {
+                    "nombre": "Kit de disfraz",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": ["Disfraz"]
+                },
+                {
+                    "nombre": "Kit de falsificación",
+                    "peso": "5 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Kit de herboristería",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Antitoxina", "Vela", "Kit de sanador", "Poción de curación"]
+                },
+                {
+                    "nombre": "Herramientas del Navegante",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Kit del envenenador",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "habilidad": "Inteligencia",
+                    "fabricacion": ["Veneno básico"]
+                },
+                {
+                    "nombre": "Herramientas de ladrón",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "habilidad": "Destreza",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Juego de dados",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Juego de dragonchess",
+                    "peso": "0.5 libras.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Juego de naipes",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Juego de apuesta de tres dragones",
+                    "peso": "—",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "habilidad": "Sabiduría",
+                    "fabricacion": []
+                }
+            ],
+            "instrumentos_musicales": [
+                {
+                    "nombre": "Gaita",
+                    "peso": "6 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Tambor",
+                    "peso": "3 libras.",
+                    "coste": { "oro": 6, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Salterio",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Flauta",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Trompa",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 3, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Laúd",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 35, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Lira",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Flauta de pan",
+                    "peso": "2 libras.",
+                    "coste": { "oro": 12, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Chirimía",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                },
+                {
+                    "nombre": "Viola",
+                    "peso": "1 libra.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "habilidad": "Carisma",
+                    "fabricacion": []
+                }
+            ]
+        };
+
+        const monturas = {
+            "animales": [
+                {
+                    "nombre": "Camello",
+                    "capacidad": "450 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"  // Los animales no son objetos
+                },
+                {
+                    "nombre": "Elefante",
+                    "capacidad": "1,320 libras.",
+                    "coste": { "oro": 200, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Caballo de tiro",
+                    "capacidad": "540 libras.",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Caballo de monta",
+                    "capacidad": "480 libras.",
+                    "coste": { "oro": 75, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Mastín",
+                    "capacidad": "195 libras.",
+                    "coste": { "oro": 25, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Mula",
+                    "capacidad": "420 libras.",
+                    "coste": { "oro": 8, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Poni",
+                    "capacidad": "225 libras.",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Caballo de guerra",
+                    "capacidad": "540 libras.",
+                    "coste": { "oro": 400, "plata": 0, "cobre": 0 }
+                }
+            ],
+            "vehiculos_terrestres": [
+                {
+                    "nombre": "Carruaje",
+                    "peso": "600 libras.",
+                    "coste": { "oro": 100, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Tartana",
+                    "peso": "200 libras.",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Carro",
+                    "peso": "100 libras.",
+                    "coste": { "oro": 250, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Vagón",
+                    "peso": "400 libras.",
+                    "coste": { "oro": 35, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                }
+            ],
+            "vehiculos_y_aparejos": [
+                {
+                    "nombre": "Alimentación por día",
+                    "peso": "10 libras.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Sillín exótico",
+                    "peso": "40 libras.",
+                    "coste": { "oro": 60, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Sillín militar",
+                    "peso": "30 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Sillín de equitación",
+                    "peso": "25 libras.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "SI"
+                },
+                {
+                    "nombre": "Trineo",
+                    "peso": "300 libras.",
+                    "coste": { "oro": 20, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Estabulación por día",
+                    "peso": "—",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "SI"
+                }
+            ],
+            "vehiculos_aereos_acuaticos": [
+                {
+                    "nombre": "Dirigible",
+                    "velocidad": "8 millas por hora",
+                    "tripulacion": "10",
+                    "pasajeros": "20",
+                    "carga": "1 tonelada",
+                    "clase_armadura": "13",
+                    "caballos_fuerza": "300",
+                    "umbral_dano": "—",
+                    "coste": { "oro": 40000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Galera",
+                    "velocidad": "4 mph",
+                    "tripulacion": "80",
+                    "pasajeros": "—",
+                    "carga": "150 toneladas",
+                    "clase_armadura": "15",
+                    "caballos_fuerza": "500",
+                    "umbral_dano": "20",
+                    "coste": { "oro": 30000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Barco de quilla",
+                    "velocidad": "1 mph",
+                    "tripulacion": "1",
+                    "pasajeros": "6",
+                    "carga": "1/2 tonelada",
+                    "clase_armadura": "15",
+                    "caballos_fuerza": "100",
+                    "umbral_dano": "10",
+                    "coste": { "oro": 3000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Barco largo",
+                    "velocidad": "3 mph",
+                    "tripulacion": "40",
+                    "pasajeros": "150",
+                    "carga": "10 toneladas",
+                    "clase_armadura": "15",
+                    "caballos_fuerza": "300",
+                    "umbral_dano": "15",
+                    "coste": { "oro": 10000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Bote de remos",
+                    "velocidad": "1½ mph",
+                    "tripulacion": "1",
+                    "pasajeros": "3",
+                    "carga": "—",
+                    "clase_armadura": "11",
+                    "caballos_fuerza": "50",
+                    "umbral_dano": "—",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Velero",
+                    "velocidad": "2 mph",
+                    "tripulacion": "20",
+                    "pasajeros": "20",
+                    "carga": "100 toneladas",
+                    "clase_armadura": "15",
+                    "caballos_fuerza": "300",
+                    "umbral_dano": "15",
+                    "coste": { "oro": 10000, "plata": 0, "cobre": 0 }
+                },
+                {
+                    "nombre": "Buque de guerra",
+                    "velocidad": "2½ millas por hora",
+                    "tripulacion": "60",
+                    "pasajeros": "60",
+                    "carga": "200 toneladas",
+                    "clase_armadura": "15",
+                    "caballos_fuerza": "500",
+                    "umbral_dano": "20",
+                    "coste": { "oro": 25000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                }
+            ]
+        };
+
+        const servicios = {
+            "estilos_de_vida": [
+                {
+                    "nombre": "Miserable",
+                    "descripcion": "Sobrevivimos gracias a la suerte y la caridad. A menudo estamos expuestos a peligros naturales por dormir a la intemperie.",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"  // Los servicios no son objetos
+                },
+                {
+                    "nombre": "Escuálido",
+                    "descripcion": "Gastas lo mínimo indispensable para cubrir tus necesidades. Puedes estar expuesto a condiciones insalubres y a delincuentes oportunistas.",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Pobre",
+                    "descripcion": "Gastas frugalmente para cubrir tus necesidades.",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Modesto",
+                    "descripcion": "Te mantienes en un nivel medio.",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Cómodo",
+                    "descripcion": "Gastas modestamente en tus necesidades y disfrutas de algunos lujos.",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Rico",
+                    "descripcion": "Estás acostumbrado a las cosas buenas de la vida y es posible que tengas sirvientes.",
+                    "coste": { "oro": 4, "plata": 0, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Aristocrático",
+                    "descripcion": "Pagas por lo mejor y es posible que tengas un personal que respalde tu estilo de vida. Otros notan tu riqueza y pueden alentarte a compartirla, ya sea legalmente o de otra manera.",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "periodo": "por día",
+                    "EsObjeto": "NO"
+                }
+            ],
+            "comida_bebida_alojamiento": {
+                "bebidas": [
+                    {
+                        "nombre": "Cerveza (taza)",
+                        "coste": { "oro": 0, "plata": 0, "cobre": 4 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Vino común (botella)",
+                        "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Vino fino (botella)",
+                        "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    }
+                ],
+                "comidas": [
+                    {
+                        "nombre": "Pan (hogaza)",
+                        "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                        "EsObjeto": "NO"  // Añadir a todas las comidas
+                    },
+                    {
+                        "nombre": "Queso (cuña)",
+                        "coste": { "oro": 0, "plata": 1, "cobre": 0 }
+                    },
+                    {
+                        "nombre": "Carne (trozo)",
+                        "coste": { "oro": 0, "plata": 3, "cobre": 0 }
+                    }
+                ],
+                "estancia_posada": [
+                    {
+                        "nombre": "Miserable",
+                        "coste": { "oro": 0, "plata": 0, "cobre": 7 },
+                        "EsObjeto": "NO"  // Añadir a todas las estancias
+                    },
+                    {
+                        "nombre": "Pobre",
+                        "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Modesto",
+                        "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Cómodo",
+                        "coste": { "oro": 0, "plata": 8, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Adinerado",
+                        "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Aristocrático",
+                        "coste": { "oro": 4, "plata": 0, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    }
+                ],
+                "comidas_completas": [
+                    {
+                        "nombre": "Miserable",
+                        "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Pobre",
+                        "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Modesto",
+                        "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Cómodo",
+                        "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Adinerado",
+                        "coste": { "oro": 0, "plata": 3, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    },
+                    {
+                        "nombre": "Aristocrático",
+                        "coste": { "oro": 0, "plata": 6, "cobre": 0 },
+                        "EsObjeto": "NO"
+                    }
+                ]
+            },
+            "viajes": [
+                {
+                    "nombre": "Viaje en carro entre ciudades",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 3 },
+                    "unidad": "por milla",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Viaje en carro dentro de una ciudad",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "unidad": "por milla",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Peaje de carretera o de puerta",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "unidad": "por paso",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Pasaje del barco",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "unidad": "por milla",
+                    "EsObjeto": "NO"
+                }
+            ],
+            "asalariados": [
+                {
+                    "nombre": "Artesano cualificado",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "unidad": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Artesano no cualificado",
+                    "coste": { "oro": 0, "plata": 2, "cobre": 0 },
+                    "unidad": "por día",
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Mensajero",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                    "unidad": "por milla",
+                    "EsObjeto": "NO"
+                }
+            ],
+            "Arrojadiza_hechizos": [
+                {
+                    "nombre": "Conjuro - Truco",
+                    "disponibilidad": "Aldea, pueblo o ciudad",
+                    "coste": { "oro": 30, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 1",
+                    "nivel": 1,
+                    "disponibilidad": "Aldea, pueblo o ciudad",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 2",
+                    "nivel": 2,
+                    "disponibilidad": "Aldea, pueblo o ciudad",
+                    "coste": { "oro": 200, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 3",
+                    "nivel": 3,
+                    "disponibilidad": "Solo pueblo o ciudad",
+                    "coste": { "oro": 300, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 4-5",
+                    "nivel": "4-5",
+                    "disponibilidad": "Solo pueblo o ciudad",
+                    "coste": { "oro": 2000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 6-8",
+                    "nivel": "6-8",
+                    "disponibilidad": "Sólo ciudad",
+                    "coste": { "oro": 20000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Conjuro - Nivel 9",
+                    "nivel": 9,
+                    "disponibilidad": "Sólo ciudad",
+                    "coste": { "oro": 100000, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                }
+            ],
+            "bienes_comerciales": [
+                {
+                    "nombre": "Trigo (1 libra)",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Harina o pollo (1 libra)",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Sal (1 libra)",
+                    "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Hierro (1 libra) o Lona (1 m²)",
+                    "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Cobre (1 libra) o Tela de algodón (1 m²)",
+                    "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Jengibre (1 libra) o Cabra",
+                    "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Canela o Pimienta (1 libra) o Oveja",
+                    "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Clavo (1 libra) o Cerdo",
+                    "coste": { "oro": 3, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Plata (1 libra) o Lino (1 m²)",
+                    "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Seda (1 m²) o Vaca",
+                    "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Azafrán (1 libra) o Buey",
+                    "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Oro (1 libra)",
+                    "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                },
+                {
+                    "nombre": "Platino (1 libra)",
+                    "coste": { "oro": 500, "plata": 0, "cobre": 0 },
+                    "EsObjeto": "NO"
+                }
+            ]
+        };
+
+        // Mover bienes_comerciales fuera de servicios y crear una nueva constante
+        const bienesComerciales = [
+            {
+                "nombre": "Trigo (1 libra)",
+                "coste": { "oro": 0, "plata": 0, "cobre": 1 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Harina o pollo (1 libra)",
+                "coste": { "oro": 0, "plata": 0, "cobre": 2 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Sal (1 libra)",
+                "coste": { "oro": 0, "plata": 0, "cobre": 5 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Hierro (1 libra) o Lona (1 m²)",
+                "coste": { "oro": 0, "plata": 1, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Cobre (1 libra) o Tela de algodón (1 m²)",
+                "coste": { "oro": 0, "plata": 5, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Jengibre (1 libra) o Cabra",
+                "coste": { "oro": 1, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Canela o Pimienta (1 libra) o Oveja",
+                "coste": { "oro": 2, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Clavo (1 libra) o Cerdo",
+                "coste": { "oro": 3, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Plata (1 libra) o Lino (1 m²)",
+                "coste": { "oro": 5, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Seda (1 m²) o Vaca",
+                "coste": { "oro": 10, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Azafrán (1 libra) o Buey",
+                "coste": { "oro": 15, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Oro (1 libra)",
+                "coste": { "oro": 50, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            },
+            {
+                "nombre": "Platino (1 libra)",
+                "coste": { "oro": 500, "plata": 0, "cobre": 0 },
+                "EsObjeto": "NO"
+            }
+        ];
+
+        function crearControlCantidad(id) {
+            return `
+                <div class="cantidad-control">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="decrementarCantidad('${id}')">-</button>
+                    <input type="number" id="cantidad-${id}" value="0" min="0" style="width: 50px" class="form-control form-control-sm">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="incrementarCantidad('${id}')">+</button>
+                </div>
+            `;
+        }
+
+        function decrementarCantidad(id) {
+            const input = document.getElementById('cantidad-' + id);
+            if (input.value > 0) {
+                input.value = parseInt(input.value) - 1;
+                actualizarCarrito();
+            }
+        }
+
+        function incrementarCantidad(id) {
+            const input = document.getElementById('cantidad-' + id);
+            input.value = parseInt(input.value) + 1;
+            actualizarCarrito();
+        }
+
+        function mostrarArmas() {
+            const tablaCuerpoACuerpoSencillas = document.getElementById('tablaCuerpoACuerpoSencillas');
+            mostrarTablaArmas(armas.cuerpo_a_cuerpo_sencillas, tablaCuerpoACuerpoSencillas, 'cuerpo-a-cuerpo-sencilla-');
+            
+            const tablaDistanciaSencillas = document.getElementById('tablaDistanciaSencillas');
+            mostrarTablaArmas(armas.distancia_sencillas, tablaDistanciaSencillas, 'distancia-sencilla-');
+            
+            const tablaCuerpoACuerpoMarciales = document.getElementById('tablaCuerpoACuerpoMarciales');
+            mostrarTablaArmas(armas.cuerpo_a_cuerpo_marciales, tablaCuerpoACuerpoMarciales, 'cuerpo-a-cuerpo-marcial-');
+            
+            const tablaDistanciaMarciales = document.getElementById('tablaDistanciaMarciales');
+            mostrarTablaArmas(armas.distancia_marciales, tablaDistanciaMarciales, 'distancia-marcial-');
+        }
+
+        function mostrarTablaArmas(listaArmas, tabla, prefijo) {
+            listaArmas.forEach((arma, index) => {
+                arma.EsObjeto = "SI";  // Las armas son objetos
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${arma.nombre}</td>
+                    <td>${formatearCoste(arma.coste)}</td>
+                    <td>${arma.daño}</td>
+                    <td>${arma.peso}</td>
+                    <td>${arma.propiedades.join(', ')}</td>
+                    <td>${arma.dominio}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function formatearCoste(coste) {
+            let resultado = [];
+            if (coste.oro) resultado.push(`${coste.oro} po`);
+            if (coste.plata) resultado.push(`${coste.plata} pp`);
+            if (coste.cobre) resultado.push(`${coste.cobre} pc`);
+            return resultado.join(', ');
+        }
+
+        function mostrarArmaduras() {
+            const tablaArmadurasLigeras = document.getElementById('tablaArmadurasLigeras');
+            mostrarTablaArmaduras(armaduras.armaduras_ligeras, tablaArmadurasLigeras, 'armadura-ligera-');
+            
+            const tablaArmadurasMedias = document.getElementById('tablaArmadurasMedias');
+            mostrarTablaArmaduras(armaduras.armaduras_medias, tablaArmadurasMedias, 'armadura-media-');
+            
+            const tablaArmadurasPesadas = document.getElementById('tablaArmadurasPesadas');
+            mostrarTablaArmaduras(armaduras.armaduras_pesadas, tablaArmadurasPesadas, 'armadura-pesada-');
+            
+            const tablaEscudos = document.getElementById('tablaEscudos');
+            mostrarTablaArmaduras(armaduras.escudos, tablaEscudos, 'escudo-');
+        }
+
+        function mostrarTablaArmaduras(listaArmaduras, tabla, prefijo) {
+            listaArmaduras.forEach((armadura, index) => {
+                armadura.EsObjeto = "SI";  // Las armaduras son objetos
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${armadura.nombre}</td>
+                    <td>${armadura.clase_armadura}</td>
+                    <td>${armadura.Fuerza}</td>
+                    <td>${armadura.sigilo}</td>
+                    <td>${armadura.peso}</td>
+                    <td>${formatearCoste(armadura.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarEquipo() {
+            const tablaEquipoGeneral = document.getElementById('tablaEquipoGeneral');
+            mostrarTablaEquipo(equipo.equipo_general, tablaEquipoGeneral, 'equipo-general-');
+            
+            const tablaPaquetes = document.getElementById('tablaPaquetes');
+            mostrarTablaEquipo(equipo.paquetes, tablaPaquetes, 'paquete-');
+            
+            const tablaPergaminosYPociones = document.getElementById('tablaPergaminosYPociones');
+            mostrarTablaEquipo(equipo.pergaminos_y_pociones, tablaPergaminosYPociones, 'pergamino-pocion-');
+
+            const tablaMuniciones = document.getElementById('tablaMuniciones');
+            mostrarTablaEquipo(equipo.municiones, tablaMuniciones, 'municion-');
+
+            const tablaFocosArcanos = document.getElementById('tablaFocosArcanos');
+            mostrarTablaEquipo(equipo.focos_arcanos, tablaFocosArcanos, 'foco-arcano-');
+
+            const tablaFocosDruidicos = document.getElementById('tablaFocosDruidicos');
+            mostrarTablaEquipo(equipo.focos_druidicos, tablaFocosDruidicos, 'foco-druidico-');
+
+            const tablaSímbolosSagrados = document.getElementById('tablaSímbolosSagrados');
+            mostrarTablaEquipo(equipo.simbolos_sagrados, tablaSímbolosSagrados, 'simbolo-sagrado-');
+        }
+
+        function mostrarTablaEquipo(listaEquipo, tabla, prefijo) {
+            listaEquipo.forEach((item, index) => {
+                item.EsObjeto = "SI";  // El equipo son objetos
+                const fila = document.createElement('tr');
+                if ('cantidad_paquete' in item) {
+                    // Es una munición
+                    fila.innerHTML = `
+                        <td>${item.nombre}</td>
+                        <td>${item.cantidad_paquete}</td>
+                        <td>${item.almacenamiento}</td>
+                        <td>${item.peso}</td>
+                        <td>${formatearCoste(item.coste)}</td>
+                        <td>${crearControlCantidad(prefijo + index)}</td>
+                    `;
+                } else {
+                    // Es equipo normal
+                    fila.innerHTML = `
+                        <td>${item.nombre}</td>
+                        <td>${item.peso}</td>
+                        <td>${formatearCoste(item.coste)}</td>
+                        <td>${crearControlCantidad(prefijo + index)}</td>
+                    `;
+                }
+                tabla.appendChild(fila);
+            });
+        }
+
+        function obtenerPrefijo(categoria) {
+            switch(categoria) {
+                case 'cuerpo_a_cuerpo_sencillas': return 'cuerpo-a-cuerpo-sencilla-';
+                case 'distancia_sencillas': return 'distancia-sencilla-';
+                case 'cuerpo_a_cuerpo_marciales': return 'cuerpo-a-cuerpo-marcial-';
+                case 'distancia_marciales': return 'distancia-marcial-';
+                case 'armaduras_ligeras': return 'armadura-ligera-';
+                case 'armaduras_medias': return 'armadura-media-';
+                case 'armaduras_pesadas': return 'armadura-pesada-';
+                case 'escudos': return 'escudo-';
+                case 'equipo_general': return 'equipo-general-';
+                case 'paquetes': return 'paquete-';
+                case 'pergaminos_y_pociones': return 'pergamino-pocion-';
+                case 'herramientas_artesano': return 'herramienta-artesano-';
+                case 'otras_herramientas': return 'otra-herramienta-';
+                case 'instrumentos_musicales': return 'instrumento-musical-';
+                case 'municiones': return 'municion-';
+                case 'focos_arcanos': return 'foco-arcano-';
+                case 'focos_druidicos': return 'foco-druidico-';
+                case 'simbolos_sagrados': return 'simbolo-sagrado-';
+                case 'animales': return 'montura-';
+                case 'vehiculos_terrestres': return 'vehiculo-terrestre-';
+                case 'vehiculos_y_aparejos': return 'vehiculo-';
+                case 'vehiculos_aereos_acuaticos': return 'vehiculo-aereo-acuatico-';
+                case 'estilos_de_vida': return 'estilo-vida-';
+                case 'bebidas': return 'bebida-';
+                case 'comidas': return 'comida-';
+                case 'estancia_posada': return 'estancia-';
+                case 'comidas_completas': return 'comida-completa-';
+                case 'viajes': return 'viaje-';
+                case 'asalariados': return 'asalariado-';
+                case 'Arrojadiza_hechizos': return 'hechizo-';
+                case 'bienes_comerciales': return 'bien-comercial-';
+                default: return '';
+            }
+        }
+
+        // Variables para almacenar las últimas frases usadas
+        let ultimaFraseDescuento = "";
+        let ultimaFrasePobre = "";
+        let ultimaFraseMedia = "";
+        let ultimaFraseRica = "";
+
+        // Arrays de frases según el gasto
+        const frasesPobre = [
+            "¡Vaya! Con esa miseria no te llega ni para una cuerda de cáñamo para ahorcarte.",
+            "¿Eso es todo? He visto mendigos con más oro en sus harapos.",
+            "¡Por Moradin! Que hasta un kobold tiene más monedas en su madriguera.",
+            "¿Te has dejado el oro en la otra bolsa? ¿O es que ni bolsa tienes?",
+            "Con esa cantidad, mejor dedícate a espantar palomas en la plaza.",
+            "¿Eres aventurero o pordiosero? Porque empiezo a dudar.",
+            "¡Bah! He visto goblins con más poder adquisitivo.",
+            "¿Esto es una compra o una limosna que me pides?",
+            "Con ese oro no llegarás ni a aprendiz de mercenario.",
+            "¿Te has gastado el resto en la taberna o es que ni para eso te llega?"
+        ];
+
+        const frasesMedia = [
+            "¡Ah! Por fin alguien que sabe gastar con sensatez.",
+            "Veo que entiendes el valor justo de las cosas, me agradas.",
+            "Una compra digna de un aventurero con criterio.",
+            "Así da gusto hacer negocios, ni mucho ni poco.",
+            "Tienes buen ojo para las mercancías, aventurero.",
+            "¡Por fin! Alguien que no me hace perder el tiempo.",
+            "Que los dioses bendigan a los clientes como tú.",
+            "Una transacción justa y honorable, como debe ser.",
+            "Vuelve cuando quieras, siempre hay sitio para compradores sensatos.",
+            "¡Esto sí que es una compra decente!"
+        ];
+
+        const frasesRica = [
+            "¡Por las barbas del rey enano! ¿Le has robado el tesoro a un dragón?",
+            "Tanto oro junto... ¿No serás un noble disfrazado?",
+            "¿Te sobra el dinero o es que no sabes contar?",
+            "Con tanto oro, cualquiera diría que eres primo del Rey de Waterdeep.",
+            "¡Válgame! Que hasta los enanos dirían que te excedes.",
+            "¿Has vaciado las arcas de algún templo o qué?",
+            "Tanto oro junto me da mala espina... ¿No serás un dragón metamorfoseado?",
+            "¿Te has traído todo el botín de la mazmorra o qué?",
+            "Con ese oro podrías comprar media ciudad... ¿No prefieres invertir en propiedades?",
+            "¡Santos dioses! Que hasta un mercader de Amn se sonrojaría con tanto derroche."
+        ];
+
+        // Función para obtener una frase aleatoria diferente a la última según el tipo
+        function obtenerFraseAleatoria(arrayFrases, ultimaFrase) {
+            let frasesCandidatas = arrayFrases.filter(frase => frase !== ultimaFrase);
+            let fraseElegida = frasesCandidatas[Math.floor(Math.random() * frasesCandidatas.length)];
+            return fraseElegida;
+        }
+
+        // Variable para controlar si estamos en delay
+        let estaEnDelay = false;
+
+        // Función para limpiar el texto después de un delay aleatorio
+        function limpiarTextoConDelay() {
+            if (!estaEnDelay) {
+                estaEnDelay = true;
+                const delay = Math.floor(Math.random() * (24000 - 8000 + 1) + 8000); // Entre 8000 y 24000 ms
+                setTimeout(() => {
+                    WALKIRIALADRAGONA = "";
+                    estaEnDelay = false;
+                }, delay);
+            }
+        }
+
+        // Array de frases para el descuento
+        const frasesDescuento = [
+            "¡Por las barbas de Moradin! Que con tanto descuento acabaré pidiendo limosna.",
+            "¡Válgame el cielo! Un mercader con descuento es como un tahúr con escrúpulos.",
+            "¡Pardiez! Que si más rebajo los precios, tendré que empeñar hasta el polvo de mis estantes.",
+            "¡Por los dioses! Que más barato que esto, solo el agua del puerto de Aguas Profundas.",
+            "¡Voto a tal! Que con tanto descuento acabaré pidiendo limosna en el templo.",
+            "¡Por mi madre! Que más económico que esto, solo el aire que respiras.",
+            "¡Santos cielos! Que con estas rebajas, hasta los mendigos de Waterdeep viven mejor.",
+            "¡Rayos y centellas! Que más barato que esto, solo la conciencia de un político.",
+            "¡Por todos los infiernos! Que con estos precios, hasta un goblin parecería generoso.",
+            "¡Válgame el cielo! Que más rebajado que esto, solo mi dignidad al aceptarlo."
+        ];
+
+        // Modificar la función actualizarCarrito para incluir las nuevas frases
+        function actualizarCarrito() {
+            const itemsCarrito = document.getElementById('items-carrito');
+            const totalOro = document.getElementById('total-oro');
+            const totalPlata = document.getElementById('total-plata');
+            const totalCobre = document.getElementById('total-cobre');
+            let items = [];
+            let totalObjetos = { oro: 0, plata: 0, cobre: 0 };
+            let totalNoObjetos = { oro: 0, plata: 0, cobre: 0 };
+
+            // Convertir monedas a cobre
+            function convertirACobre(monedas) {
+                return monedas.oro * 100 + monedas.plata * 10 + monedas.cobre;
+            }
+
+            // Convertir cobre a monedas
+            function convertirDeCobre(cobreTotalMonedas) {
+                return {
+                    oro: Math.floor(cobreTotalMonedas / 100),
+                    plata: Math.floor((cobreTotalMonedas % 100) / 10),
+                    cobre: cobreTotalMonedas % 10
+                };
+            }
+
+            // Procesar todos los items y calcular totales separados
+            function procesarItems(objeto, categoria, categoriaPadre) {
+                if (!objeto[categoria]) return;
+                
+                if (typeof objeto[categoria] === 'object' && !Array.isArray(objeto[categoria])) {
+                    Object.keys(objeto[categoria]).forEach(subcategoria => {
+                        const prefijo = obtenerPrefijo(subcategoria);
+                        objeto[categoria][subcategoria].forEach((item, index) => {
+                            const cantidad = parseInt(document.getElementById('cantidad-' + prefijo + index)?.value || 0);
+                            if (cantidad > 0) {
+                                console.log('=== DEBUG ITEM ===');
+                                console.log('Nombre:', item.nombre);
+                                console.log('Categoría:', categoria);
+                                console.log('Subcategoría:', subcategoria);
+                                console.log('EsObjeto:', item.EsObjeto);
+                                console.log('Tipo de EsObjeto:', typeof item.EsObjeto);
+                                
+                                const costeItem = {
+                                    oro: item.coste.oro * cantidad,
+                                    plata: item.coste.plata * cantidad,
+                                    cobre: item.coste.cobre * cantidad
+                                };
+
+                                // Determinar si es objeto basado en la variable EsObjeto
+                                const esObjeto = item.EsObjeto === "SI";
+                                console.log('¿Es objeto?:', esObjeto);
+                                console.log('Añadiendo a:', esObjeto ? 'totalObjetos' : 'totalNoObjetos');
+                                console.log('=== FIN DEBUG ITEM ===');
+
+                                // Sumar al total correspondiente sin aplicar descuento
+                                if (esObjeto) {
+                                    totalObjetos.oro += costeItem.oro;
+                                    totalObjetos.plata += costeItem.plata;
+                                    totalObjetos.cobre += costeItem.cobre;
+                                } else {
+                                    totalNoObjetos.oro += costeItem.oro;
+                                    totalNoObjetos.plata += costeItem.plata;
+                                    totalNoObjetos.cobre += costeItem.cobre;
+                                }
+
+                                // Añadir al array de items para mostrar en el carrito
+                                items.push({
+                                    nombre: item.nombre,
+                                    cantidad: cantidad,
+                                    costeTotal: costeItem,
+                                    peso: item.peso || '',
+                                    categoria: categoriaPadre,
+                                    subcategoria: subcategoria
+                                });
+                            }
+                        });
+                    });
+                    return;
+                }
+
+                // Para arrays simples
+                const prefijo = obtenerPrefijo(categoria);
+                objeto[categoria].forEach((item, index) => {
+                    const cantidad = parseInt(document.getElementById('cantidad-' + prefijo + index)?.value || 0);
+                    if (cantidad > 0) {
+                        console.log('=== DEBUG ITEM (ARRAY SIMPLE) ===');
+                        console.log('Nombre:', item.nombre);
+                        console.log('Categoría:', categoria);
+                        console.log('EsObjeto:', item.EsObjeto);
+                        console.log('Tipo de EsObjeto:', typeof item.EsObjeto);
+                        
+                        const costeItem = {
+                            oro: item.coste.oro * cantidad,
+                            plata: item.coste.plata * cantidad,
+                            cobre: item.coste.cobre * cantidad
+                        };
+
+                        const esObjeto = item.EsObjeto === "SI";
+                        console.log('¿Es objeto?:', esObjeto);
+                        console.log('Añadiendo a:', esObjeto ? 'totalObjetos' : 'totalNoObjetos');
+                        console.log('=== FIN DEBUG ITEM ===');
+
+                        // Sumar al total correspondiente sin aplicar descuento
+                        if (esObjeto) {
+                            totalObjetos.oro += costeItem.oro;
+                            totalObjetos.plata += costeItem.plata;
+                            totalObjetos.cobre += costeItem.cobre;
+                        } else {
+                            totalNoObjetos.oro += costeItem.oro;
+                            totalNoObjetos.plata += costeItem.plata;
+                            totalNoObjetos.cobre += costeItem.cobre;
+                        }
+
+                        items.push({
+                            nombre: item.nombre,
+                            cantidad: cantidad,
+                            costeTotal: costeItem,
+                            peso: item.peso || '',
+                            categoria: categoriaPadre,
+                            subcategoria: categoria
+                        });
+                    }
+                });
+            }
+
+            // Procesar todas las categorías
+            Object.keys(armas).forEach(categoria => procesarItems(armas, categoria, 'armas'));
+            Object.keys(armaduras).forEach(categoria => procesarItems(armaduras, categoria, 'armaduras'));
+            Object.keys(equipo).forEach(categoria => procesarItems(equipo, categoria, 'equipo'));
+            Object.keys(herramientas).forEach(categoria => procesarItems(herramientas, categoria, 'herramientas'));
+            Object.keys(monturas).forEach(categoria => procesarItems(monturas, categoria, 'monturas'));
+            Object.keys(servicios).forEach(categoria => procesarItems(servicios, categoria, 'servicios'));
+
+            console.log('=== INICIO CÁLCULO DESCUENTO ===');
+            console.log('Total Objetos antes del descuento:', {
+                oro: totalObjetos.oro,
+                plata: totalObjetos.plata,
+                cobre: totalObjetos.cobre
+            });
+            console.log('Total No Objetos:', {
+                oro: totalNoObjetos.oro,
+                plata: totalNoObjetos.plata,
+                cobre: totalNoObjetos.cobre
+            });
+
+            // Aplicar descuento solo al total de objetos si Crafter está activo
+            const doteCrafterActivo = document.getElementById('doteCrafter').checked;
+            if (doteCrafterActivo) {
+                // Primero la frase de descuento
+                if (!estaEnDelay) {
+                    WALKIRIALADRAGONA = obtenerFraseAleatoria(frasesDescuento, ultimaFraseDescuento);
+                    ultimaFraseDescuento = WALKIRIALADRAGONA;
+                    reproducirAudio();
+                    limpiarTextoConDelay();
+                }
+
+                // Aplicar descuento
+                const totalObjetosEnCobre = (totalObjetos.oro * 100) + (totalObjetos.plata * 10) + totalObjetos.cobre;
+                const totalConDescuento = Math.floor(totalObjetosEnCobre * 0.8);
+                
+                totalObjetos = {
+                    oro: Math.floor(totalConDescuento / 100),
+                    plata: Math.floor((totalConDescuento % 100) / 10),
+                    cobre: totalConDescuento % 10
+                };
+            }
+
+            // Combinar totales después del descuento
+            const total = {
+                oro: totalObjetos.oro + totalNoObjetos.oro,
+                plata: totalObjetos.plata + totalNoObjetos.plata,
+                cobre: totalObjetos.cobre + totalNoObjetos.cobre
+            };
+
+            // Reproducir frase según el valor total (siempre, con o sin descuento)
+            if (!estaEnDelay) {
+                const totalEnCobre = (total.oro * 100) + (total.plata * 10) + total.cobre;
+                
+                if (totalEnCobre >= 790000) {
+                    WALKIRIALADRAGONA = obtenerFraseAleatoria(frasesRica, ultimaFraseRica);
+                    ultimaFraseRica = WALKIRIALADRAGONA;
+                } else if (totalEnCobre >= 123000 && totalEnCobre < 789000) {
+                    WALKIRIALADRAGONA = obtenerFraseAleatoria(frasesMedia, ultimaFraseMedia);
+                    ultimaFraseMedia = WALKIRIALADRAGONA;
+                } else {
+                    WALKIRIALADRAGONA = obtenerFraseAleatoria(frasesPobre, ultimaFrasePobre);
+                    ultimaFrasePobre = WALKIRIALADRAGONA;
+                }
+                
+                reproducirAudio();
+                limpiarTextoConDelay();
+            }
+
+            console.log('Total final combinado:', total);
+            console.log('=== FIN CÁLCULO DESCUENTO ===');
+
+            // Normalizar monedas del total final
+            normalizarMonedas(total);
+
+            // Actualizar vista del carrito
+            itemsCarrito.innerHTML = items.map((item, index) => `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>${item.cantidad}x ${item.nombre}</span>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">${formatearCoste(item.costeTotal)}</span>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${index})" style="padding: 0.25rem 0.5rem;">
+                            <span style="color: white;">✖</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Actualizar el título del total según si el descuento está activo
+            const totalTitle = document.querySelector('#total-carrito h4');
+            if (totalTitle) {
+                totalTitle.textContent = doteCrafterActivo ? 'Total con descuento:' : 'Total:';
+            }
+
+            // Comprobar si el botón está activo
+            const vendedoraActiva = document.getElementById('vendedoraBtn').classList.contains('active');
+            
+            // Actualizar totales en el DOM
+            totalOro.textContent = total.oro;
+            totalPlata.textContent = total.plata;
+            totalCobre.textContent = total.cobre;
+
+            // Justo antes de terminar la función actualizarCarrito (antes de cerrar la función):
+            window.itemsCarritoGlobal = items;
+        }
+
+        function normalizarMonedas(total) {
+            // 1 oro = 10 plata, 1 plata = 10 cobre
+            // Convertir cobre excedente a plata
+            if (total.cobre >= 10) {
+                total.plata += Math.floor(total.cobre / 10);
+                total.cobre = total.cobre % 10;
+            }
+            
+            // Convertir plata excedente a oro
+            if (total.plata >= 10) {
+                total.oro += Math.floor(total.plata / 10);
+                total.plata = total.plata % 10;
+            }
+        }
+
+        // Añadir evento para cuando se cambia manualmente el valor
+        function agregarEventosInput() {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', () => {
+                    if (input.value < 0) input.value = 0;
+                    actualizarCarrito();
+                });
+                input.addEventListener('change', () => {
+                    if (input.value < 0) input.value = 0;
+                    actualizarCarrito();
+                });
+            });
+        }
+
+        function mostrarHerramientas() {
+            const tablaHerramientasArtesano = document.getElementById('tablaHerramientasArtesano');
+            mostrarTablaHerramientas(herramientas.herramientas_artesano, tablaHerramientasArtesano, 'herramienta-artesano-');
+            
+            const tablaOtrasHerramientas = document.getElementById('tablaOtrasHerramientas');
+            mostrarTablaHerramientas(herramientas.otras_herramientas, tablaOtrasHerramientas, 'otra-herramienta-');
+
+            const tablaInstrumentosMusicales = document.getElementById('tablaInstrumentosMusicales');
+            mostrarTablaHerramientas(herramientas.instrumentos_musicales, tablaInstrumentosMusicales, 'instrumento-musical-');
+        }
+
+        function mostrarTablaHerramientas(listaHerramientas, tabla, prefijo) {
+            listaHerramientas.forEach((herramienta, index) => {
+                herramienta.EsObjeto = "SI";  // Las herramientas son objetos
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${herramienta.nombre}</td>
+                    <td>${herramienta.peso}</td>
+                    <td>${formatearCoste(herramienta.coste)}</td>
+                    <td>${herramienta.habilidad}</td>
+                    <td>${herramienta.fabricacion.join(', ') || '—'}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarMonturas() {
+            const tablaMonturasAnimales = document.getElementById('tablaMonturasAnimales');
+            mostrarTablaMonturas(monturas.animales, tablaMonturasAnimales, 'montura-');
+            
+            const tablaVehiculosTerrestres = document.getElementById('tablaVehiculosTerrestres');
+            mostrarTablaVehiculos(monturas.vehiculos_terrestres, tablaVehiculosTerrestres, 'vehiculo-terrestre-');
+            
+            const tablaVehiculosAparejos = document.getElementById('tablaVehiculosAparejos');
+            mostrarTablaVehiculos(monturas.vehiculos_y_aparejos, tablaVehiculosAparejos, 'vehiculo-');
+            
+            const tablaVehiculosAereosAcuaticos = document.getElementById('tablaVehiculosAereosAcuaticos');
+            mostrarTablaVehiculosAereosAcuaticos(monturas.vehiculos_aereos_acuaticos, tablaVehiculosAereosAcuaticos, 'vehiculo-aereo-acuatico-');
+        }
+
+        function mostrarTablaMonturas(listaMonturas, tabla, prefijo) {
+            listaMonturas.forEach((montura, index) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${montura.nombre}</td>
+                    <td>${montura.capacidad}</td>
+                    <td>${formatearCoste(montura.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarTablaVehiculos(listaVehiculos, tabla, prefijo) {
+            listaVehiculos.forEach((vehiculo, index) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${vehiculo.nombre}</td>
+                    <td>${vehiculo.peso}</td>
+                    <td>${formatearCoste(vehiculo.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarTablaVehiculosAereosAcuaticos(listaVehiculos, tabla, prefijo) {
+            listaVehiculos.forEach((vehiculo, index) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${vehiculo.nombre}</td>
+                    <td>${vehiculo.velocidad}</td>
+                    <td>${vehiculo.tripulacion}</td>
+                    <td>${vehiculo.pasajeros}</td>
+                    <td>${vehiculo.carga}</td>
+                    <td>${vehiculo.clase_armadura}</td>
+                    <td>${vehiculo.caballos_fuerza}</td>
+                    <td>${vehiculo.umbral_dano}</td>
+                    <td>${formatearCoste(vehiculo.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarServicios() {
+            const tablaEstilosVida = document.getElementById('tablaEstilosVida');
+            mostrarTablaEstilosVida(servicios.estilos_de_vida, tablaEstilosVida, 'estilo-vida-');
+            
+            const tablaBebidas = document.getElementById('tablaBebidas');
+            mostrarTablaServiciosSimple(servicios.comida_bebida_alojamiento.bebidas, tablaBebidas, 'bebida-');
+            
+            const tablaComidas = document.getElementById('tablaComidas');
+            mostrarTablaServiciosSimple(servicios.comida_bebida_alojamiento.comidas, tablaComidas, 'comida-');
+            
+            const tablaEstancias = document.getElementById('tablaEstancias');
+            mostrarTablaServiciosSimple(servicios.comida_bebida_alojamiento.estancia_posada, tablaEstancias, 'estancia-');
+            
+            const tablaComidasCompletas = document.getElementById('tablaComidasCompletas');
+            mostrarTablaServiciosSimple(servicios.comida_bebida_alojamiento.comidas_completas, tablaComidasCompletas, 'comida-completa-');
+            
+            const tablaViajes = document.getElementById('tablaViajes');
+            mostrarTablaServiciosConUnidad(servicios.viajes, tablaViajes, 'viaje-');
+            
+            const tablaAsalariados = document.getElementById('tablaAsalariados');
+            mostrarTablaServiciosConUnidad(servicios.asalariados, tablaAsalariados, 'asalariado-');
+            
+            const tablaHechizos = document.getElementById('tablaHechizos');
+            mostrarTablaHechizos(servicios.Arrojadiza_hechizos, tablaHechizos, 'hechizo-');
+        }
+
+        function mostrarTablaEstilosVida(listaEstilos, tabla, prefijo) {
+            listaEstilos.forEach((estilo, index) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${estilo.nombre}</td>
+                    <td>${estilo.descripcion}</td>
+                    <td>${formatearCoste(estilo.coste)}</td>
+                    <td>${estilo.periodo}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarTablaServiciosSimple(listaServicios, tabla, prefijo) {
+            listaServicios.forEach((servicio, index) => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${servicio.nombre}</td>
+                    <td>${formatearCoste(servicio.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarTablaServiciosConUnidad(listaServicios, tabla, prefijo) {
+            listaServicios.forEach((servicio, index) => {
+                servicio.EsObjeto = "NO";  // Los servicios no son objetos
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${servicio.nombre}</td>
+                    <td>${formatearCoste(servicio.coste)}</td>
+                    <td>${servicio.unidad}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        function mostrarTablaHechizos(listaHechizos, tabla, prefijo) {
+            listaHechizos.forEach((hechizo, index) => {
+                hechizo.EsObjeto = "NO";  // Los hechizos son servicios
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${hechizo.nombre}</td>
+                    <td>${hechizo.disponibilidad}</td>
+                    <td>${formatearCoste(hechizo.coste)}</td>
+                    <td>${crearControlCantidad(prefijo + index)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        // Añadir nueva función para mostrar bienes comerciales
+        function mostrarBienesComerciales() {
+            const tablaBienesComerciales = document.getElementById('tablaBienesComerciales');
+            mostrarTablaServiciosSimple(bienesComerciales, tablaBienesComerciales, 'bien-comercial-');
+        }
+
+        // Actualizar la inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.vendedora-img').src = IconoTiendadeAventureros;
+            mostrarArmas();
+            mostrarArmaduras();
+            mostrarEquipo();
+            mostrarHerramientas();
+            mostrarMonturas();
+            mostrarServicios();
+            mostrarBienesComerciales();  // Añadir esta línea
+            agregarEventosInput();
+
+            // Añadir event listener para el checkbox del descuento
+            document.getElementById('doteCrafter').addEventListener('change', function() {
+                actualizarCarrito();
+            });
+        });
+
+        async function copiarADiscord() {
+            const totalOro = document.getElementById('total-oro').textContent;
+            const totalPlata = document.getElementById('total-plata').textContent;
+            const totalCobre = document.getElementById('total-cobre').textContent;
+            const doteCrafterActivo = document.getElementById('doteCrafter').checked;
+            let items = window.itemsCarritoGlobal || [];
+
+            let texto = "```\nCompras:\n";
+            if (doteCrafterActivo) {
+                texto += "[Dote Crafter aplicado: 20% descuento]\n\n";
+            }
+            // Solo la lista de objetos, en el mismo orden que el carrito
+            items.forEach(item => {
+                const costeStr = formatearCoste(item.costeTotal);
+                let pesoStr = '-';
+                if (item.peso && item.peso.trim() !== '') {
+                    pesoStr = item.peso.replace(/libras?\.?/gi, 'lb').replace(/\s+/, ' ').trim();
+                }
+                texto += `${item.cantidad}x ${item.nombre.padEnd(30)} (${pesoStr}) ${costeStr}\n`;
+            });
+            texto += "\nTotal:\n";
+            let totalStr = [];
+            if (parseInt(totalOro)) totalStr.push(`${totalOro} po`);
+            if (parseInt(totalPlata)) totalStr.push(`${totalPlata} pp`);
+            if (parseInt(totalCobre)) totalStr.push(`${totalCobre} pc`);
+            texto += totalStr.join(' ') + "\n```";
+            texto += "\nTienda en: https://el-almacen-de-giacomo.tiiny.site/";
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(texto);
+                    alert('¡Copiado al portapapeles!');
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = texto;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            alert('¡Copiado al portapapeles!');
+                        } else {
+                            alert('No se pudo copiar automáticamente. Por favor, copia el texto manualmente.');
+                        }
+                    } catch (err) {
+                        alert('No se pudo copiar automáticamente. Por favor, copia el texto manualmente.');
+                    }
+                    document.body.removeChild(textarea);
+                }
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+                alert('Error al copiar al portapapeles');
+            }
+        }
+
+        let WALKIRIALADRAGONA = "Bienvenido a la tienda de aventureros."; // Mensaje inicial
+        let vendedoraActiva = false;
+        let audioContext = null;
+        let audioSource = null;
+        let contadorClicks = 0; // Contador para llevar el registro de las veces que se ha pulsado
+
+        function toggleVendedora() {
+            const btn = document.getElementById('vendedoraBtn');
+            vendedoraActiva = !vendedoraActiva;
+            
+            if (vendedoraActiva) {
+                btn.classList.add('active');
+                
+                // Actualizar el mensaje según el número de clicks
+                contadorClicks++;
+                switch(contadorClicks) {
+                    case 1:
+                        WALKIRIALADRAGONA = "Bienvenido a la tienda de aventureros.";
+                        break;
+                    case 2:
+                        WALKIRIALADRAGONA = "No haces mas que salir y entrar de mi tienda.";
+                        break;
+                    case 3:
+                        WALKIRIALADRAGONA = "Mira, si no te encuentras el culo ni usando ambas manos es tu problema, déjame seguir barriendo cucarachas.";
+                        break;
+                    case 4:
+                        WALKIRIALADRAGONA = "No quiero relacionarme contigo, como me sigas molestando llamaré a Yiácomo Malatesta para que te aplique un expirato.";
+                        break;
+                        case 5:
+                        WALKIRIALADRAGONA = "Me importas una mierda, eres un mediocre.";
+                        break;
+                        case 6:
+                        WALKIRIALADRAGONA = "Me puedes comer los huevos por detrás. Dedícate a mirar la mercancía.";
+                        break;
+                        case 7:
+                        WALKIRIALADRAGONA = "Prefiero cambiarme de dirección que darte la razón en algo. Compra algo o vete a la mierda.";
+                        break;
+                        case 8:
+                        WALKIRIALADRAGONA = "Que te den por culo, cállate un mes. Déjame en paz.";
+                        break;
+                        case 9:
+                        WALKIRIALADRAGONA = "A ver si pisas un clavo, te caes de culo sobre un charco y se te rompen los huevos.";
+                        break;
+                    default:
+                        WALKIRIALADRAGONA = "Revisa la mercancía, no a mi.";
+                        break;
+                }
+                
+                reproducirAudio();
+            } else {
+                btn.classList.remove('active');
+                if (audioSource) {
+                    audioSource.stop();
+                }
+            }
+        }
+
+        function reproducirAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (!vendedoraActiva) {
+                WALKIRIALADRAGONA = ""; // Si la vendedora no está activa, no hay mensaje
+            }
+
+            // Convertir texto a voz usando la API de síntesis de voz
+            const utterance = new SpeechSynthesisUtterance(WALKIRIALADRAGONA);
+            utterance.lang = 'es-ES';
+            utterance.pitch = 1.2; // Voz ligeramente más aguda
+            utterance.rate = 1.0; // Velocidad normal
+            
+            // Reproducir el audio
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Limpiar el contexto de audio cuando se cierre la página
+        window.addEventListener('beforeunload', () => {
+            if (audioContext) {
+                audioContext.close();
+            }
+        });
+
+        // Añadir función para eliminar items
+        function eliminarDelCarrito(index) {
+            // Obtener el item a eliminar
+            const itemsCarrito = document.getElementById('items-carrito');
+            const items = Array.from(itemsCarrito.children);
+            
+            if (items[index]) {
+                // Obtener el nombre del item para buscarlo en los inputs
+                const nombreItem = items[index].querySelector('span').textContent.split('x ')[1].trim();
+                
+                // Buscar y resetear el input correspondiente
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    const fila = input.closest('tr');
+                    if (fila && fila.querySelector('td').textContent.trim() === nombreItem) {
+                        input.value = 0;
+                        actualizarCarrito();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+

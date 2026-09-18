@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario de Harptos - Costa de la Espada</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'MedievalSharp', cursive;
+            margin: 20px;
+            background-color: #2c2416;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 2px solid #000;
+        }
+        
+        .left-panel, .right-panel {
+            flex: 1;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 2px solid #000;
+        }
+        
+        .calendar {
+            border: 2px solid #000;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: white;
+        }
+        
+        .calendar-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .day {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 0.9em;
+            position: relative;
+        }
+        
+        .day:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .selected-principal {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            z-index: 10;
+        }
+        
+        .selected-grupo1 {
+            background-color: #ffd700;
+            z-index: 1;
+        }
+        
+        .selected-grupo2 {
+            background-color: #ff4444;
+            color: white;
+            z-index: 1;
+        }
+        
+        .selected-grupo3 {
+            background-color: #4444ff;
+            color: white;
+            z-index: 1;
+        }
+        
+        .festivo {
+            background-color: #ff69b4;
+            color: white;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 5px;
+        }
+        
+        .controls select {
+            padding: 3px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        
+        .controls button {
+            padding: 3px 8px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .buttons button {
+            padding: 8px 15px;
+            border: none;
+            background-color: #1a1a1a;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'MedievalSharp', cursive;
+            transition: all 0.3s ease;
+        }
+        
+        .buttons button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+
+        .buttons button:first-child {
+            background-color: #2c5530;
+        }
+
+        .buttons button:first-child:hover {
+            background-color: #3a6a40;
+        }
+
+        .buttons button:nth-child(2) {
+            background-color: #7289da;
+        }
+
+        .buttons button:nth-child(2):hover {
+            background-color: #8299ea;
+        }
+
+        .buttons button:last-child {
+            background-color: #8b4513;
+        }
+
+        .buttons button:last-child:hover {
+            background-color: #a0522d;
+        }
+
+        .mes-container {
+            border: 2px solid #000;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .mes-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+    </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/8.0.20/jsrsasign-all-min.js"></script>
+</head>
+<body>
+    <h1 style="
+        text-align: center;
+        color: #f4e4bc;
+        margin: 20px 0;
+        font-size: 2.5em;
+        font-family: 'MedievalSharp', cursive;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    ">Calendario de Harptos</h1>
+
+    <div class="container">
+        <div class="left-panel">
+            <!-- Añadir input oculto para el código -->
+            <input type="hidden" id="codigo" value="">
+            <!-- Grupo 1 -->
+            <div class="calendar" id="grupo1">
+                <div class="calendar-title">Grupo 1</div>
+                <div class="controls">
+                    <label>Día:</label>
+                    <button onclick="ajustarDia(-1, 'grupo1')">-</button>
+                    <select class="dia" onchange="actualizarCalendario('grupo1')"></select>
+                    <button onclick="ajustarDia(1, 'grupo1')">+</button>
+                    
+                    <label>Mes:</label>
+                    <button onclick="ajustarMes(-1, 'grupo1')">-</button>
+                    <select class="mes" onchange="actualizarCalendario('grupo1')"></select>
+                    <button onclick="ajustarMes(1, 'grupo1')">+</button>
+                    
+                    <label>Año:</label>
+                    <button onclick="ajustarAño(-1, 'grupo1')">-</button>
+                    <select class="año" onchange="actualizarCalendario('grupo1')"></select>
+                    <button onclick="ajustarAño(1, 'grupo1')">+</button>
+                </div>
+                <div class="calendar-grid"></div>
+            </div>
+
+            <!-- Grupo 2 -->
+            <div class="calendar" id="grupo2">
+                <div class="calendar-title">Grupo 2</div>
+                <div class="controls">
+                    <label>Día:</label>
+                    <button onclick="ajustarDia(-1, 'grupo2')">-</button>
+                    <select class="dia" onchange="actualizarCalendario('grupo2')"></select>
+                    <button onclick="ajustarDia(1, 'grupo2')">+</button>
+                    
+                    <label>Mes:</label>
+                    <button onclick="ajustarMes(-1, 'grupo2')">-</button>
+                    <select class="mes" onchange="actualizarCalendario('grupo2')"></select>
+                    <button onclick="ajustarMes(1, 'grupo2')">+</button>
+                    
+                    <label>Año:</label>
+                    <button onclick="ajustarAño(-1, 'grupo2')">-</button>
+                    <select class="año" onchange="actualizarCalendario('grupo2')"></select>
+                    <button onclick="ajustarAño(1, 'grupo2')">+</button>
+                </div>
+                <div class="calendar-grid"></div>
+            </div>
+
+            <!-- Grupo 3 -->
+            <div class="calendar" id="grupo3">
+                <div class="calendar-title">Grupo 3</div>
+                <div class="controls">
+                    <label>Día:</label>
+                    <button onclick="ajustarDia(-1, 'grupo3')">-</button>
+                    <select class="dia" onchange="actualizarCalendario('grupo3')"></select>
+                    <button onclick="ajustarDia(1, 'grupo3')">+</button>
+                    
+                    <label>Mes:</label>
+                    <button onclick="ajustarMes(-1, 'grupo3')">-</button>
+                    <select class="mes" onchange="actualizarCalendario('grupo3')"></select>
+                    <button onclick="ajustarMes(1, 'grupo3')">+</button>
+                    
+                    <label>Año:</label>
+                    <button onclick="ajustarAño(-1, 'grupo3')">-</button>
+                    <select class="año" onchange="actualizarCalendario('grupo3')"></select>
+                    <button onclick="ajustarAño(1, 'grupo3')">+</button>
+                </div>
+                <div class="calendar-grid"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="calendar" id="principal">
+                <div class="calendar-title">Calendario Principal</div>
+                <div class="controls">
+                    <label>Día:</label>
+                    <button onclick="ajustarDia(-1, 'principal')">-</button>
+                    <select class="dia" onchange="actualizarCalendario('principal')"></select>
+                    <button onclick="ajustarDia(1, 'principal')">+</button>
+                    
+                    <label>Mes:</label>
+                    <button onclick="ajustarMes(-1, 'principal')">-</button>
+                    <select class="mes" onchange="actualizarCalendario('principal')"></select>
+                    <button onclick="ajustarMes(1, 'principal')">+</button>
+                    
+                    <label>Año:</label>
+                    <button onclick="ajustarAño(-1, 'principal')">-</button>
+                    <select class="año" onchange="actualizarCalendario('principal')"></select>
+                    <button onclick="ajustarAño(1, 'principal')">+</button>
+                </div>
+                
+                <div class="mes-container">
+                    <div class="mes-title">Mes Anterior</div>
+                    <div class="calendar-grid" id="mes-anterior"></div>
+                </div>
+                
+                <div class="mes-container">
+                    <div class="mes-title">Mes Actual</div>
+                    <div class="calendar-grid" id="mes-actual"></div>
+                </div>
+                
+                <div class="mes-container">
+                    <div class="mes-title">Mes Siguiente</div>
+                    <div class="calendar-grid" id="mes-siguiente"></div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button onclick="sincronizarCalendarios()">Sincronizar</button>
+                <button onclick="copiarDiscord()">Discord</button>
+                <button onclick="copiarImagen()">IMG</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sheet-content" style="
+        display: none;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    ">
+        <h3>Contenido del Sheet:</h3>
+        <p id="sheet-text"></p>
+    </div>
+
+    <script>
+        // Configuración
+        const mesesHarptos = [
+            "Hammer", "Alturiak", "Ches", "Tarsakh", "Mirtul", "Kythorn",
+            "Flamerule", "Eleasis", "Eleint", "Marpenoth", "Uktar", "Nightal"
+        ];
+
+        const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhxJwBgMjZgySfsrEMiytoq2hx3GFK0SfizBpui0NOX6GhkrVpobrzjGCaZObSO9716WFZHRvodlhh/pub?output=csv";
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwviI-aseB0kELQ4Z3rxXEYvp4uAGVH8aFf2NscahvO0zXGewgrlk-9pZFCpb_Wg4zW/exec';
+
+        const festividades = {
+            "Midwinter": {
+                posicion: [0, 30],
+                nombreCompleto: "Midwinter",
+                descripcion: "Festival de invierno"
+            },
+            "Greengrass": {
+                posicion: [3, 30],
+                nombreCompleto: "Greengrass",
+                descripcion: "Festival de primavera"
+            },
+            "Midsummer": {
+                posicion: [6, 30],
+                nombreCompleto: "Midsummer",
+                descripcion: "Festival de verano"
+            },
+            "Highharvestide": {
+                posicion: [8, 30],
+                nombreCompleto: "Highharvestide",
+                descripcion: "Festival de cosecha"
+            },
+            "Feast of the Moon": {
+                posicion: [10, 30],
+                nombreCompleto: "Feast of the Moon",
+                descripcion: "Festival lunar"
+            }
+        };
+
+        // Funciones principales
+        function inicializarCalendarios() {
+            // Inicializar selectores y grids
+            inicializarSelectores();
+            crearGridsDias();
+            actualizarMarcadores();
+        }
+
+        function actualizarCalendarios() {
+            try {
+                const fechasTexto = document.getElementById('codigo').value;
+                if (!fechasTexto) {
+                    throw new Error("Datos vacíos");
+                }
+
+                console.log("Datos leídos:", fechasTexto);
+                
+                // Separar las fechas de la fecha guardada (formato: dia.mes.año-dia.mes.año-dia.mes.año-dia.mes.año|YYYYMMDD)
+                const [calendarios, fechaGuardada] = fechasTexto.split('|');
+                
+                if (!fechaGuardada) {
+                    throw new Error("Formato inválido: falta fecha guardada");
+                }
+                
+                // Formatear la fecha guardada para comparar
+                const fechaGuardadaFormateada = `${fechaGuardada.slice(0,4)}-${fechaGuardada.slice(4,6)}-${fechaGuardada.slice(6,8)}`;
+                const fechaActual = new Date().toISOString().split('T')[0];
+                
+                console.log("Fecha guardada:", fechaGuardadaFormateada);
+                console.log("Fecha actual:", fechaActual);
+                
+                // Calcular días transcurridos
+                const diasTranscurridos = Math.floor(
+                    (new Date(fechaActual) - new Date(fechaGuardadaFormateada)) / (1000 * 60 * 60 * 24)
+                );
+                
+                console.log("Días transcurridos:", diasTranscurridos);
+
+                // Separar los 4 calendarios (3 grupos + 1 principal)
+                const calendariosSplit = calendarios.split('-');
+                if (calendariosSplit.length !== 4) {
+                    throw new Error(`Formato inválido: se esperaban 4 calendarios, se encontraron ${calendariosSplit.length}`);
+                }
+
+                // Actualizar grupos (sin añadir días transcurridos)
+                for (let i = 0; i < 3; i++) {
+                    const [dia, mes, año] = calendariosSplit[i].split('.');
+                    const grupo = document.getElementById(`grupo${i + 1}`);
+                    grupo.querySelector('.dia').value = dia;
+                    grupo.querySelector('.mes').value = mes;
+                    grupo.querySelector('.año').value = año;
+                    console.log(`Grupo ${i + 1}: ${dia}.${mes}.${año}`);
+                }
+
+                // Actualizar calendario principal (añadiendo días transcurridos)
+                const [diaPrincipal, mesPrincipal, añoPrincipal] = calendariosSplit[3].split('.');
+                const diasTotalesPrincipal = convertirFechaADias(mesPrincipal, parseInt(diaPrincipal)) + diasTranscurridos;
+                const fechaPrincipal = convertirDiasAFecha(diasTotalesPrincipal);
+                const principal = document.getElementById('principal');
+                principal.querySelector('.dia').value = fechaPrincipal.dia;
+                principal.querySelector('.mes').value = fechaPrincipal.mes;
+                principal.querySelector('.año').value = añoPrincipal;
+                console.log(`Principal: ${fechaPrincipal.dia}.${fechaPrincipal.mes}.${añoPrincipal} (con ${diasTranscurridos} días transcurridos)`);
+
+                actualizarMarcadores();
+                actualizarMesesAdyacentes();
+
+            } catch (e) {
+                console.error("Error al procesar datos:", e);
+            }
+        }
+
+        function sincronizarCalendarios() {
+            const principal = document.getElementById('principal');
+            const dia = principal.querySelector('.dia').value;
+            const mes = principal.querySelector('.mes').value;
+            const año = principal.querySelector('.año').value;
+
+            // Actualizar todos los grupos
+            for (let i = 1; i <= 3; i++) {
+                const grupo = document.getElementById(`grupo${i}`);
+                grupo.querySelector('.dia').value = dia;
+                grupo.querySelector('.mes').value = mes;
+                grupo.querySelector('.año').value = año;
+            }
+
+            actualizarMarcadores();
+            actualizarMesesAdyacentes();
+            actualizarNumeroDesdeSelectores();
+        }
+
+        function copiarDiscord() {
+            try {
+                // Obtener fechas de los grupos
+                let texto = "**__Fechas D&D 5e - Calendario de Harptos__**\n\n";
+                
+                // Emojis para cada grupo
+                const emojis = {
+                    1: ":yellow_circle: ",
+                    2: ":red_circle: ",
+                    3: ":blue_circle: "
+                };
+                
+                for (let i = 1; i <= 3; i++) {
+                    const grupo = document.getElementById(`grupo${i}`);
+                    const dia = grupo.querySelector('.dia').value;
+                    const mes = grupo.querySelector('.mes').value;
+                    const año = grupo.querySelector('.año').value;
+                    texto += `${emojis[i]}**Grupo ${i}:** ${dia} de ${mes}, ${año}\n`;
+                }
+
+                // Obtener fecha principal
+                const principal = document.getElementById('principal');
+                const dia = principal.querySelector('.dia').value;
+                const mes = principal.querySelector('.mes').value;
+                const año = principal.querySelector('.año').value;
+                texto += `\n:green_circle: **Calendario Principal:** ${dia} de ${mes}, ${año}`;
+
+                // Añadir enlace al calendario
+                texto += "\n\nCalendario Yuguliano: https://calendarioyuguliano.tiiny.site/";
+
+                // Copiar al portapapeles
+                navigator.clipboard.writeText(texto).then(() => {
+                    mostrarMensajeCopiado();
+                });
+            } catch (e) {
+                console.error("Error al copiar para Discord:", e);
+            }
+        }
+
+        function mostrarMensajeCopiado() {
+            const mensaje = document.createElement('div');
+            mensaje.textContent = "¡Copiado al portapapeles!";
+            mensaje.style.position = 'fixed';
+            mensaje.style.top = '50%';
+            mensaje.style.left = '50%';
+            mensaje.style.transform = 'translate(-50%, -50%)';
+            mensaje.style.padding = '10px 20px';
+            mensaje.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            mensaje.style.color = 'white';
+            mensaje.style.borderRadius = '5px';
+            mensaje.style.zIndex = '1000';
+            
+            document.body.appendChild(mensaje);
+            setTimeout(() => mensaje.remove(), 1000);
+        }
+
+        function crearGridsDias() {
+            // Crear grids para los grupos
+            for (let i = 1; i <= 3; i++) {
+                const grid = document.querySelector(`#grupo${i} .calendar-grid`);
+                crearGridDias(grid);
+            }
+
+            // Crear grids para el calendario principal
+            crearGridDias(document.getElementById('mes-anterior'));
+            crearGridDias(document.getElementById('mes-actual'));
+            crearGridDias(document.getElementById('mes-siguiente'));
+        }
+
+        function crearGridDias(grid) {
+            grid.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 10; j++) {
+                    const dia = document.createElement('div');
+                    dia.className = 'day';
+                    const numeroDia = i * 10 + j + 1;
+                    if (numeroDia <= 30) {
+                        dia.textContent = numeroDia;
+                        dia.onclick = () => diaClickado(numeroDia, grid);
+                    }
+                    grid.appendChild(dia);
+                }
+            }
+        }
+
+        function inicializarSelectores() {
+            // Inicializar selectores de día
+            const selectorDia = document.querySelectorAll('.dia');
+            for (let selector of selectorDia) {
+                for (let i = 1; i <= 30; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    selector.appendChild(option);
+                }
+                selector.value = '1';
+            }
+
+            // Inicializar selectores de mes
+            const selectorMes = document.querySelectorAll('.mes');
+            for (let selector of selectorMes) {
+                for (let mes of mesesHarptos) {
+                    const option = document.createElement('option');
+                    option.value = mes;
+                    option.textContent = mes;
+                    selector.appendChild(option);
+                }
+                selector.value = mesesHarptos[0];
+            }
+
+            // Inicializar selectores de año
+            const selectorAño = document.querySelectorAll('.año');
+            for (let selector of selectorAño) {
+                for (let i = 1400; i < 2000; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    selector.appendChild(option);
+                }
+                selector.value = '1495';
+            }
+        }
+
+        function diaClickado(dia, grid) {
+            const calendario = grid.closest('.calendar');
+            if (calendario) {
+                const selector = calendario.querySelector('.dia');
+                if (selector) {
+                    selector.value = dia;
+                    actualizarCalendario(calendario.id);
+                }
+            }
+        }
+
+        function actualizarCalendario(id) {
+            actualizarMarcadores();
+            actualizarMesesAdyacentes();
+            actualizarNumeroDesdeSelectores();
+        }
+
+        function actualizarMarcadores() {
+            // Limpiar todos los marcadores
+            document.querySelectorAll('.day').forEach(day => {
+                day.className = 'day';
+            });
+
+            // Obtener información del mes principal
+            const principal = document.getElementById('principal');
+            const mesPrincipal = principal.querySelector('.mes').value;
+            const añoPrincipal = parseInt(principal.querySelector('.año').value);
+            const idxMesPrincipal = mesesHarptos.indexOf(mesPrincipal);
+
+            // Calcular meses y años adyacentes
+            const idxMesAnterior = (idxMesPrincipal - 1 + 12) % 12;
+            const idxMesSiguiente = (idxMesPrincipal + 1) % 12;
+            const añoAnterior = idxMesPrincipal === 0 ? añoPrincipal - 1 : añoPrincipal;
+            const añoSiguiente = idxMesPrincipal === 11 ? añoPrincipal + 1 : añoPrincipal;
+
+            // Marcar días de los grupos
+            for (let i = 1; i <= 3; i++) {
+                const grupo = document.getElementById(`grupo${i}`);
+                const diaGrupo = parseInt(grupo.querySelector('.dia').value);
+                const mesGrupo = grupo.querySelector('.mes').value;
+                const añoGrupo = parseInt(grupo.querySelector('.año').value);
+                const idxMesGrupo = mesesHarptos.indexOf(mesGrupo);
+
+                // Marcar en el grid del grupo
+                marcarDia(grupo.querySelector('.calendar-grid'), diaGrupo, `selected-grupo${i}`);
+
+                // Marcar en el calendario principal según el mes
+                if (mesGrupo === mesesHarptos[idxMesAnterior] && añoGrupo === añoAnterior) {
+                    marcarDia(document.getElementById('mes-anterior'), diaGrupo, `selected-grupo${i}`);
+                }
+                if (mesGrupo === mesPrincipal && añoGrupo === añoPrincipal) {
+                    marcarDia(document.getElementById('mes-actual'), diaGrupo, `selected-grupo${i}`);
+                }
+                if (mesGrupo === mesesHarptos[idxMesSiguiente] && añoGrupo === añoSiguiente) {
+                    marcarDia(document.getElementById('mes-siguiente'), diaGrupo, `selected-grupo${i}`);
+                }
+            }
+
+            // Marcar día principal (siempre en el mes actual)
+            const diaPrincipal = parseInt(principal.querySelector('.dia').value);
+            marcarDia(document.getElementById('mes-actual'), diaPrincipal, 'selected-principal');
+        }
+
+        function marcarDia(grid, dia, clase) {
+            if (!grid) return;
+            const dias = grid.querySelectorAll('.day');
+            if (dias[dia - 1]) {
+                const diaElement = dias[dia - 1];
+                
+                if (clase === 'selected-principal') {
+                    // Si es el día principal (verde), eliminar todas las otras clases
+                    diaElement.className = 'day selected-principal';
+                } else {
+                    // Si no es el día principal y no está marcado como principal, añadir la clase
+                    if (!diaElement.classList.contains('selected-principal')) {
+                        diaElement.classList.add(clase);
+                    }
+                }
+            }
+        }
+
+        function ajustarDia(incremento, id) {
+            const calendario = document.getElementById(id);
+            const selector = calendario.querySelector('.dia');
+            let nuevoDia = parseInt(selector.value) + incremento;
+            
+            // Ajustar al mes anterior/siguiente si es necesario
+            if (nuevoDia < 1) {
+                ajustarMes(-1, id);
+                nuevoDia = 30;
+            } else if (nuevoDia > 30) {
+                ajustarMes(1, id);
+                nuevoDia = 1;
+            }
+            
+            selector.value = nuevoDia;
+            actualizarCalendario(id);
+        }
+
+        function ajustarMes(incremento, id) {
+            const calendario = document.getElementById(id);
+            const selector = calendario.querySelector('.mes');
+            const mesActual = selector.value;
+            const idx = mesesHarptos.indexOf(mesActual);
+            let nuevoIdx = idx + incremento;
+            
+            // Ajustar al año anterior/siguiente si es necesario
+            if (nuevoIdx < 0) {
+                ajustarAño(-1, id);
+                nuevoIdx = 11;
+            } else if (nuevoIdx > 11) {
+                ajustarAño(1, id);
+                nuevoIdx = 0;
+            }
+            
+            selector.value = mesesHarptos[nuevoIdx];
+            actualizarCalendario(id);
+        }
+
+        function ajustarAño(incremento, id) {
+            const calendario = document.getElementById(id);
+            const selector = calendario.querySelector('.año');
+            const nuevoAño = parseInt(selector.value) + incremento;
+            
+            // Mantener el año entre 1400 y 1999
+            if (nuevoAño >= 1400 && nuevoAño < 2000) {
+                selector.value = nuevoAño;
+                actualizarCalendario(id);
+            }
+        }
+
+        function actualizarMesesAdyacentes() {
+            try {
+                const principal = document.getElementById('principal');
+                if (!principal) return;
+
+                const mesActual = principal.querySelector('.mes').value;
+                const añoActual = parseInt(principal.querySelector('.año').value);
+                const idxActual = mesesHarptos.indexOf(mesActual);
+
+                // Calcular índices y años de los meses adyacentes
+                const idxAnterior = (idxActual - 1 + 12) % 12;
+                const idxSiguiente = (idxActual + 1) % 12;
+                const añoAnterior = idxActual === 0 ? añoActual - 1 : añoActual;
+                const añoSiguiente = idxActual === 11 ? añoActual + 1 : añoActual;
+
+                // Actualizar título del mes anterior
+                const mesAnteriorTitle = document.querySelector('#mes-anterior .mes-title');
+                if (mesAnteriorTitle) {
+                    mesAnteriorTitle.textContent = `Mes Anterior: ${mesesHarptos[idxAnterior]}`;
+                }
+
+                // Actualizar título del mes actual
+                const mesActualTitle = document.querySelector('#mes-actual .mes-title');
+                if (mesActualTitle) {
+                    mesActualTitle.textContent = `Mes Actual: ${mesActual}`;
+                }
+
+                // Actualizar título del mes siguiente
+                const mesSiguienteTitle = document.querySelector('#mes-siguiente .mes-title');
+                if (mesSiguienteTitle) {
+                    mesSiguienteTitle.textContent = `Mes Siguiente: ${mesesHarptos[idxSiguiente]}`;
+                }
+
+                // Actualizar los grids y marcadores
+                actualizarGridMeses(idxActual);
+            } catch (e) {
+                console.error("Error en actualizarMesesAdyacentes:", e);
+            }
+        }
+
+        function actualizarGridMeses(idxActual) {
+            // Actualizar grids de los meses adyacentes
+            for (let i = 1; i <= 3; i++) {
+                const grupo = document.getElementById(`grupo${i}`);
+                const diaGrupo = parseInt(grupo.querySelector('.dia').value);
+                const mesGrupo = grupo.querySelector('.mes').value;
+                const añoGrupo = parseInt(grupo.querySelector('.año').value);
+
+                // Marcar días de los grupos que correspondan a estos meses
+                for (let j = 0; j < 3; j++) {
+                    const dia = j * 10 + 1;
+                    const fecha = convertirDiasAFecha(convertirFechaADias(mesesHarptos[j], dia));
+                    if (fecha.mes === mesesHarptos[i - 1] && fecha.año === añoGrupo) {
+                        marcarDia(grupo.querySelector('.calendar-grid'), dia, `selected-grupo${i}`);
+                    }
+                }
+            }
+
+            // Marcar día principal (siempre en el mes actual)
+            const principal = document.getElementById('principal');
+            const diaPrincipal = parseInt(principal.querySelector('.dia').value);
+            marcarDia(document.getElementById('mes-actual'), diaPrincipal, 'selected-principal');
+        }
+
+        function actualizarNumeroDesdeSelectores() {
+            try {
+                // Crear cadena en formato legible: dia.mes.año-dia.mes.año-dia.mes.año-dia.mes.año|YYYYMMDD
+                let fechasTexto = "";
+                
+                // Obtener fechas de los 3 grupos
+                for (let i = 1; i <= 3; i++) {
+                    const grupo = document.getElementById(`grupo${i}`);
+                    const dia = parseInt(grupo.querySelector('.dia').value);
+                    const mes = grupo.querySelector('.mes').value;
+                    const año = grupo.querySelector('.año').value;
+                    
+                    if (i > 1) fechasTexto += "-";
+                    fechasTexto += `${dia}.${mes}.${año}`;
+                }
+
+                // Obtener fecha del calendario principal
+                const principal = document.getElementById('principal');
+                const diaPrincipal = parseInt(principal.querySelector('.dia').value);
+                const mesPrincipal = principal.querySelector('.mes').value;
+                const añoPrincipal = principal.querySelector('.año').value;
+                
+                fechasTexto += `-${diaPrincipal}.${mesPrincipal}.${añoPrincipal}`;
+
+                // Añadir la fecha actual (separada con |)
+                const fechaActual = new Date().toISOString().split('T')[0].replace(/-/g, '');
+                fechasTexto += `|${fechaActual}`;
+
+                // Actualizar el campo
+                document.getElementById('codigo').value = fechasTexto;
+
+                // Enviar al Google Sheet
+                enviarCodigoASheet(fechasTexto);
+
+            } catch (e) {
+                console.error("Error al actualizar fechas:", e);
+            }
+        }
+
+        // Función para cargar el código desde Google Sheets
+        async function cargarCodigoDesdeSheets() {
+            try {
+                const response = await fetch(APPS_SCRIPT_URL + '?accion=leerA1');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Datos recibidos:", data);
+
+                // Obtener el contenido de A1
+                const codigo = data.valor ? data.valor.trim() : '';
+                console.log("Código leído de A1:", codigo);
+
+                // Mostrar el código en la sección "Contenido del Sheet"
+                const sheetText = document.getElementById('sheet-text');
+                if (sheetText) {
+                    sheetText.textContent = `Código actual: ${codigo}`;
+                }
+
+                // Actualizar el campo de código
+                const codigoInput = document.getElementById('codigo');
+                if (codigoInput) {
+                    codigoInput.value = codigo;
+                    // Solo actualizar calendarios si hay datos válidos (formato: dia.mes.año-...|YYYYMMDD)
+                    if (codigo && codigo.includes('.') && codigo.includes('|')) {
+                        actualizarCalendarios();
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error al cargar desde Google Sheets:", error);
+                const sheetText = document.getElementById('sheet-text');
+                if (sheetText) {
+                    sheetText.textContent = `Error al cargar: ${error.message}`;
+                }
+            }
+        }
+
+        // Función para enviar el código al Google Sheet
+        async function enviarCodigoASheet(codigo) {
+            try {
+                if (!codigo) {
+                    throw new Error('Código vacío');
+                }
+
+                const params = new URLSearchParams({
+                    accion: 'escribirA1',
+                    valor: codigo
+                });
+
+                const response = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Respuesta del servidor:", data);
+
+                const sheetText = document.getElementById('sheet-text');
+                if (sheetText) {
+                    sheetText.textContent = `Código actual: ${codigo}`;
+                }
+
+            } catch (error) {
+                console.error("Error al enviar código al Sheet:", error);
+                const sheetText = document.getElementById('sheet-text');
+                if (sheetText) {
+                    sheetText.textContent = `Error al enviar: ${error.message}`;
+                }
+            }
+        }
+
+        // Funciones para el código Yuguliano
+        function numeroABase36(numeroDecimal) {
+            const digitos = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let base36 = "";
+            let numero = BigInt(numeroDecimal); // Usar BigInt para números grandes
+            
+            if (numero === 0n) return "0";
+            
+            while (numero > 0n) {
+                const resto = Number(numero % 36n);
+                base36 = digitos[resto] + base36;
+                numero = numero / 36n;
+            }
+            
+            return base36;
+        }
+
+        function base36ADecimal(numeroBase36) {
+            const digitos = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            let decimal = 0n; // Usar BigInt
+            
+            for (let digito of numeroBase36.toUpperCase()) {
+                if (!digitos.includes(digito)) {
+                    throw new Error(`Dígito inválido en base 36: ${digito}`);
+                }
+                decimal = decimal * 36n + BigInt(digitos.indexOf(digito));
+            }
+            
+            return decimal.toString().padStart(24, '0');
+        }
+
+        function convertirFechaADias(mes, dia) {
+            const mesIdx = mesesHarptos.indexOf(mes);
+            let diasTotales = mesIdx * 30 + parseInt(dia);
+            
+            // Ajustar por festividades
+            for (const [nombre, festival] of Object.entries(festividades)) {
+                const [mesFestival, diaFestival] = festival.posicion;
+                const diasFestival = mesFestival * 30 + diaFestival + 1;
+                if (diasTotales > diasFestival) {
+                    diasTotales += 1;
+                }
+            }
+            
+            return diasTotales;
+        }
+
+        function convertirDiasAFecha(diasTotales) {
+            // Ajustar días para que estén en el rango 1-365
+            diasTotales = ((diasTotales - 1) % 365) + 1;
+            
+            // Ajustar por festividades
+            let diasAjustados = diasTotales;
+            for (const [nombre, festival] of Object.entries(festividades)) {
+                const [mesFestival, diaFestival] = festival.posicion;
+                const diasFestival = mesFestival * 30 + diaFestival + 1;
+                if (diasTotales === diasFestival) {
+                    return {
+                        dia: 31,
+                        mes: mesesHarptos[mesFestival],
+                        esFestivo: true
+                    };
+                } else if (diasTotales > diasFestival) {
+                    diasAjustados -= 1;
+                }
+            }
+            
+            // Calcular mes y día
+            const mesIdx = Math.floor((diasAjustados - 1) / 30);
+            const dia = ((diasAjustados - 1) % 30) + 1;
+            
+            return {
+                dia: dia,
+                mes: mesesHarptos[mesIdx],
+                esFestivo: false
+            };
+        }
+
+        // Inicializar al cargar
+        window.onload = async function() {
+            try {
+                // Inicializar la interfaz
+                inicializarSelectores();
+                crearGridsDias();
+                
+                // Cargar el código desde Google Sheets
+                await cargarCodigoDesdeSheets();
+                
+                // Configurar actualización periódica
+                setInterval(cargarCodigoDesdeSheets, 60000); // Actualizar cada minuto
+            } catch (e) {
+                console.error("Error en la inicialización:", e);
+            }
+        };
+
+        function copiarImagen() {
+            // Capturar solo el panel derecho (calendario principal)
+            html2canvas(document.querySelector('.right-panel'), {
+                backgroundColor: 'white',
+                scale: 2, // Mejor calidad
+                logging: false,
+                onclone: function(clonedDoc) {
+                    // Ocultar los botones en la captura
+                    const clonedButtons = clonedDoc.querySelector('.buttons');
+                    if (clonedButtons) {
+                        clonedButtons.style.display = 'none';
+                    }
+                }
+            }).then(canvas => {
+                canvas.toBlob(function(blob) {
+                    const item = new ClipboardItem({ "image/png": blob });
+                    navigator.clipboard.write([item]).then(() => {
+                        mostrarMensajeCopiado();
+                    }).catch(err => {
+                        console.error("Error al copiar la imagen:", err);
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>
