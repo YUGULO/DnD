@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title id="tituloWebTitle">Codificador de Bastiones (ultracompacto, base 62)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://www.transparenttextures.com/patterns/wood-pattern.png'), #3a2c1a;
+      background-size: 340px;
+      margin: 40px;
+    }
+    h1 {
+      color: #2c5530;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px #0006, 0 0 2px #d4af37;
+      position: relative;
+    }
+    h1::before, h1::after {
+      content: '';
+      display: inline-block;
+      width: 48px;
+      height: 18px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/6/6b/Ornament_gold.png') no-repeat center/contain;
+      vertical-align: middle;
+      margin: 0 12px;
+    }
+    h1::before { margin-right: 18px; }
+    h1::after { margin-left: 18px; }
+    .formulario {
+      background: rgba(255, 248, 220, 0.98);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0007, 0 0 0 6px #d4af37cc;
+      max-width: 800px;
+      margin: 0 auto;
+      border: 4px solid #d4af37;
+      position: relative;
+    }
+    .formulario::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      border: 2px solid #7a4a0c;
+      pointer-events: none;
+      box-shadow: 0 0 0 2px #fff2, 0 0 12px #d4af37aa inset;
+    }
+    label { font-weight: bold; margin-right: 8px; }
+    input, select { margin-right: 12px; margin-bottom: 8px; }
+    .seccion { margin-bottom: 18px; }
+    .copiar-btn { background: #2c5530; color: #fff; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.95em; margin-left: 8px; }
+    .copiar-btn:hover { background: #3a6a40; }
+    #codigo { font-family: monospace; font-size: 1.1em; background: #eee; padding: 4px 8px; border-radius: 4px; }
+    .habitacion-info { font-size: 0.95em; color: #555; margin-left: 8px; }
+    table { border-collapse: collapse; width: 100%; background: #fff; margin-top: 18px; }
+    th, td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; }
+    th { background: #e0e0e0; }
+    .eliminar-btn { background: #a00; color: #fff; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+    .eliminar-btn:hover { background: #d33; }
+    .muralla-box { display: flex; align-items: center; gap: 8px; margin-left: 24px; }
+    @media (max-width: 700px) { .formulario { max-width: 99vw; } }
+  </style>
+</head>
+<body>
+  <h1 id="tituloWeb"></h1>
+  <div class="formulario">
+    <div class="seccion" style="display: flex; align-items: center; gap: 16px;">
+      <label for="codigoInput" style="font-size:1.1em;">CÓDIGO DEL BASTIÓN:</label>
+      <input type="text" id="codigoInput" maxlength="128" style="font-family:monospace; width:340px;" placeholder="Pega aquí el código para decodificar" value="">
+      <button class="copiar-btn" onclick="decodificarCodigo()">Decodificar</button>
+      <button class="copiar-btn" onclick="copiarCodigo()">Copiar</button>
+    </div>
+    <div class="seccion">
+      <label for="nombre">Nombre del personaje:</label>
+      <input type="text" id="nombre" maxlength="12" placeholder="Nombre" required>
+      <label for="nivel">Nivel:</label>
+      <input type="number" id="nivel" min="5" max="20" value="5" style="width:60px;">
+    </div>
+    <div class="seccion" style="display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap;">
+      <div>
+        <label>Habitación común:</label>
+        <select id="habitacionComun">
+          <option value="">-- Selecciona --</option>
+        </select>
+      </div>
+      <div>
+        <label>Habitación especial:</label>
+        <select id="habitacionEspecial">
+          <option value="">-- Selecciona --</option>
+        </select>
+      </div>
+      <div style="display:flex; align-items:end; gap:8px;">
+        <div>
+          <label for="tamano">Tamaño:</label>
+          <select id="tamano"></select>
+        </div>
+        <div>
+          <label for="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" min="1" max="61" value="1" style="width:60px;">
+        </div>
+        <button class="copiar-btn" style="margin-bottom:2px;" onclick="agregarHabitacion()">Agregar</button>
+      </div>
+      <div class="muralla-box">
+        <label for="muralla">Muralla:</label>
+        <input type="number" id="muralla" min="0" max="61" value="0" style="width:80px;">
+      </div>
+    </div>
+    <div class="seccion">
+      <table id="tablaHabitaciones">
+        <thead>
+          <tr><th>Tipo</th><th>Nombre</th><th>Tamaño</th><th>Cantidad</th><th>Coste</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="costeTotalDiv" style="font-weight:bold; font-size:1.1em; margin-top:10px;"></div>
+    <hr style="margin:32px 0; border:2px solid #2c5530; border-radius:2px;">
+    <div id="explicacionesEdificios"></div>
+    <div class="seccion" style="text-align:center; margin-bottom:24px;">
+      <button class="copiar-btn" id="eventosBtn" style="background:#d7263d; color:#fff; font-weight:bold; font-size:1.1em;">Eventos semanales</button>
+    </div>
+    <!-- Modal de eventos semanales -->
+    <div id="modalEventos" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,20,10,0.85); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:#fff; border-radius:14px; box-shadow:0 8px 32px #000a; padding:32px 24px 24px 24px; max-width:480px; width:96vw; max-height:90vh; overflow-y:auto; margin:auto; position:relative; display:flex; flex-direction:column; align-items:center;">
+        <h2 style="color:#d7263d; text-align:center; margin-bottom:8px;">Eventos semanales del Bastión</h2>
+        <div style="color:#7a4a0c; font-size:1.08em; margin-bottom:18px; text-align:center;">
+          <b>¡Descubre el destino de tu bastión cada semana!</b><br>
+          Pulsa el dado para generar un evento según las reglas oficiales de D&D 5ª edición.<br>
+        </div>
+        <ul id="listaEventos" style="width:100%; margin:0 0 12px 0; padding:0; list-style:none; max-height:220px; overflow-y:auto; background:#f8f3e6; border-radius:8px;"></ul>
+        <div style="display:flex; gap:12px; margin-top:10px; justify-content:center;">
+          <button class="copiar-btn" id="generarEventoBtn" style="background:#d7263d; color:#fff; font-weight:bold;">¡Lanzar dado!</button>
+          <button class="copiar-btn" id="copiarEventosBtn">Copiar a Discord</button>
+          <button class="copiar-btn" id="cerrarModalBtn" style="background:#222; color:#fff;">Cerrar</button>
+        </div>
+        <audio id="sonidoDado" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5b2.mp3" preload="auto"></audio>
+      </div>
+    </div>
+    <div id="estadoArmeriaDiv" style="margin:10px 0; font-weight:bold; color:#2c5530;"></div>
+    <div id="tenientesDiv" style="margin:10px 0; font-weight:bold; color:#2c5530;"></div>
+    <div style="height: 120px; width: 100%;"></div>
+  </div>
+  <script>
+    // Variable para el título de la web
+    const TITULO_WEB = 'El Cubil de los Engendros';
+    document.getElementById('tituloWeb').textContent = TITULO_WEB;
+    document.getElementById('tituloWebTitle').textContent = TITULO_WEB;
+
+    // Alfabeto base 62
+    const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    function toBase62(n) {
+      if (n === 0) return '0';
+      let s = '';
+      while (n > 0) {
+        s = BASE62[n % 62] + s;
+        n = Math.floor(n / 62);
+      }
+      return s;
+    }
+    function fromBase62(s) {
+      let n = 0;
+      for (let c of s) n = n * 62 + BASE62.indexOf(c);
+      return n;
+    }
+
+    // Definición de edificios (básicos y especiales)
+    const EDIFICIOS = [
+      // Básicos
+      'Dormitorio', 'Comedor', 'Salón', 'Patio', 'Cocina', 'Almacén',
+      // Especiales traducidos (Nivel 5)
+      'Estudio Arcano', 'Armería', 'Cuartel', 'Jardín', 'Biblioteca', 'Santuario', 'Herrería', 'Depósito Comercial', 'Taller',
+      // Especiales traducidos (Nivel 9)
+      'Sala de Juegos', 'Invernadero', 'Laboratorio', 'Sacristía', 'Scriptorium', 'Establo', 'Círculo de Teletransporte', 'Teatro', 'Sala de Entrenamiento', 'Sala de Trofeos',
+      // Especiales traducidos (Nivel 13)
+      'Archivo', 'Cámara de Meditación', 'Casa de Fieras', 'Observatorio', 'Taberna', 'Reliquiario',
+      // Especiales traducidos (Nivel 17)
+      'Plano Demiplano', 'Sala de Gremio', 'Santuario Mayor', 'Sala de Guerra'
+    ];
+    // Mapeo de tamaños
+    // Cramped: 2x2 (4 casillas), Roomy: 4x4 (16 casillas), Vast: 6x6 (36 casillas)
+    const TAMANOS = [
+      {nombre: 'Reducido', key: 'cramped', casillas: '2x2'}, // 4
+      {nombre: 'Espacioso', key: 'roomy', casillas: '4x4'},  // 16
+      {nombre: 'Vasto', key: 'vast', casillas: '6x6'}        // 36
+    ];
+    // Especiales que pueden tener varios tamaños según el manual oficial
+    const ESPECIALES_TAMANOS = {
+      8: ['roomy', 'vast'], // Cuartel (índice 8) - Roomy o Vast
+      9: ['roomy', 'vast'], // Jardín (índice 9) - Roomy o Vast
+      14: ['roomy', 'vast'], // Taller (índice 14) - Roomy o Vast
+      20: ['roomy', 'vast'], // Establo (índice 20) - Roomy o Vast
+      25: ['roomy', 'vast'], // Archivo (índice 25) - Roomy o Vast
+      29: ['roomy', 'vast']  // Taberna (índice 29) - Roomy o Vast
+      // El resto: solo roomy, excepto:
+      // - Sala de Juegos (índice 15): solo Vast
+      // - Invernadero (índice 16): solo Roomy
+      // - Círculo de Teletransporte (índice 21): solo Roomy
+      // - Teatro (índice 22): solo Vast
+      // - Sala de Entrenamiento (índice 23): solo Vast
+      // - Sala de Trofeos (índice 24): solo Roomy
+      // - Cámara de Meditación (índice 26): solo Cramped
+      // - Casa de Fieras (índice 27): solo Vast
+      // - Observatorio (índice 28): solo Roomy
+      // - Reliquiario (índice 30): solo Cramped
+      // - Plano Demiplano (índice 31): solo Vast
+      // - Sala de Gremio (índice 32): solo Vast
+      // - Santuario Mayor (índice 33): solo Roomy
+      // - Sala de Guerra (índice 34): solo Vast
+    };
+
+    // Estado de habitaciones agregadas
+    let habitaciones = [];
+
+    // Añadir precios a los tamaños
+    const PRECIOS = [500, 1000, 3000]; // Ajustado, Espacioso, Vasto
+
+    // Tabla de requisitos de nivel para habitaciones especiales
+    const ESPECIALES_NIVEL = [
+      // Nivel 5
+      { idx: 6,  nombre: 'Estudio Arcano', nivel: 5 },
+      { idx: 7,  nombre: 'Armería', nivel: 5 },
+      { idx: 8,  nombre: 'Cuartel', nivel: 5 },
+      { idx: 9,  nombre: 'Jardín', nivel: 5 },
+      { idx: 10, nombre: 'Biblioteca', nivel: 5 },
+      { idx: 11, nombre: 'Santuario', nivel: 5 },
+      { idx: 12, nombre: 'Herrería', nivel: 5 },
+      { idx: 13, nombre: 'Depósito Comercial', nivel: 5 },
+      { idx: 14, nombre: 'Taller', nivel: 5 },
+      // Nivel 9
+      { idx: 15, nombre: 'Sala de Juegos', nivel: 9 },
+      { idx: 16, nombre: 'Invernadero', nivel: 9 },
+      { idx: 17, nombre: 'Laboratorio', nivel: 9 },
+      { idx: 18, nombre: 'Sacristía', nivel: 9 },
+      { idx: 19, nombre: 'Scriptorium', nivel: 9 },
+      { idx: 20, nombre: 'Establo', nivel: 9 },
+      { idx: 21, nombre: 'Círculo de Teletransporte', nivel: 9 },
+      { idx: 22, nombre: 'Teatro', nivel: 9 },
+      { idx: 23, nombre: 'Sala de Entrenamiento', nivel: 9 },
+      { idx: 24, nombre: 'Sala de Trofeos', nivel: 9 },
+      // Nivel 13
+      { idx: 25, nombre: 'Archivo', nivel: 13 },
+      { idx: 26, nombre: 'Cámara de Meditación', nivel: 13 },
+      { idx: 27, nombre: 'Casa de Fieras', nivel: 13 },
+      { idx: 28, nombre: 'Observatorio', nivel: 13 },
+      { idx: 29, nombre: 'Taberna', nivel: 13 },
+      { idx: 30, nombre: 'Reliquiario', nivel: 13 },
+      // Nivel 17
+      { idx: 31, nombre: 'Plano Demiplano', nivel: 17 },
+      { idx: 32, nombre: 'Sala de Gremio', nivel: 17 },
+      { idx: 33, nombre: 'Santuario Mayor', nivel: 17 },
+      { idx: 34, nombre: 'Sala de Guerra', nivel: 17 }
+    ];
+
+    // Renderizar selectores
+    function renderSelectores() {
+      const comunSel = document.getElementById('habitacionComun');
+      comunSel.innerHTML = '<option value="">-- Selecciona --</option>';
+      for (let i = 0; i < 6; i++) {
+        comunSel.innerHTML += `<option value="${i}">${EDIFICIOS[i]}</option>`;
+      }
+      const especialSel = document.getElementById('habitacionEspecial');
+      especialSel.innerHTML = '<option value="">-- Selecciona --</option>';
+      const nivel = parseInt(document.getElementById('nivel').value) || 5;
+      // Agrupar por nivel
+      const niveles = [5, 9, 13, 17];
+      niveles.forEach(nvl => {
+        const grupo = ESPECIALES_NIVEL.filter(e => e.nivel === nvl && nvl <= nivel);
+        if (grupo.length > 0) {
+          especialSel.innerHTML += `<optgroup label="Nivel ${nvl}">`;
+          grupo.forEach(e => {
+            especialSel.innerHTML += `<option value="${e.idx}">${e.nombre}</option>`;
+          });
+          especialSel.innerHTML += '</optgroup>';
+        }
+      });
+      // Botón de muralla
+      const murallaBox = document.querySelector('.muralla-box');
+      if (!document.getElementById('agregarMurallaBtn')) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Agregar';
+        btn.className = 'copiar-btn';
+        btn.id = 'agregarMurallaBtn';
+        btn.onclick = agregarMuralla;
+        murallaBox.appendChild(btn);
+      }
+      actualizarTamanos();
+    }
+
+    // Actualizar selector de tamaños según tipo
+    function actualizarTamanos() {
+      const comun = document.getElementById('habitacionComun').value;
+      const especial = document.getElementById('habitacionEspecial').value;
+      const tamanoSel = document.getElementById('tamano');
+      tamanoSel.innerHTML = '';
+      if (comun) {
+        TAMANOS.forEach((t, idx) => {
+          tamanoSel.innerHTML += `<option value="${idx+1}">${t.nombre} (${t.casillas})</option>`;
+        });
+        tamanoSel.disabled = false;
+      } else if (especial) {
+        const idx = parseInt(especial);
+        if (ESPECIALES_TAMANOS[idx]) {
+          // Habitaciones que pueden tener varios tamaños
+          ESPECIALES_TAMANOS[idx].forEach(tkey => {
+            const tIdx = TAMANOS.findIndex(x=>x.key===tkey);
+            tamanoSel.innerHTML += `<option value="${tIdx+1}">${TAMANOS[tIdx].nombre} (${TAMANOS[tIdx].casillas})</option>`;
+          });
+          tamanoSel.disabled = false;
+        } else {
+          // Tamaños específicos según el manual oficial
+          const nombreHabitacion = EDIFICIOS[idx];
+          if (nombreHabitacion === 'Sala de Juegos' || nombreHabitacion === 'Teatro' || nombreHabitacion === 'Sala de Entrenamiento' || nombreHabitacion === 'Casa de Fieras' || nombreHabitacion === 'Plano Demiplano' || nombreHabitacion === 'Sala de Gremio' || nombreHabitacion === 'Sala de Guerra') {
+            // Solo Vast (tamaño 3)
+            tamanoSel.innerHTML += `<option value="3">Vasto (${TAMANOS[2].casillas})</option>`;
+            tamanoSel.disabled = true;
+          } else if (nombreHabitacion === 'Cámara de Meditación' || nombreHabitacion === 'Reliquiario') {
+            // Solo Cramped (tamaño 1)
+            tamanoSel.innerHTML += `<option value="1">Reducido (${TAMANOS[0].casillas})</option>`;
+            tamanoSel.disabled = true;
+          } else {
+            // Solo Roomy (tamaño 2) para el resto
+            tamanoSel.innerHTML += `<option value="2">Espacioso (${TAMANOS[1].casillas})</option>`;
+            tamanoSel.disabled = true;
+          }
+        }
+      } else {
+        tamanoSel.disabled = true;
+      }
+    }
+
+    document.getElementById('habitacionComun').addEventListener('change', function() {
+      document.getElementById('habitacionEspecial').value = '';
+      actualizarTamanos();
+    });
+    document.getElementById('habitacionEspecial').addEventListener('change', function() {
+      document.getElementById('habitacionComun').value = '';
+      actualizarTamanos();
+    });
+
+    // Tabla de máximos de habitaciones especiales por nivel
+    function maxEspecialesPorNivel(nivel) {
+      if (nivel >= 17) return 6;
+      if (nivel >= 13) return 5;
+      if (nivel >= 9) return 4;
+      return 2;
+    }
+
+    // Modificar agregarHabitacion para limitar especiales
+    function agregarHabitacion() {
+      const comun = document.getElementById('habitacionComun').value;
+      const especial = document.getElementById('habitacionEspecial').value;
+      const tamano = document.getElementById('tamano').value;
+      const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+      if (!comun && !especial) return alert('Selecciona una habitación.');
+      let idx = comun ? parseInt(comun) : parseInt(especial);
+      let tipo = comun ? 'Común' : 'Especial';
+      let nombre = EDIFICIOS[idx];
+      let tamanoMostrar = TAMANOS[parseInt(tamano)-1]?.nombre + ' (' + TAMANOS[parseInt(tamano)-1]?.casillas + ')';
+      // Límite de especiales
+      if (tipo === 'Especial') {
+        const nivel = parseInt(document.getElementById('nivel').value) || 5;
+        const maxEsp = maxEspecialesPorNivel(nivel);
+        let totalEsp = habitaciones.filter(h => h.tipo === 'Especial').reduce((a, h) => a + h.cantidad, 0);
+        // Si ya existe, restar la cantidad previa
+        let existente = habitaciones.find(h => h.idx === idx && h.tamano == tamano);
+        let ya = existente ? existente.cantidad : 0;
+        if (totalEsp - ya + cantidad > maxEsp) {
+          alert(`Solo puedes tener ${maxEsp} habitaciones especiales a nivel ${nivel}.`);
+          return;
+        }
+      }
+      // Buscar si ya existe ese edificio con ese tamaño
+      let existente = habitaciones.find(h => h.idx === idx && h.tamano == tamano);
+      if (existente) {
+        existente.cantidad = Math.min(20, existente.cantidad + cantidad);
+      } else {
+        habitaciones.push({idx, tipo, nombre, tamano, tamanoMostrar, cantidad, orden: habitaciones.length});
+      }
+      renderTabla();
+      actualizarCodigo();
+    }
+
+    // Botón para agregar muralla
+    function agregarMuralla() {
+      const muralla = parseInt(document.getElementById('muralla').value) || 0;
+      // Elimina cualquier fila de muralla previa
+      habitaciones = habitaciones.filter(h => h.nombre !== 'Muralla');
+      if (muralla > 0) {
+        habitaciones.push({idx: -1, tipo: 'Muralla', nombre: 'Muralla', tamano: '-', tamanoMostrar: '-', cantidad: muralla, orden: habitaciones.length});
+      }
+      renderTabla();
+      actualizarCodigo();
+    }
+
+    // Renderizar tabla de habitaciones
+    function renderTabla() {
+      const tbody = document.querySelector('#tablaHabitaciones tbody');
+      tbody.innerHTML = '';
+      let comunes = habitaciones.filter(h=>h.tipo==='Común');
+      let especiales = habitaciones.filter(h=>h.tipo==='Especial');
+      let murallaFila = habitaciones.find(h=>h.tipo==='Muralla');
+      let totalCoste = 0;
+      [...comunes, ...especiales].forEach((h, idx) => {
+        let coste = 0;
+        if (h.tipo === 'Común') {
+          coste = PRECIOS[parseInt(h.tamano)-1] * h.cantidad;
+        } else {
+          // Especiales: solo pagan si son Vast (tamaño 3)
+          if (parseInt(h.tamano) === 3) coste = 2000;
+        }
+        totalCoste += coste;
+        tbody.innerHTML += `<tr><td>${h.tipo}</td><td>${h.nombre}</td><td>${h.tamanoMostrar}</td><td>${h.cantidad}</td><td>${coste ? coste.toLocaleString()+ ' PO' : '-'}</td><td><button class='eliminar-btn' onclick='eliminarHabitacion(${idx})'>X</button></td></tr>`;
+      });
+      // Fila de muralla solo si está en habitaciones
+      if (murallaFila) {
+        const costeMuralla = murallaFila.cantidad * 250;
+        totalCoste += costeMuralla;
+        tbody.innerHTML += `<tr><td colspan="3"><b>Muralla</b></td><td>${murallaFila.cantidad}</td><td>${costeMuralla ? costeMuralla.toLocaleString() + ' PO' : '-'}</td><td></td></tr>`;
+      }
+      // Mostrar coste total bajo la tabla
+      let totalDiv = document.getElementById('costeTotalDiv');
+      if (!totalDiv) {
+        totalDiv = document.createElement('div');
+        totalDiv.id = 'costeTotalDiv';
+        totalDiv.style = 'font-weight:bold; font-size:1.1em; margin-top:10px;';
+        document.querySelector('.seccion:last-of-type').insertAdjacentElement('beforebegin', totalDiv);
+      }
+      totalDiv.innerHTML = `Coste total: <span style='color:#2c5530;'>${totalCoste.toLocaleString()} PO</span>`;
+      mostrarExplicaciones();
+      actualizarBotonAgregar();
+    }
+
+    function eliminarHabitacion(idx) {
+      habitaciones.splice(idx,1);
+      renderTabla();
+      actualizarCodigo();
+      actualizarBotonAgregar();
+    }
+
+    // Función para convertir array de objetos {tamano, cantidad} a churro base62
+    function datosAChurro(arr) {
+      let str = arr.map(obj => `${obj.tamano}${obj.cantidad.toString().padStart(2,'0')}`).join('');
+      // Convertir string decimal largo a BigInt y luego a base62
+      let n = BigInt(str);
+      return bigIntToBase62(n);
+    }
+    // Función para convertir churro base62 a array de objetos {tamano, cantidad}
+    function churroADatos(churro, len) {
+      let n = base62ToBigInt(churro);
+      let str = n.toString().padStart(len*3, '0');
+      let arr = [];
+      for (let i = 0; i < len; i++) {
+        let t = parseInt(str.slice(i*3, i*3+1)) || 2;
+        let c = parseInt(str.slice(i*3+1, i*3+3)) || 0;
+        arr.push({tamano: t, cantidad: c});
+      }
+      return arr;
+    }
+    // Función para convertir un número grande a base62
+    function bigIntToBase62(n) {
+      if (n === 0n) return '0';
+      let s = '';
+      while (n > 0n) {
+        s = BASE62[Number(n % 62n)] + s;
+        n = n / 62n;
+      }
+      return s;
+    }
+    // Función para convertir base62 a BigInt
+    function base62ToBigInt(s) {
+      let n = 0n;
+      for (let c of s) n = n * 62n + BigInt(BASE62.indexOf(c));
+      return n;
+    }
+    // Generar el código en el nuevo formato
+    function actualizarCodigo() {
+      if (habitaciones.length === 0) {
+        document.getElementById('codigoInput').value = '';
+        return;
+      }
+      const nombre = document.getElementById('nombre').value.trim();
+      const nivel = ('' + Math.max(5, parseInt(document.getElementById('nivel').value) || 5)).padStart(2, '0');
+      const muralla = ('' + (parseInt(document.getElementById('muralla').value) || 0)).padStart(2, '0');
+      // Vector de {tamano, cantidad} en orden EDIFICIOS
+      let datos = Array(EDIFICIOS.length).fill(0).map(_ => ({tamano:2, cantidad:0}));
+      habitaciones.forEach(h => {
+        if (h.idx >= 0) datos[h.idx] = {tamano: parseInt(h.tamano), cantidad: Math.min(20, (datos[h.idx]?.cantidad || 0) + h.cantidad)};
+      });
+      let churroStr = datosAChurro(datos);
+      const codigo = `${nombre}$${nivel}#${churroStr}@${muralla}`;
+      document.getElementById('codigoInput').value = codigo;
+    }
+    // Decodificar el código en el nuevo formato
+    function decodificarCodigo() {
+      const codigo = document.getElementById('codigoInput').value.trim();
+      if (!codigo.includes('$') || !codigo.includes('#') || !codigo.includes('@')) return alert('Código no válido.');
+      const nombre = codigo.split('$')[0];
+      const nivel = parseInt(codigo.split('$')[1].slice(0,2));
+      const churroStr = codigo.split('#')[1].split('@')[0];
+      const muralla = parseInt(codigo.split('@')[1]);
+      document.getElementById('nombre').value = nombre;
+      document.getElementById('nivel').value = nivel;
+      document.getElementById('muralla').value = muralla;
+      // Decodificar churro
+      let datos = churroADatos(churroStr, EDIFICIOS.length);
+      habitaciones = [];
+      datos.forEach((obj, idx) => {
+        if (obj.cantidad > 0) {
+          let tipo = idx < 6 ? 'Común' : 'Especial';
+          let nombre = EDIFICIOS[idx];
+          let tamano = obj.tamano;
+          let tamanoMostrar = TAMANOS[tamano-1]?.nombre + ' (' + TAMANOS[tamano-1]?.casillas + ')';
+          habitaciones.push({idx, tipo, nombre, tamano, tamanoMostrar, cantidad: obj.cantidad, orden: habitaciones.length});
+        }
+      });
+      // Añadir muralla si hay
+      if (muralla > 0) {
+        habitaciones.push({idx: -1, tipo: 'Muralla', nombre: 'Muralla', tamano: '-', tamanoMostrar: '-', cantidad: muralla, orden: habitaciones.length});
+      }
+      renderTabla();
+      actualizarCodigo();
+    }
+    // El botón copiar copia el input de código
+    function copiarCodigo() {
+      const codigo = document.getElementById('codigoInput').value;
+      navigator.clipboard.writeText(codigo).then(() => {
+        document.getElementById('codigoInput').style.background = '#cfc';
+        setTimeout(()=>document.getElementById('codigoInput').style.background='#fff', 600);
+      });
+    }
+
+    // Diccionario de descripciones de edificios
+    const DESCRIPCIONES = {
+      // Básicos
+      'Dormitorio': 'Sirve como lugar de descanso para los habitantes del bastión. No tiene efectos mecánicos, pero es esencial para la vida diaria.',
+      'Comedor': 'Espacio para comer y socializar. No tiene efectos mecánicos, pero mejora la convivencia.',
+      'Salón': 'Zona común para reuniones, descanso y actividades sociales.',
+      'Patio': 'Espacio abierto para actividades al aire libre, entrenamiento o relajación.',
+      'Cocina': 'Permite preparar comidas para los habitantes del bastión.',
+      'Almacén': 'Lugar para guardar provisiones y objetos.',
+      // Especiales Nivel 5
+      'Estudio Arcano': 'Lugar de investigación arcana (16 casillas, 1 sirviente). Orden: Craft. Da un Encanto de Identificar gratis tras descanso largo. Puede fabricar focos arcanos, libros y objetos mágicos (nivel 9+).',
+      'Armería': 'Almacén de armas y armaduras (16 casillas, 1 sirviente). Orden: Trade. Abastecer cuesta 100 PO + 100 PO por defensor. Los defensores usan d8 en lugar de d6 en eventos de ataque.',
+      'Cuartel': 'Cuarteles para defensores (16/36 casillas, 1 sirviente). Orden: Recruit. Roomy: hasta 12 defensores. Vast: hasta 25 defensores. Recluta hasta 4 defensores por orden.',
+      'Jardín': 'Jardín de cultivos (16/36 casillas, 1-2 sirvientes). Orden: Harvest. Tipos: decorativo, comida, hierbas, veneno. Vast equivale a 2 jardines.',
+      'Biblioteca': 'Colección de libros (16 casillas, 1 sirviente). Orden: Research. Investiga temas y obtiene hasta 3 piezas de información desconocida.',
+      'Santuario': 'Lugar de culto (16 casillas, 1 sirviente). Orden: Craft. Da un Encanto de Palabra Sanadora gratis tras descanso largo. Puede fabricar focos sagrados.',
+      'Herrería': 'Forja de armas (16 casillas, 2 sirvientes). Orden: Craft. Puede fabricar armas, armaduras y objetos mágicos (nivel 9+).',
+      'Depósito Comercial': 'Almacén comercial (16 casillas, 1 sirviente). Orden: Trade. Compra/vende bienes con 10-100% de beneficio según nivel.',
+      'Taller': 'Taller artesanal (16/36 casillas, 3-5 sirvientes). Orden: Craft. 6 tipos de herramientas artesanales. Da Inspiración Heroica tras descanso corto.',
+      // Especiales Nivel 9
+      'Sala de Juegos': 'Sala de apuestas (36 casillas, 4 sirvientes). Orden: Trade. Casa de apuestas que genera 1d6×10 a 10d6×10 PO según tirada.',
+      'Invernadero': 'Cultivo controlado (16 casillas, 1 sirviente). Orden: Harvest. 3 frutos de Restauración Menor diarios. Puede crear pociones de curación mayor o venenos.',
+      'Laboratorio': 'Laboratorio alquímico (16 casillas, 1 sirviente). Orden: Craft. Crea suministros de alquimista y venenos específicos.',
+      'Sacristía': 'Sala sagrada (16 casillas, 1 sirviente). Orden: Craft. Recupera 1 slot de conjuro nivel 5 o menor tras descanso corto. Crea agua bendita y objetos mágicos religiosos.',
+      'Scriptorium': 'Sala de escritura (16 casillas, 1 sirviente). Orden: Craft. Copia libros, crea pergaminos de conjuros y material impreso.',
+      'Establo': 'Establo de monturas (16/36 casillas, 1 sirviente). Orden: Trade. Incluye 1 caballo/camello y 2 ponis/mulas. Compra/venta con 20-100% beneficio.',
+      'Círculo de Teletransporte': 'Círculo permanente (16 casillas, 1 sirviente). Orden: Recruit. Invita hechiceros amistosos que pueden lanzar conjuros nivel 4-8.',
+      'Teatro': 'Teatro y conciertos (36 casillas, 4 sirvientes). Orden: Empower. Producciones teatrales que otorgan dados de Teatro (d6-d10) para tiradas.',
+      'Sala de Entrenamiento': 'Área de entrenamiento (36 casillas, 4 sirvientes). Orden: Empower. Entrenadores expertos que otorgan beneficios de combate, habilidades o herramientas.',
+      'Sala de Trofeos': 'Colección de trofeos (16 casillas, 1 sirviente). Orden: Research. Investiga temas o busca trinkets mágicos útiles.',
+      // Especiales Nivel 13
+      'Archivo': 'Repositorio de conocimiento (16/36 casillas, 1 sirviente). Orden: Research. Efecto de Legend Lore. Libros de referencia que dan ventaja en tiradas de conocimiento.',
+      'Cámara de Meditación': 'Sala de meditación (4 casillas, 1 sirviente). Orden: Empower. Permite rodar dos veces en eventos y elegir resultado. Meditación de 7 días da ventaja en tiradas de salvación.',
+      'Casa de Fieras': 'Zoológico de criaturas (36 casillas, 2 sirvientes). Orden: Recruit. Aloja hasta 4 criaturas Grandes. Las criaturas cuentan como defensores del bastión.',
+      'Observatorio': 'Observatorio astronómico (16 casillas, 1 sirviente). Orden: Empower. Da un Encanto de Contactar Otro Plano tras descanso largo. Explora misterios estelares.',
+      'Taberna': 'Taberna y centro social (16/36 casillas, 1-4 sirvientes). Orden: Research. Red de espías que localiza criaturas. Bebidas mágicas especiales con efectos únicos.',
+      'Reliquiario': 'Bóveda sagrada (4 casillas, 1 sirviente). Orden: Harvest. Da un Encanto de Restauración Mayor tras descanso largo. Crea talismanes que reemplazan componentes de conjuros.',
+      // Especiales Nivel 17
+      'Plano Demiplano': 'Acceso extradimensional (36 casillas, 1 sirviente). Orden: Empower. Puerta a un plano demi. Da Puntos de Golpe Temporales y permite crear objetos de la nada.',
+      'Sala de Gremio': 'Sede de gremio (36 casillas, 1 sirviente). Orden: Recruit. Gremio de ~50 miembros. Asignaciones especiales según tipo de gremio (aventureros, panaderos, constructores, etc.).',
+      'Santuario Mayor': 'Santuario de poder (16 casillas, 4 sirvientes). Orden: Empower. Da un Encanto de Sanar tras descanso largo. Ritos fortificantes que dan Puntos de Golpe Temporales. Siempre tiene Palabra de Regreso preparado.',
+      'Sala de Guerra': 'Centro de mando militar (36 casillas, 2+ sirvientes). Orden: Recruit. Tenientes veteranos que reducen dados de ataque. Puede reclutar ejércitos de 100 guardias o 20 jinetes.'
+    };
+
+    // Mostrar explicaciones de edificios en el orden de la tabla
+    function mostrarExplicaciones() {
+      const div = document.getElementById('explicacionesEdificios');
+      div.innerHTML = '';
+      let yaMostrado = new Set();
+      let orden = [];
+      habitaciones.forEach(h => {
+        if (!yaMostrado.has(h.nombre)) {
+          orden.push(h);
+          yaMostrado.add(h.nombre);
+        }
+      });
+      // Añadir muralla si hay
+      const muralla = parseInt(document.getElementById('muralla').value) || 0;
+      if (muralla > 0) {
+        orden.push({nombre: 'Muralla'});
+      }
+      // Mostrar explicaciones
+      const nivel = parseInt(document.getElementById('nivel').value) || 5;
+      const maxEsp = maxEspecialesPorNivel(nivel);
+      div.innerHTML += `<div style='margin-bottom:10px;'><b>Nivel ${nivel}, puedes tener hasta ${maxEsp} habitaciones especiales.</b></div>`;
+      orden.forEach(h => {
+        let desc = '';
+        if (h.nombre === 'Muralla') {
+          desc = 'Muralla defensiva de 20 pies de alto. Cada sección cuesta 250 PO. Reduce las bajas en caso de ataque.';
+        } else {
+          desc = DESCRIPCIONES[h.nombre] || 'Sin descripción.';
+          // Añadir detalles según tamaño, nivel, etc.
+          if (h.tipo === 'Especial') {
+            if (h.nombre === 'Cuartel') {
+              if (parseInt(h.tamano) === 3) desc += ' (Vast: hasta 25 defensores)';
+              else desc += ' (Roomy: hasta 12 defensores)';
+            }
+            if (h.nombre === 'Jardín') {
+              if (parseInt(h.tamano) === 3) desc += ' (Vast: doble producción)';
+            }
+          }
+        }
+        div.innerHTML += `<div style='margin-bottom:10px;'><b>${h.nombre}:</b> ${desc}</div>`;
+      });
+    }
+
+    // Botón copiar a Discord (formato markdown)
+    function copiarDiscord() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const nivel = parseInt(document.getElementById('nivel').value) || 5;
+      const maxEsp = maxEspecialesPorNivel(nivel);
+      let texto = `${nombre}, nivel ${nivel}, ${maxEsp} habitaciones especiales\n`;
+      texto += 'Habitaciones:\n';
+      let totalCoste = 0;
+      let comunes = habitaciones.filter(h=>h.tipo==='Común');
+      let especiales = habitaciones.filter(h=>h.tipo==='Especial');
+      let murallaFila = habitaciones.find(h=>h.tipo==='Muralla');
+      [...comunes, ...especiales].forEach(h => {
+        let coste = 0;
+        if (h.tipo === 'Común') {
+          coste = PRECIOS[parseInt(h.tamano)-1] * h.cantidad;
+        } else {
+          if (parseInt(h.tamano) === 3) coste = 2000;
+        }
+        totalCoste += coste;
+        texto += `- ${h.nombre} (${TAMANOS[parseInt(h.tamano)-1]?.nombre} ${TAMANOS[parseInt(h.tamano)-1]?.casillas}) x${h.cantidad} - ${coste ? coste.toLocaleString() + ' PO' : '-'}\n`;
+      });
+      if (murallaFila) {
+        const costeMuralla = murallaFila.cantidad * 250;
+        totalCoste += costeMuralla;
+        texto += `Muralla: ${murallaFila.cantidad} secciones - ${costeMuralla.toLocaleString()} PO\n`;
+      }
+      texto += `Coste total: ${totalCoste.toLocaleString()} PO\n\n`;
+      texto += 'Explicaciones:\n';
+      let yaMostrado = new Set();
+      let orden = [];
+      habitaciones.forEach(h => {
+        if (!yaMostrado.has(h.nombre)) {
+          orden.push(h);
+          yaMostrado.add(h.nombre);
+        }
+      });
+      if (murallaFila) orden.push({nombre: 'Muralla'});
+      orden.forEach(h => {
+        let desc = '';
+        if (h.nombre === 'Muralla') {
+          desc = 'Muralla defensiva de 20 pies de alto. Cada sección cuesta 250 PO. Reduce las bajas en caso de ataque.';
+        } else {
+          desc = DESCRIPCIONES[h.nombre] || 'Sin descripción.';
+        }
+        texto += `**${h.nombre}**: *${desc}*\n`;
+      });
+      texto += `\nCódigo del bastión: ${document.getElementById('codigoInput').value}`;
+      texto += `\n\n**URL:** https://elcubildelosengendros.tiiny.site`;
+      navigator.clipboard.writeText(texto).then(() => {
+        alert('¡Resumen copiado para Discord!');
+      });
+    }
+
+    // Desactivar el botón Agregar si se llega al límite de especiales
+    function actualizarBotonAgregar() {
+      const comun = document.getElementById('habitacionComun').value;
+      const especial = document.getElementById('habitacionEspecial').value;
+      const btnAgregar = document.querySelector('.copiar-btn[onclick*="agregarHabitacion"]');
+      if (!btnAgregar) return;
+      if (comun) {
+        btnAgregar.disabled = false;
+        return;
+      }
+      if (especial) {
+        const nivel = parseInt(document.getElementById('nivel').value) || 5;
+        const maxEsp = maxEspecialesPorNivel(nivel);
+        let totalEsp = habitaciones.filter(h => h.tipo === 'Especial').reduce((a, h) => a + h.cantidad, 0);
+        if (totalEsp >= maxEsp) {
+          btnAgregar.disabled = true;
+        } else {
+          btnAgregar.disabled = false;
+        }
+      } else {
+        btnAgregar.disabled = true;
+      }
+    }
+
+    // Llamar a actualizarBotonAgregar en los eventos relevantes
+    document.getElementById('habitacionComun').addEventListener('change', actualizarBotonAgregar);
+    document.getElementById('habitacionEspecial').addEventListener('change', actualizarBotonAgregar);
+    document.getElementById('nivel').addEventListener('input', function() {
+      if (parseInt(this.value) < 5) this.value = 5;
+      renderSelectores();
+      actualizarBotonAgregar();
+      actualizarCodigo();
+    });
+
+    // Añadir el botón a la interfaz
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSelectores();
+      renderTabla();
+      if (!document.getElementById('copiarDiscordBtn')) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Copiar a Discord';
+        btn.className = 'copiar-btn';
+        btn.id = 'copiarDiscordBtn';
+        btn.style = 'margin: 18px 0 0 0; float:right;';
+        btn.onclick = copiarDiscord;
+        document.querySelector('.formulario').appendChild(btn);
+        // Añadir espacio extra justo debajo del botón
+        const espacio = document.createElement('div');
+        espacio.style.height = '120px';
+        espacio.style.width = '100%';
+        document.querySelector('.formulario').appendChild(espacio);
+      }
+    });
+
+    // --- DADOS Y RESOLUCIÓN AUTOMÁTICA DE EVENTOS ---
+    function tirarDados(n, caras) {
+      let resultados = [];
+      for (let i = 0; i < n; i++) resultados.push(Math.floor(Math.random()*caras)+1);
+      return resultados;
+    }
+
+    // --- INTEGRACIÓN TOTAL DE GESTIÓN AVANZADA EN EVENTOS ---
+    function resolverEvento(ev) {
+      let resultado = '';
+      let tirada = '';
+      // --- EVENTO: ATAQUE ---
+      if (ev.titulo === 'Ataque') {
+        // Si hay monstruo amistoso presente, ningún defensor muere
+        if (monstruoAmistosoPresente) {
+          monstruoAmistosoPresente = false;
+          return '¡El bastión ha sido atacado! Pero tu huésped monstruoso defiende el bastión y ningún defensor muere.';
+        }
+        // Calcular defensores
+        let defensores = 0;
+        habitaciones.forEach(h => {
+          if (h.nombre === 'Cuartel') {
+            if (parseInt(h.tamano) === 2) defensores += 12 * h.cantidad;
+            if (parseInt(h.tamano) === 3) defensores += 25 * h.cantidad;
+          }
+          if (h.nombre === 'Casa de Fieras') {
+            defensores += 4 * h.cantidad;
+          }
+        });
+        let tieneMuralla = habitaciones.some(h=>h.nombre==='Muralla' && h.cantidad>0);
+        let tieneArmeria = habitaciones.some(h=>h.nombre==='Armería');
+        let tieneWarRoom = habitaciones.some(h=>h.nombre==='Sala de Guerra');
+        let dadosExtra = numTenientes || 0;
+        // Si hay muralla, se reducen 2 dados (regla oficial)
+        let dadosAtaque = 6 - (tieneMuralla ? 2 : 0) - (tieneWarRoom ? 1 : 0) - dadosExtra;
+        if (dadosAtaque < 1) dadosAtaque = 1;
+        let carasDado = (tieneArmeria && armeriaAbastecida) ? 8 : 6;
+        const dados = tirarDados(dadosAtaque, carasDado);
+        let bajas = dados.filter(x=>x===1).length;
+        // Si hay armería, reduce bajas en 1 (mínimo 0)
+        if (tieneArmeria) bajas = Math.max(0, bajas-1);
+        if (defensores < 1) {
+          // No hay defensores: inutilizar instalación especial
+          const especiales = habitaciones.filter(h=>h.tipo==='Especial' && !instalacionesInactivas[h.nombre]);
+          if (especiales.length > 0) {
+            const idx = Math.floor(Math.random()*especiales.length);
+            const inutilizada = especiales[idx].nombre;
+            marcarInactiva(inutilizada);
+            resultado = `¡El bastión ha sido atacado! No tienes defensores, así que la instalación especial <b>${inutilizada}</b> queda inutilizada hasta el siguiente turno.`;
+          } else {
+            resultado = '¡El bastión ha sido atacado! No tienes defensores ni instalaciones especiales que puedan ser inutilizadas.';
+          }
+          return resultado;
+        }
+        let defensoresRestantes = defensores - bajas;
+        resultado = `¡El bastión ha sido atacado! Has perdido <b>${bajas}</b> defensor${bajas!==1?'es':''} (tirada: ${dadosAtaque}d${carasDado} = ${dados.join(', ')}${tieneMuralla?' + muralla (reduce 2 dados)':''}${tieneArmeria?' + armería':''}${tieneWarRoom?' + sala de guerra':''}${numTenientes?` + ${numTenientes} tenientes`:''}).`;
+        if (bajas===0) resultado += ' ¡Ningún defensor ha caído!';
+        if (defensoresRestantes < 1) {
+          // Tras el ataque, no quedan defensores
+          const especiales = habitaciones.filter(h=>h.tipo==='Especial' && !instalacionesInactivas[h.nombre]);
+          if (especiales.length > 0) {
+            const idx = Math.floor(Math.random()*especiales.length);
+            const inutilizada = especiales[idx].nombre;
+            marcarInactiva(inutilizada);
+            resultado += `<br>Tras el ataque, no quedan defensores. La instalación especial <b>${inutilizada}</b> queda inutilizada hasta el siguiente turno.`;
+          } else {
+            resultado += '<br>Tras el ataque, no quedan defensores ni instalaciones especiales que puedan ser inutilizadas.';
+          }
+        }
+        // Si la armería estaba abastecida y se usó, pasa a desabastecida
+        if (tieneArmeria && armeriaAbastecida) {
+          armeriaAbastecida = false;
+          mostrarEstadoArmeria();
+          resultado += '<br>La armería ha quedado desabastecida tras el ataque.';
+        }
+        avanzarTurnoInactivas();
+        return resultado;
+      }
+      // --- EVENTO: PETICIÓN DE AYUDA ---
+      if (ev.titulo && ev.titulo.trim() === 'Petición de Ayuda') {
+        let defensores = 0;
+        habitaciones.forEach(h => {
+          if (h.nombre === 'Cuartel') {
+            if (parseInt(h.tamano) === 2) defensores += 12 * h.cantidad;
+            if (parseInt(h.tamano) === 3) defensores += 25 * h.cantidad;
+          }
+          if (h.nombre === 'Casa de Fieras') {
+            defensores += 4 * h.cantidad;
+          }
+        });
+        if (defensores < 1) {
+          return 'No tienes defensores en el bastión, por lo que no puedes enviar ayuda en esta ocasión.';
+        }
+        let n = parseInt(prompt(`¿Cuántos defensores del bastión envías para ayudar en la misión? (Disponibles: ${defensores}, 1-20)`, '1'));
+        if (isNaN(n) || n<1) n=1;
+        if (n>defensores) n=defensores;
+        if (n>20) n=20;
+        const dados = tirarDados(n,6);
+        let bono = 0;
+        if (habitaciones.some(h=>h.nombre==='Armería')) bono += 1;
+        if (habitaciones.some(h=>h.nombre==='Sala de Guerra')) bono += 2;
+        bono += numTenientes;
+        const total = dados.reduce((a,b)=>a+b,0) + bono;
+        const recompensa = tirarDados(1,6)[0]*100;
+        let textoBono = bono ? ` (bono edificios: +${bono})` : '';
+        if (total>=10) {
+          resultado = `¡Problema resuelta! (Tirada: ${n}d6 = ${dados.join(', ')}${textoBono}; total = ${total} ≥ 10). Ganas <b>${recompensa} PO</b>.`;
+        } else {
+          resultado = `Problema resuelta, pero pierdes un defensor (Tirada: ${n}d6 = ${dados.join(', ')}${textoBono}; total = ${total} < 10). Ganas <b>${Math.floor(recompensa/2)} PO</b>.`;
+        }
+        avanzarTurnoInactivas();
+        return resultado;
+      }
+      // --- EVENTO: REFUGIADOS ---
+      if (ev.titulo === 'Refugiados') {
+        const refugiados = tirarDados(2,4).reduce((a,b)=>a+b,0);
+        const pago = tirarDados(1,6)[0]*100;
+        let libres = espacioRefugiados();
+        let texto = '';
+        if (libres >= refugiados) {
+          texto = `Han llegado <b>${refugiados}</b> refugiados y te pagan <b>${pago} PO</b>. Hay espacio suficiente y se alojan cómodamente.`;
+          if (tieneJardin()) texto += ' El jardín ayuda a alimentar a los refugiados.';
+          if (tienePub()) texto += ' El pub ayuda a integrarlos en la comunidad.';
+        } else {
+          texto = `Han llegado <b>${refugiados}</b> refugiados y te pagan <b>${pago} PO</b>. No hay espacio suficiente, así que acampan fuera del bastión.`;
+          if (tieneJardin()) texto += ' El jardín ayuda a alimentar a los refugiados.';
+          if (tienePub()) texto += ' El pub ayuda a integrarlos en la comunidad.';
+        }
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: VISITANTES AMISTOSOS ---
+      if (ev.titulo === 'Visitantes Amistosos') {
+        const pago = tirarDados(1,6)[0]*100;
+        let texto = `Los visitantes te ofrecen <b>${pago} PO</b> por usar una instalación especial.`;
+        if (tieneJardin()) texto += ' El jardín impresiona a los visitantes.';
+        if (tienePub()) texto += ' El pub les ofrece un lugar de encuentro.';
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: HUÉSPED ---
+      if (ev.titulo === 'Huésped') {
+        const d4 = tirarDados(1,4)[0];
+        let texto = '';
+        if (d4===1) texto = 'Un invitado de gran renombre se queda 7 días y te da una carta de recomendación.';
+        if (d4===2) texto = 'Un invitado pide asilo y te da un regalo de 1d6 × 100 PO.';
+        if (d4===3) texto = 'Un mercenario se une como defensor del bastión.';
+        if (d4===4) { texto = 'Un monstruo amistoso te visita y defiende el bastión si es atacado.'; monstruoAmistosoPresente = true; }
+        let resultado = `Tirada de huésped: <b>d4 = ${d4}</b>. ${texto}`;
+        if (d4===2) {
+          const regalo = tirarDados(1,6)[0]*100;
+          resultado += ` Te da <b>${regalo} PO</b> (1d6 = ${regalo/100}).`;
+        }
+        avanzarTurnoInactivas();
+        return resultado;
+      }
+      // --- EVENTO: SIRVIENTE CRIMINAL ---
+      if (ev.titulo === 'Sirviente Criminal') {
+        const soborno = tirarDados(1,6)[0]*100;
+        let texto = `Uno de tus sirvientes resulta tener un pasado criminal. Puedes pagar un soborno de <b>${soborno} PO</b> para retenerlo. Si no, la instalación queda inactiva un turno.`;
+        // Marcar una instalación especial aleatoria como inactiva si no se paga (simplificado: siempre se inactiva una)
+        const especiales = habitaciones.filter(h=>h.tipo==='Especial' && !instalacionesInactivas[h.nombre]);
+        if (especiales.length > 0) {
+          const idx = Math.floor(Math.random()*especiales.length);
+          const inactiva = especiales[idx].nombre;
+          marcarInactiva(inactiva);
+          texto += `<br>La instalación <b>${inactiva}</b> queda inactiva un turno.`;
+        }
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: SIRVIENTES PERDIDOS ---
+      if (ev.titulo === 'Sirvientes Perdidos') {
+        const especiales = habitaciones.filter(h=>h.tipo==='Especial' && !instalacionesInactivas[h.nombre]);
+        if (especiales.length > 0) {
+          const idx = Math.floor(Math.random()*especiales.length);
+          const inactiva = especiales[idx].nombre;
+          marcarInactiva(inactiva);
+          resultado = `Los sirvientes de la instalación <b>${inactiva}</b> han desaparecido. La instalación queda inactiva un turno.`;
+        } else {
+          resultado = 'Algunos sirvientes han desaparecido, pero no tienes instalaciones especiales activas.';
+        }
+        avanzarTurnoInactivas();
+        return resultado;
+      }
+      // --- EVENTO: OPORTUNIDAD EXTRAORDINARIA ---
+      if (ev.titulo === 'Oportunidad Extraordinaria') {
+        let oro = 500;
+        // Aquí podrías comprobar si el jugador tiene suficiente oro (requiere gestión de tesorería)
+        let texto = `Se presenta la ocasión de organizar un festival, financiar una investigación mágica o ganarte el favor de un noble. Si aceptas, paga <b>${oro} PO</b> y lanza otro evento.`;
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: DESCUBRIMIENTO MÁGICO ---
+      if (ev.titulo === 'Descubrimiento Mágico') {
+        let texto = 'Un fenómeno arcano o un hallazgo mágico sorprende a los habitantes del bastión.';
+        if (tieneInstalacionMagica()) texto += ' Puedes elegir el tipo de objeto mágico encontrado.';
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: TESORO ---
+      if (ev.titulo === 'Tesoro') {
+        const d100 = tirarDados(1,100)[0];
+        let tabla = '';
+        if (d100<=40) tabla = '25 PO (1d10)';
+        else if (d100<=63) tabla = '250 PO (1d10)';
+        else if (d100<=73) tabla = '750 PO (1d10)';
+        else if (d100<=75) tabla = '2.500 PO (1d10)';
+        else if (d100<=90) tabla = 'Objeto mágico común (elige tabla)';
+        else if (d100<=98) tabla = 'Objeto mágico poco común (elige tabla)';
+        else tabla = 'Objeto mágico raro (elige tabla)';
+        let d10 = (tabla.includes('1d10')) ? tirarDados(1,10)[0] : null;
+        let texto = `Tirada de tesoro: <b>d100 = ${d100}</b> → ${tabla}`;
+        if (d10) texto += `, <b>d10 = ${d10}</b> (consulta la tabla correspondiente en el manual).`;
+        if (tieneInstalacionMagica()) texto += ' Puedes elegir el tipo de objeto mágico encontrado.';
+        avanzarTurnoInactivas();
+        return texto;
+      }
+      // --- EVENTO: TODO EN CALMA, OTROS ---
+      if (typeof ev.descripcion === 'function') return ev.descripcion();
+      avanzarTurnoInactivas();
+      return ev.descripcion;
+    }
+
+    // --- SISTEMA DE EVENTOS SEMANALES DE BASTIÓN ---
+    const EVENTOS_BASTION = [
+      {rango: [1,50], icono:'🛡️', color:'#2c5530', titulo:'Todo en Calma', descripcion:()=>{
+        const detalles = [
+          'Los informes de accidentes han disminuido notablemente.',
+          'La gotera del tejado ha sido reparada.',
+          'No hay infestaciones de alimañas que reportar.',
+          'Tú-Sabes-Quién perdió sus gafas otra vez.',
+          'Uno de tus sirvientes adoptó un perro callejero.',
+          'Recibiste una carta encantadora de un amigo.',
+          'Alguien ha estado poniendo huevos podridos en las botas de la gente.',
+          'Alguien pensó que vio un fantasma.'
+        ];
+        return detalles[Math.floor(Math.random()*detalles.length)];
+      }},
+      {rango: [51,55], icono:'⚔️', color:'#d7263d', titulo:'Ataque', descripcion:()=>'Una fuerza hostil ataca tu bastión pero es derrotada. Tira 6d6; por cada dado que saque 1, un Defensor del Bastión muere. Si no quedan defensores, una instalación especial se daña y se cierra.'},
+      {rango: [56,58], icono:'🕵️', color:'#bfa76a', titulo:'Sirviente Criminal', descripcion:()=>'Uno de los sirvientes de tu bastión tiene un pasado criminal que sale a la luz. Puedes retener al sirviente pagando un soborno de 1d6 × 100 PO. Si no, es arrestado y la instalación queda inactiva un turno.'},
+      {rango: [59,63], icono:'🎉', color:'#2c5530', titulo:'Oportunidad Extraordinaria', descripcion:()=>'Tu bastión tiene la oportunidad de organizar un festival importante, financiar la investigación de un hechicero poderoso, o apaciguar a un noble dominante. Si aprovechas la oportunidad, paga 500 PO y lanza otro evento.'},
+      {rango: [64,72], icono:'🤝', color:'#3a6a40', titulo:'Visitantes Amistosos', descripcion:()=>'Visitantes amistosos vienen a tu bastión buscando usar una de tus instalaciones especiales. Ofrecen 1d6 × 100 PO por el uso breve de esa instalación.'},
+      {rango: [73,76], icono:'🏰', color:'#7a4a0c', titulo:'Huésped', descripcion:()=>'Un huésped amistoso viene a quedarse en tu bastión. Puede ser una persona de gran renombre, alguien que busca santuario, un mercenario, o un monstruo amistoso.'},
+      {rango: [77,79], icono:'❓', color:'#bfa76a', titulo:'Sirvientes Perdidos', descripcion:()=>'Una de las instalaciones especiales de tu bastión pierde a sus sirvientes. La instalación no puede usarse en tu próximo turno, pero los sirvientes son reemplazados sin costo.'},
+      {rango: [80,83], icono:'✨', color:'#2c5530', titulo:'Descubrimiento Mágico', descripcion:()=>'Tus sirvientes descubren o crean accidentalmente un objeto mágico Poco Común de tu elección sin costo. El objeto debe ser una Poción o Pergamino.'},
+      {rango: [84,91], icono:'🚶', color:'#3a6a40', titulo:'Refugiados', descripcion:()=>'Un grupo de 2d4 refugiados huyendo de un ataque de monstruo, desastre natural u otra calamidad busca refugio en tu bastión. Te ofrecen 1d6 × 100 PO como pago.'},
+      {rango: [92,98], icono:'📜', color:'#7a4a0c', titulo:'Petición de Ayuda', descripcion:()=>'Tu bastión es llamado a ayudar a un líder local. Si ayudas, debes enviar uno o más Defensores del Bastión. Tira 1d6 por cada defensor enviado. Si el total es 10 o más, resuelves el problema y ganas 1d6 × 100 PO.'},
+      {rango: [99,100], icono:'💰', color:'#d4af37', titulo:'Tesoro', descripcion:()=>'Tu bastión adquiere un objeto de arte o un objeto mágico determinado por tirada en las tablas de tesoros. Puede representar una herencia, un regalo, un robo, o un descubrimiento afortunado.'}
+    ];
+    const EXPLICACIONES_EVENTOS = {
+      'Ataque': 'Tira 6d6; por cada dado que saque 1, un Defensor del Bastión muere. Si no quedan defensores, una instalación especial se daña y se cierra hasta el siguiente turno.',
+      'Sirviente Criminal': 'Puedes pagar un soborno de 1d6 × 100 PO para retener al sirviente. Si no, es arrestado y la instalación queda inactiva un turno.',
+      'Oportunidad Extraordinaria': 'Puedes pagar 500 PO para aprovechar la oportunidad y lanzar otro evento. Si no, no ocurre nada.',
+      'Refugiados': 'Un grupo de 2d4 refugiados pide asilo. Si los acoges, te pagan 1d6 × 100 PO. Se quedan hasta que encuentres un nuevo hogar o el bastión sea atacado.',
+      'Petición de Ayuda': 'Envía Defensores del Bastión y tira 1d6 por cada uno. Si el total es 10 o más, resuelves el problema y ganas 1d6 × 100 PO. Si es menos, la recompensa se reduce a la mitad y pierdes un defensor.',
+      'Tesoro': 'Tira en la tabla de tesoros: puedes obtener un objeto de arte o un objeto mágico según el resultado. Consulta el manual para detalles.'
+    };
+    let eventosGenerados = [];
+    document.getElementById('eventosBtn').onclick = function() {
+      document.getElementById('modalEventos').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      renderListaEventos();
+    };
+    document.getElementById('cerrarModalBtn').onclick = cerrarModalEventos;
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') cerrarModalEventos();
+    });
+    function cerrarModalEventos() {
+      document.getElementById('modalEventos').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.getElementById('generarEventoBtn').onclick = function() {
+      document.getElementById('sonidoDado').currentTime = 0;
+      document.getElementById('sonidoDado').play();
+      const d100 = Math.floor(Math.random()*100)+1;
+      let evento = EVENTOS_BASTION.find(ev => d100 >= ev.rango[0] && d100 <= ev.rango[1]);
+      if (!evento) evento = EVENTOS_BASTION[0];
+      const descripcion = resolverEvento(evento);
+      eventosGenerados.push({
+        icono: evento.icono,
+        color: evento.color,
+        titulo: evento.titulo,
+        descripcion,
+        d100
+      });
+      renderListaEventos();
+    };
+    function renderListaEventos() {
+      const ul = document.getElementById('listaEventos');
+      ul.innerHTML = '';
+      if (eventosGenerados.length === 0) {
+        ul.innerHTML = '<li style="color:#7a4a0c; text-align:center;">Aún no se ha generado ningún evento semanal.<br>¡Pulsa el dado para descubrir el destino de tu bastión!</li>';
+        return;
+      }
+      eventosGenerados.forEach(ev => {
+        let explicacion = '';
+        if (EXPLICACIONES_EVENTOS[ev.titulo]) {
+          explicacion = `<div style='margin-top:8px; color:#d7263d; font-size:0.98em; background:#fffbe6; border-left:4px solid #d7263d; padding:8px 12px; border-radius:6px;'>${EXPLICACIONES_EVENTOS[ev.titulo]}</div>`;
+        }
+        ul.innerHTML += `<li style='margin:12px 0; padding:10px 12px; border-radius:8px; background:#f3e7c6; border-left:6px solid ${ev.color}; font-size:1.08em; box-shadow:0 1px 4px #0001; position:relative;'><span style='font-size:1.5em; position:absolute; left:-32px; top:8px;'>${ev.icono}</span> <b>${ev.titulo}</b> <span style='color:#bfa76a;'>(d100: ${ev.d100})</span><br><span>${ev.descripcion}</span>${explicacion}</li>`;
+      });
+      ul.scrollTop = ul.scrollHeight;
+    }
+    document.getElementById('copiarEventosBtn').onclick = function() {
+      if (eventosGenerados.length === 0) return;
+      let texto = `**Eventos semanales del Bastión:**\n`;
+      eventosGenerados.forEach(ev => {
+        // Convertir HTML a Markdown para Discord
+        let desc = ev.descripcion
+          .replace(/<b>/g, '**')
+          .replace(/<\/b>/g, '**')
+          .replace(/<br\s*\/?>/gi, '\n');
+        texto += `- ${ev.icono} **${ev.titulo}** (d100: ${ev.d100}): _${desc}_\n`;
+      });
+      texto += `\n**URL:** https://elcubildelosengendros.tiiny.site`;
+      navigator.clipboard.writeText(texto).then(()=>{
+        alert('¡Eventos copiados para Discord!');
+      });
+    };
+
+    // --- GESTIÓN AVANZADA DE BASTIÓN Y EVENTOS ---
+    // 1. Estado de armería abastecida/desabastecida
+    let armeriaAbastecida = true;
+    function mostrarEstadoArmeria() {
+      const div = document.getElementById('estadoArmeriaDiv');
+      if (!div) return;
+      if (!habitaciones.some(h=>h.nombre==='Armería')) {
+        div.style.display = 'none';
+        return;
+      }
+      div.style.display = 'block';
+      div.innerHTML = `Armería: <b>${armeriaAbastecida ? 'Abastecida' : 'Desabastecida'}</b> <button class='copiar-btn' onclick='reabastecerArmeria()'>Reabastecer</button>`;
+    }
+    function reabastecerArmeria() {
+      // Calcular coste: 100 PO + 100 PO por defensor, la mitad si hay herrería
+      let defensores = 0;
+      habitaciones.forEach(h => {
+        if (h.nombre === 'Cuartel') {
+          if (parseInt(h.tamano) === 2) defensores += 12 * h.cantidad;
+          if (parseInt(h.tamano) === 3) defensores += 25 * h.cantidad;
+        }
+        if (h.nombre === 'Menagerie') {
+          defensores += 4 * h.cantidad;
+        }
+      });
+      let coste = 100 + 100 * defensores;
+      if (habitaciones.some(h=>h.nombre==='Herrería')) coste = Math.floor(coste/2);
+      alert(`Has pagado ${coste} PO para reabastecer la armería.`);
+      armeriaAbastecida = true;
+      mostrarEstadoArmeria();
+    }
+    // Añadir div de estado de armería a la interfaz
+    window.addEventListener('DOMContentLoaded', () => {
+      let div = document.createElement('div');
+      div.id = 'estadoArmeriaDiv';
+      div.style = 'margin:10px 0; font-weight:bold; color:#2c5530;';
+      document.querySelector('.formulario').insertBefore(div, document.querySelector('.formulario').children[2]);
+      mostrarEstadoArmeria();
+    });
+    // 2. Gestión de tenientes (Sala de Guerra)
+    let numTenientes = 0;
+    function mostrarTenientes() {
+      const div = document.getElementById('tenientesDiv');
+      if (!div) return;
+      if (!habitaciones.some(h=>h.nombre==='Sala de Guerra')) {
+        div.style.display = 'none';
+        return;
+      }
+      div.style.display = 'block';
+      div.innerHTML = `Tenientes en Sala de Guerra: <b>${numTenientes}</b> <button class='copiar-btn' onclick='anadirTeniente()'>Añadir</button> <button class='copiar-btn' onclick='quitarTeniente()'>Quitar</button>`;
+    }
+    function anadirTeniente() {
+      if (numTenientes < 10) numTenientes++;
+      mostrarTenientes();
+    }
+    function quitarTeniente() {
+      if (numTenientes > 0) numTenientes--;
+      mostrarTenientes();
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      let div = document.createElement('div');
+      div.id = 'tenientesDiv';
+      div.style = 'margin:10px 0; font-weight:bold; color:#2c5530;';
+      document.querySelector('.formulario').insertBefore(div, document.querySelector('.formulario').children[3]);
+      mostrarTenientes();
+    });
+    // 3. Gestión de sirvientes inactivos
+    let instalacionesInactivas = {};
+    function marcarInactiva(nombre) {
+      instalacionesInactivas[nombre] = 1; // 1 turno inactiva
+      renderTabla();
+    }
+    function avanzarTurnoInactivas() {
+      for (let k in instalacionesInactivas) {
+        instalacionesInactivas[k]--;
+        if (instalacionesInactivas[k]<=0) delete instalacionesInactivas[k];
+      }
+      renderTabla();
+    }
+    // Modificar renderTabla para mostrar instalaciones inactivas
+    // 4. Espacio para refugiados
+    function espacioRefugiados() {
+      let libres = 0;
+      habitaciones.forEach(h => {
+        if (h.nombre==='Dormitorio' || h.nombre==='Salón' || h.nombre==='Comedor') libres += h.cantidad;
+      });
+      return libres;
+    }
+    // 5. Guest (monstruo amistoso)
+    let monstruoAmistosoPresente = false;
+    // 6. Eventos mágicos/tesoro: permitir elegir tipo si hay instalaciones mágicas
+    function tieneInstalacionMagica() {
+      return habitaciones.some(h=>['Estudio Arcano','Biblioteca','Laboratorio','Scriptorium','Santuario','Sacristía','Observatorio','Reliquiario'].includes(h.nombre));
+    }
+    // 7. Bonos narrativos: jardín/pub
+    function tieneJardin() { return habitaciones.some(h=>h.nombre==='Jardín'); }
+    function tienePub() { return habitaciones.some(h=>h.nombre==='Taberna'); }
+    // --- FIN GESTIÓN AVANZADA ---
+    // Integrar estas funciones en la lógica de eventos y la interfaz según corresponda.
+
+    renderSelectores();
+    renderTabla();
+  </script>
+</body>
+</html> 
